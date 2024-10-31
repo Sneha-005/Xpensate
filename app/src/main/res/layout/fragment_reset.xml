@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:id="@+id/reset_screen">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/poppins_black"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+    <!-- Guidelines for layout positioning -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1231" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2359" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3889" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.466" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7468" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_not_recieve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8296" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8665" />
+
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset Password"
+        android:textSize="28sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/guideline_top" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toBottomOf="@id/guideline_logo"
+        android:contentDescription="App Logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Email EditText with error message -->
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:hint="Email"
+        android:textColorHint="@color/font_color"
+        android:textSize="14sp"
+        android:paddingStart="15dp"
+        android:background="@drawable/box"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/guideline_email" />
+
+        <!-- instruction -->
+        <TextView
+            android:id="@+id/instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter E-mail to reset password."
+            android:textSize="16sp"
+            android:textColor="@color/font_color"
+            app:layout_constraintTop_toBottomOf="@id/guideline_instruction" />
+
+        <!-- Login Button -->
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Login"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="13dp"
+        android:textSize="14sp"
+        app:cornerRadius="5.333dp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/green"
+        app:layout_constraintTop_toBottomOf="@id/guideline_button"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Sign Up Option -->
+    <TextView
+        android:id="@+id/old_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account?"
+        android:textSize="16sp"
+        android:textColor="@color/font_color"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/guideline_not_recieve" />
+
+    <TextView
+        android:id="@+id/signup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+        android:textSize="14sp"
+        android:textColor="@color/green"
+        android:textAlignment="center"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline_signup" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

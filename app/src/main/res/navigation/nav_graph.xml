@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashScreen">
+
+    <fragment
+        android:id="@+id/splashScreen"
+        android:name="com.example.xpensate.splashScreen"
+        android:label="fragment_splash_screen"
+        tools:layout="@layout/fragment_splash_screen" >
+        <action
+            android:id="@+id/action_splashScreen_to_started_1"
+            app:destination="@id/started_1" />
+        <action
+            android:id="@+id/action_splashScreen_to_login2"
+            app:destination="@id/login2" />
+        <action
+            android:id="@+id/action_splashScreen_to_slider"
+            app:destination="@id/slider" />
+    </fragment>
+    <fragment
+        android:id="@+id/sign_up"
+        android:name="com.example.xpensate.Sign_up"
+        android:label="Sign_up" >
+        <action
+            android:id="@+id/action_sign_up_to_login2"
+            app:destination="@id/login2" />
+        <action
+            android:id="@+id/action_sign_up_to_verify"
+            app:destination="@id/verify" />
+        <action
+            android:id="@+id/action_sign_up_to_splashScreen"
+            app:destination="@id/splashScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/started_1"
+        android:name="com.example.xpensate.started_1"
+        android:label="fragment_started_1"
+        tools:layout="@layout/fragment_started_1" >
+        <action
+            android:id="@+id/action_started_1_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/login2"
+        android:name="com.example.xpensate.Login"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_login2_to_reset"
+            app:destination="@id/reset" />
+        <action
+            android:id="@+id/action_login2_to_sign_up"
+            app:destination="@id/sign_up" />
+        <action
+            android:id="@+id/action_login2_to_splashScreen"
+            app:destination="@id/splashScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/started_2"
+        android:name="com.example.xpensate.started_2"
+        android:label="fragment_started_4"
+        tools:layout="@layout/fragment_started_4" >
+        <action
+            android:id="@+id/action_started_2_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/started_5"
+        android:name="com.example.xpensate.started_5"
+        android:label="fragment_started_5"
+        tools:layout="@layout/fragment_started_5" >
+        <action
+            android:id="@+id/action_started_5_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/started_3"
+        android:name="com.example.xpensate.started_3"
+        android:label="started_3" >
+        <action
+            android:id="@+id/action_started_3_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/reset"
+        android:name="com.example.xpensate.Reset"
+        android:label="reset" >
+        <action
+            android:id="@+id/action_reset_to_login2"
+            app:destination="@id/login2" />
+        <action
+            android:id="@+id/action_reset_to_sign_up"
+            app:destination="@id/sign_up" />
+        <action
+            android:id="@+id/action_reset_to_login22"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/verify"
+        android:name="com.example.xpensate.verify"
+        android:label="verify" >
+        <action
+            android:id="@+id/action_verify_to_sign_up"
+            app:destination="@id/sign_up" />
+    </fragment>
+    <fragment
+        android:id="@+id/slider"
+        android:name="com.example.xpensate.Slider"
+        android:label="fragment_slider"
+        tools:layout="@layout/fragment_slider" >
+        <action
+            android:id="@+id/action_slider_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+    <fragment
+        android:id="@+id/started_4"
+        android:name="com.example.xpensate.started_4"
+        android:label="started_4" >
+        <action
+            android:id="@+id/action_started_4_to_login2"
+            app:destination="@id/login2" />
+    </fragment>
+</navigation>
