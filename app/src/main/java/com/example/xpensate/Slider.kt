@@ -24,7 +24,7 @@ class Slider : Fragment(), AdapterSlider.SkipListener {
 
         adapter.setContinueListener(object : AdapterSlider.ContinueListener {
             override fun onContinue() {
-                findNavController().navigate(R.id.action_slider_to_login2) // Ensure this action ID is correct
+                findNavController().navigate(R.id.action_slider_to_login2)
             }
         })
 
@@ -36,7 +36,7 @@ class Slider : Fragment(), AdapterSlider.SkipListener {
 
     override fun onSkip() {
         view?.let {
-            findNavController().navigate(R.id.action_slider_to_login2) // Ensure the action ID is correct
+            findNavController().navigate(R.id.action_slider_to_login2)
         }
     }
 }

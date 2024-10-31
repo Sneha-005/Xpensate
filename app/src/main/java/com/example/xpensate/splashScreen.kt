@@ -30,7 +30,6 @@ class splashScreen : Fragment() {
             }
         })
 
-        // Delay for the splash screen
         Handler().postDelayed({
             findNavController().navigate(R.id.action_splashScreen_to_slider)
         }, 2000)

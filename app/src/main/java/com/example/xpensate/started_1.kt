@@ -24,7 +24,7 @@ class started_1 : Fragment() {
 
         val skipTextView: TextView = view.findViewById(R.id.skip)
         skipTextView.setOnClickListener {
-            skipListener?.onSkip() // Notify the listener when "Skip" is clicked
+            skipListener?.onSkip()
         }
 
         return view

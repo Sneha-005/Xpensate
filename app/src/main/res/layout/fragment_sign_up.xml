@@ -79,7 +79,6 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.8665" />
 
-            <!-- Sign Up Title -->
             <TextView
                 android:id="@+id/subText"
                 android:layout_width="match_parent"
@@ -93,7 +92,6 @@
                 app:layout_constraintTop_toBottomOf="@id/guideline_top"
                 android:textAlignment="center"/>
 
-            <!-- Logo -->
             <ImageView
                 android:id="@+id/logo"
                 android:layout_width="match_parent"
@@ -103,7 +101,6 @@
                 app:layout_constraintTop_toBottomOf="@id/guideline_logo"/>
 
 
-            <!-- Email EditText -->
             <EditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
@@ -118,7 +115,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/guideline_email"/>
 
-            <!-- Password EditText with visibility icon and error message -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/passwordContainer"
                 android:layout_width="match_parent"
@@ -156,7 +152,6 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- confirm Password EditText with visibility icon and error message -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/checkpasswordContainer"
                 android:layout_width="match_parent"
@@ -194,7 +189,6 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Remember Me Checkbox -->
             <CheckBox
                 android:id="@+id/myCheckBox"
                 android:layout_width="wrap_content"
@@ -205,7 +199,6 @@
                 app:layout_constraintTop_toBottomOf="@id/guideline_checkbox"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Sign Up Button -->
             <Button
                 android:id="@+id/signup"
                 android:layout_width="match_parent"
@@ -220,7 +213,6 @@
                 app:layout_constraintTop_toBottomOf="@id/guideline_button"
                 app:cornerRadius="5.333dp"/>
 
-            <!-- old account text -->
             <TextView
                 android:id="@+id/old_account"
                 android:layout_width="match_parent"
@@ -233,7 +225,6 @@
                 app:layout_constraintTop_toBottomOf="@id/guideline_old_account"
                 android:textAlignment="center"/>
 
-            <!-- login -->
             <TextView
                 android:id="@+id/login"
                 android:layout_width="wrap_content"

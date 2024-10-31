@@ -76,7 +76,6 @@
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/guideline_top" />
 
-    <!-- Logo -->
     <ImageView
         android:id="@+id/logo"
         android:layout_width="match_parent"
@@ -87,7 +86,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Email EditText with error message -->
     <EditText
         android:id="@+id/email"
         android:layout_width="match_parent"
@@ -100,7 +98,6 @@
         android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@id/guideline_email" />
 
-        <!-- instruction -->
         <TextView
             android:id="@+id/instruction"
             android:layout_width="match_parent"
@@ -110,7 +107,6 @@
             android:textColor="@color/font_color"
             app:layout_constraintTop_toBottomOf="@id/guideline_instruction" />
 
-        <!-- Login Button -->
     <Button
         android:id="@+id/login_button"
         android:layout_width="match_parent"
@@ -125,7 +121,6 @@
         app:layout_constraintTop_toBottomOf="@id/guideline_button"
         android:layout_marginTop="8dp"/>
 
-    <!-- Sign Up Option -->
     <TextView
         android:id="@+id/old_account"
         android:layout_width="match_parent"

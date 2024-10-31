@@ -33,7 +33,6 @@ class verify : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Navigate to the splash screen
                 navController.navigate(R.id.action_verify_to_sign_up)
             }
         })
@@ -48,7 +47,7 @@ class verify : Fragment() {
             otpDigit1.addTextChangedListener(OtpTextWatcher(otpDigit1, otpDigit2, null))
             otpDigit2.addTextChangedListener(OtpTextWatcher(otpDigit2, otpDigit3, otpDigit1))
             otpDigit3.addTextChangedListener(OtpTextWatcher(otpDigit3, otpDigit4, otpDigit2))
-            otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3)) // Last field
+            otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3))
         }
     }
 
@@ -65,7 +64,6 @@ class OtpTextWatcher(
 ) : TextWatcher {
 
     init {
-        // Detect backspace key press
         currentView.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN && currentView.text.isEmpty()) {
                 previousView?.requestFocus()

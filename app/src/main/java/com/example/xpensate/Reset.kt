@@ -20,7 +20,6 @@ class Reset : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout using ViewBinding
         _binding = FragmentResetBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -28,16 +27,13 @@ class Reset : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize the NavController
         navController = findNavController()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Navigate to the splash screen
                 navController.navigate(R.id.action_reset_to_login2)
             }
         })
 
-        // Set up click listeners
         binding.signup.setOnClickListener {
             navController.navigate(R.id.action_reset_to_sign_up)
         }
@@ -53,6 +49,6 @@ class Reset : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Clear binding to avoid memory leaks
+        _binding = null
     }
 }
