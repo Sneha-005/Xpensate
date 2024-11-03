@@ -216,7 +216,7 @@
             android:id="@+id/verify_button"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Sign Up"
+            android:text="Reset Password"
             android:textSize="14sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/green"

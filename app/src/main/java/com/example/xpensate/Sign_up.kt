@@ -12,6 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.xpensate.databinding.FragmentSignUpBinding
+import com.example.xpensate.network.AuthInstance
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class Sign_up : Fragment() {
     private lateinit var navController: NavController
@@ -29,15 +33,20 @@ class Sign_up : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view,savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navController.navigate(R.id.action_sign_up_to_splashScreen)
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navController.navigate(R.id.action_sign_up_to_splashScreen)
+                }
+            })
+        setupUI()
+    }
 
+    private fun setupUI() {
         binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         binding.passwordVisibility.setImageResource(R.drawable.eye_closed)
 
@@ -54,7 +63,7 @@ class Sign_up : Fragment() {
 
         binding.signup.setOnClickListener {
             if (validateInput()) {
-                navController.navigate(R.id.action_sign_up_to_verify)
+                registerUser()
             }
         }
 
@@ -116,6 +125,29 @@ class Sign_up : Fragment() {
 
         return true
     }
+
+    private fun registerUser() {
+        val email = binding.email.text.toString().trim()
+        val password = binding.password.text.toString().trim()
+        val confirmPassword = binding.checkpassword.text.toString().trim()
+        val registerRequest = RegisterRequest(confirm_password = confirmPassword, email = email, password = password)
+
+        AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
+            override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), response.body()?.message ?: "Registration successful", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.action_sign_up_to_verify)
+                } else {
+                    Toast.makeText(requireContext(), "Registration failed: ${response.message()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,9 +1,6 @@
 package com.example.xpensate
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,18 +8,16 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.xpensate.databinding.FragmentVerifyBinding
 import com.example.xpensate.network.AuthInstance
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.os.CountDownTimer
 
-class verify : Fragment() {
+class VerifyReset : Fragment() {
     private var _binding: FragmentVerifyBinding? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
@@ -106,69 +101,34 @@ class verify : Fragment() {
     }
 
     private fun verifyOtp(email: String, otp: String) {
-        val verifyRequest = VerifyRequest(email, otp)
-        AuthInstance.api.verify(verifyRequest).enqueue(object : Callback<VerifyResponse> {
-            override fun onResponse(call: Call<VerifyResponse>, response: Response<VerifyResponse>) {
+        val passResetRequest = PassResetRequest(
+            confirm_password = "Sky@12345",
+            email = email,
+            new_password = "Sky@12345"
+        )
+
+        AuthInstance.api.passreset(passResetRequest).enqueue(object : Callback<PassResetResponse> {
+            override fun onResponse(call: Call<PassResetResponse>, response: Response<PassResetResponse>) {
                 if (response.isSuccessful) {
-                    val message = response.body()?.message ?: "OTP Verified!"
+                    val message = response.body()?.messsage?.firstOrNull() ?: "Password changed successfully"
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                    response.body()?.tokens?.let { tokens ->
-                        saveTokens(tokens.access, tokens.refresh)
-                    }
-                    navController.navigate(R.id.action_verify_to_sign_up)
+
+                    navController.navigate(R.id.action_verifyReset_to_reset)
                 } else {
                     response.errorBody()?.let {
-                        Toast.makeText(requireContext(), "Error: ${it.string()}", Toast.LENGTH_SHORT)
-                            .show()
-                    } ?: Toast.makeText(
-                        requireContext(),
-                        "OTP Verification Failed",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                        Toast.makeText(requireContext(), "Error: ${it.string()}", Toast.LENGTH_SHORT).show()
+                    } ?: Toast.makeText(requireContext(), "OTP Verification Failed", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<VerifyResponse>, t: Throwable) {
+            override fun onFailure(call: Call<PassResetResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun saveTokens(accessToken: String, refreshToken: String) {
-        lifecycleScope.launch {
-            TokenDataStore.saveTokens(requireContext(), accessToken, refreshToken)
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
-
-class OtpTextWatcher(
-    private val currentView: EditText,
-    private val nextView: EditText?,
-    private val previousView: EditText?
-) : TextWatcher {
-
-    init {
-        currentView.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN && currentView.text.isEmpty()) {
-                previousView?.requestFocus()
-                true
-            } else {
-                false
-            }
-        }
-    }
-
-    override fun afterTextChanged(s: Editable?) {
-        if (!s.isNullOrEmpty()) {
-            nextView?.requestFocus()
-        }
-    }
-
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 }
