@@ -220,6 +220,7 @@
             android:layout_height="48dp"
             android:text="Reset"
             android:textSize="14sp"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:backgroundTint="@color/green"
             app:layout_constraintStart_toStartOf="parent"

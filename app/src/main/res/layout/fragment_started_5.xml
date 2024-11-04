@@ -102,6 +102,7 @@
             android:layout_marginEnd="13dp"
             android:background="@drawable/button_stroke"
             android:text="Continue"
+            android:textAllCaps="false"
             android:textColor="@color/green"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"

@@ -172,6 +172,8 @@
         android:layout_width="182dp"
         android:layout_height="48dp"
         android:text="Login"
+        android:textAllCaps="false"
+
         android:layout_marginLeft="13dp"
         android:layout_marginRight="13dp"
         android:textSize="14sp"
