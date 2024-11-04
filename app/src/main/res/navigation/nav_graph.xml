@@ -29,7 +29,11 @@
             app:destination="@id/login2" />
         <action
             android:id="@+id/action_sign_up_to_verify"
-            app:destination="@id/verify" />
+            app:destination="@id/verify">
+            <argument
+                android:name="email"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/action_sign_up_to_splashScreen"
             app:destination="@id/splashScreen" />
@@ -49,14 +53,18 @@
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_login2_to_sign_up"
-            app:destination="@id/sign_up" />
+            android:id="@+id/action_login2_to_verifyReset"
+            app:destination="@id/verifyReset" >
+            <argument
+                android:name="email"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_login2_to_blankFragment"
+            app:destination="@id/blankFragment" />
         <action
             android:id="@+id/action_login2_to_splashScreen"
             app:destination="@id/splashScreen" />
-        <action
-            android:id="@+id/action_login2_to_verifyReset"
-            app:destination="@id/verifyReset" />
     </fragment>
     <fragment
         android:id="@+id/started_2"
@@ -88,6 +96,12 @@
         android:id="@+id/reset"
         android:name="com.example.xpensate.Reset"
         android:label="reset" >
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="otp"
+            app:argType="string" />
         <action
             android:id="@+id/action_reset_to_login2"
             app:destination="@id/login2" />
@@ -99,6 +113,12 @@
         android:id="@+id/verify"
         android:name="com.example.xpensate.verify"
         android:label="verify" >
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_verify_to_blankFragment"
+            app:destination="@id/blankFragment" />
         <action
             android:id="@+id/action_verify_to_sign_up"
             app:destination="@id/sign_up" />
@@ -124,8 +144,23 @@
         android:id="@+id/verifyReset"
         android:name="com.example.xpensate.VerifyReset"
         android:label="VerifyReset" >
+        <argument
+            android:name="email"
+            app:argType="string" />
         <action
             android:id="@+id/action_verifyReset_to_reset"
-            app:destination="@id/reset" />
+            app:destination="@id/reset" >
+            <argument
+                android:name="email"
+                app:argType="string" />
+            <argument
+                android:name="otp"
+                app:argType="string" />
+        </action>
     </fragment>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="com.example.xpensate.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" />
 </navigation>

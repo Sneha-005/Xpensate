@@ -3,6 +3,7 @@ package com.example.xpensate
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import retrofit2.Response
 class Login : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private lateinit var navController: NavController
     private var isPasswordVisible = false
 
     override fun onCreateView(
@@ -34,12 +36,11 @@ class Login : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val navController = findNavController()
+        navController = findNavController()
 
-        // Handle back button press to navigate to splash screen
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (isAdded) { // Ensure fragment is added before navigating
+                if (isAdded) {
                     navController.navigate(R.id.action_login2_to_splashScreen)
                 }
             }
@@ -48,7 +49,7 @@ class Login : Fragment() {
         lifecycleScope.launch {
             TokenDataStore.getAccessToken(requireContext()).collect { accessToken ->
                 if (accessToken != null && isAdded) {
-                    navController.navigate(R.id.action_login2_to_splashScreen)
+                    navController.navigate(R.id.action_login2_to_blankFragment)
                 }
             }
         }
@@ -94,7 +95,7 @@ class Login : Fragment() {
                     response.body()?.let { loginResponse ->
                         saveTokens(loginResponse.tokens.access, loginResponse.tokens.refresh)
                         Toast.makeText(requireContext(), loginResponse.message ?: "Login successful", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_login2_to_splashScreen)
+                        findNavController().navigate(R.id.action_login2_to_blankFragment)
                     }
                 } else {
                     binding.errorMessage.visibility = View.VISIBLE
@@ -136,8 +137,13 @@ class Login : Fragment() {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), response.body()?.message ?: "OTP sent on mail", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_login2_to_verifyReset)
-
+                    try {
+                        val action = LoginDirections.actionLogin2ToVerifyReset(email)
+                        navController.navigate(action)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("LoginFragment", "Navigation error: ${e.message}", e)
+                    }
                 } else {
                     val errorMessage = when (response.code()) {
                         400 -> "Error: Invalid email"

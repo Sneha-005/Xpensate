@@ -11,44 +11,30 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fontFamily="@font/poppins_black"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/poppins_black">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.0943" />
+            app:layout_constraintGuide_percent="0.0655" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2771" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.632" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.6881" />
+            app:layout_constraintGuide_percent="0.27" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.7468" />
+            app:layout_constraintGuide_percent="0.78" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_dots"
@@ -61,10 +47,10 @@
             android:id="@+id/skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Skip"
-            android:textSize="24sp"
-            android:textColor="@color/font_color"
             android:layout_marginRight="24dp"
+            android:text="Skip"
+            android:textColor="@color/font_color"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_top" />
 
@@ -72,83 +58,93 @@
             android:id="@+id/logo"
             android:layout_width="240dp"
             android:layout_height="240dp"
-            android:src="@drawable/__5"
-            app:layout_constraintTop_toBottomOf="@id/guideline_logo"
             android:contentDescription="App Logo"
+            android:src="@drawable/__5"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/guideline_logo" />
 
         <TextView
             android:id="@+id/loginTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="381dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="40dp"
             android:text="Manage Debt with people"
-            android:textSize="24sp"
-            android:textColor="@color/white"
             android:textAlignment="center"
-            app:layout_constraintTop_toBottomOf="@id/guideline_head" />
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/signup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logo"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Track who owes you and what you owe others, keeping all your debts organized."
-            android:textSize="16sp"
-            android:textColor="@color/font_color"
+            android:layout_width="377dp"
+            android:layout_height="41dp"
+            android:layout_marginBottom="64dp"
+            android:text="Track who owes you and what you owe \nothers, keeping all your debts organized."
             android:textAlignment="center"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/font_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/continue_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_signup" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/continue_button"
-            android:layout_width="match_parent"
+            android:layout_width="182dp"
             android:layout_height="48dp"
-            android:text="Continue"
-            android:textSize="14sp"
-            android:textColor="@color/green"
             android:layout_marginStart="13dp"
-            android:layout_marginEnd="13dp"
             android:layout_marginTop="8dp"
-            style="@style/CustomButtonStyle"
+            android:layout_marginEnd="13dp"
+            android:background="@drawable/button_stroke"
+            android:text="Continue"
+            android:textColor="@color/green"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_button" />
 
         <LinearLayout
             android:id="@+id/dotLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/guideline_dots"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/guideline_dots">
 
             <ImageView
                 android:id="@+id/dot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected_dot"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/unselected_dot" />
 
             <ImageView
                 android:id="@+id/dot2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected_dot"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/unselected_dot" />
 
             <ImageView
                 android:id="@+id/dot3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected_dot"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/unselected_dot" />
 
             <ImageView
                 android:id="@+id/dot4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/unselected_dot"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/unselected_dot" />
 
             <ImageView
                 android:id="@+id/dot5"
@@ -156,8 +152,6 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/selected_dot" />
         </LinearLayout>
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

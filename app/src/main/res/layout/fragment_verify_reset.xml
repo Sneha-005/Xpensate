@@ -192,35 +192,38 @@
             android:id="@+id/timerTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="05:00"
+            android:text="Resend in 05:00 mins"
             android:textSize="14sp"
             android:textColor="@color/font_color"
             android:lineHeight="22sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_not_recieve"
+            app:layout_constraintTop_toBottomOf="@id/guideline_resend"
             android:textAlignment="center"/>
 
         <TextView
             android:id="@+id/resend"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Resend"
             android:textSize="14sp"
-            android:textColor="@color/background"
+            android:textColor="@color/font_color"
             android:lineHeight="22sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_resend"
             android:textAlignment="center"/>
 
         <Button
             android:id="@+id/verify_button"
-            android:layout_width="match_parent"
+            android:layout_width="182dp"
             android:layout_height="48dp"
-            android:text="Reset Password"
+            android:text="Reset"
             android:textSize="14sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/green"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:cornerRadius="5.333dp"/>
 

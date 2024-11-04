@@ -10,16 +10,18 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.example.xpensate.databinding.FragmentVerifyBinding
 import com.example.xpensate.network.AuthInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.os.CountDownTimer
+import android.util.Log
+import com.example.xpensate.databinding.FragmentVerifyResetBinding
 
 class VerifyReset : Fragment() {
-    private var _binding: FragmentVerifyBinding? = null
+    private var _binding: FragmentVerifyResetBinding? = null
     private val binding get() = _binding!!
+    private var email: String? = null
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
     private val otpTimeout = 300000L
@@ -28,13 +30,16 @@ class VerifyReset : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentVerifyBinding.inflate(inflater, container, false)
+
+        _binding = FragmentVerifyResetBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
+
+        email = arguments?.getString("email")
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -53,16 +58,18 @@ class VerifyReset : Fragment() {
             otpDigit3.addTextChangedListener(OtpTextWatcher(otpDigit3, otpDigit4, otpDigit2))
             otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3))
         }
-        val email = arguments?.getString("email") ?: "default@example.com"
         binding.verifyButton.setOnClickListener {
             val otp = otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
             if (otp.length == 4) {
-                verifyOtp(email, otp)
+                email?.let { verifyOtp(it, otp) }
             } else {
                 Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
             }
         }
-        startOtpTimer(email)
+        binding.resend.setOnClickListener {
+            email?.let { resendOtp(it) }
+        }
+        email?.let { startOtpTimer(it) }
     }
 
     private fun startOtpTimer(email: String) {
@@ -75,16 +82,16 @@ class VerifyReset : Fragment() {
             override fun onFinish() {
                 binding.timerTextView.text = "Time expired!"
                 binding.verifyButton.isEnabled = false
-                resendOtp(email)
+                binding.resend.visibility=View.VISIBLE
             }
         }.start()
     }
 
     private fun resendOtp(email: String) {
-        val verifyRequest = VerifyRequest(email, "placeholder")
+        val verifyResetRequest = VerifyResetRequest(email, "placeholder")
 
-        AuthInstance.api.verify(verifyRequest).enqueue(object : Callback<VerifyResponse> {
-            override fun onResponse(call: Call<VerifyResponse>, response: Response<VerifyResponse>) {
+        AuthInstance.api.otpverify(verifyResetRequest).enqueue(object : Callback<VerifyResetResponse> {
+            override fun onResponse(call: Call<VerifyResetResponse>, response: Response<VerifyResetResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
@@ -94,34 +101,33 @@ class VerifyReset : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<VerifyResponse>, t: Throwable) {
+            override fun onFailure(call: Call<VerifyResetResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun verifyOtp(email: String, otp: String) {
-        val passResetRequest = PassResetRequest(
-            confirm_password = "Sky@12345",
-            email = email,
-            new_password = "Sky@12345"
-        )
-
-        AuthInstance.api.passreset(passResetRequest).enqueue(object : Callback<PassResetResponse> {
-            override fun onResponse(call: Call<PassResetResponse>, response: Response<PassResetResponse>) {
+       val verifyResetRequest=VerifyResetRequest(email, otp)
+        AuthInstance.api.otpverify(verifyResetRequest).enqueue(object : Callback<VerifyResetResponse> {
+            override fun onResponse(call: Call<VerifyResetResponse>, response: Response<VerifyResetResponse>) {
                 if (response.isSuccessful) {
-                    val message = response.body()?.messsage?.firstOrNull() ?: "Password changed successfully"
+                    val message = response.body()?.message ?: "OTP Verified successfully!"
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-
-                    navController.navigate(R.id.action_verifyReset_to_reset)
+                    try {
+                        val action = VerifyResetDirections.actionVerifyResetToReset(email,otp)
+                        navController.navigate(action)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("LoginFragment", "Navigation error: ${e.message}", e)
+                    }
                 } else {
-                    response.errorBody()?.let {
-                        Toast.makeText(requireContext(), "Error: ${it.string()}", Toast.LENGTH_SHORT).show()
-                    } ?: Toast.makeText(requireContext(), "OTP Verification Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "OTP Verification Failed", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<PassResetResponse>, t: Throwable) {
+
+            override fun onFailure(call: Call<VerifyResetResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -129,6 +135,7 @@ class VerifyReset : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        countDownTimer.cancel()
         _binding = null
     }
 }

@@ -1,6 +1,7 @@
 package com.example.xpensate
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +19,11 @@ import retrofit2.Response
 class Reset : Fragment() {
     private var _binding: FragmentResetBinding? = null
     private val binding get() = _binding!!
-
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
     private lateinit var navController: NavController
+    private var email: String? = null
+    private var otp: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +37,9 @@ class Reset : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+        email = arguments?.getString("email")
+        otp = arguments?.getString("otp")
+
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -40,26 +47,60 @@ class Reset : Fragment() {
                     navController.navigate(R.id.action_reset_to_login2)
                 }
             })
+        binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        binding.passwordVisibility.setImageResource(R.drawable.eye_closed)
 
-        binding.signup.setOnClickListener {
-            navController.navigate(R.id.action_reset_to_sign_up)
+        binding.checkpassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        binding.checkpasswordVisibility.setImageResource(R.drawable.eye_closed)
+
+        binding.passwordVisibility.setOnClickListener {
+            togglePasswordVisibility()
         }
 
-        binding.oldAccount.setOnClickListener {
-            navController.navigate(R.id.action_reset_to_sign_up)
+        binding.checkpasswordVisibility.setOnClickListener {
+            toggleConfirmPasswordVisibility()
         }
 
         binding.loginButton.setOnClickListener {
-            performPasswordReset()        }
+            performPasswordReset()
         }
+    }
+
+    private fun togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible
+        if (isPasswordVisible) {
+            binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.passwordVisibility.setImageResource(R.drawable.heroicons_eye_solid)
+        } else {
+            binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            binding.passwordVisibility.setImageResource(R.drawable.eye_closed)
+        }
+        binding.password.setSelection(binding.password.text.length)
+    }
+
+    private fun toggleConfirmPasswordVisibility() {
+        isConfirmPasswordVisible = !isConfirmPasswordVisible
+        if (isConfirmPasswordVisible) {
+            binding.checkpassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            binding.checkpasswordVisibility.setImageResource(R.drawable.heroicons_eye_solid)
+        } else {
+            binding.checkpassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            binding.checkpasswordVisibility.setImageResource(R.drawable.eye_closed)
+        }
+        binding.checkpassword.setSelection(binding.checkpassword.text.length)
+    }
 
     private fun performPasswordReset() {
-        val email = binding.email.text.toString().trim()
         val newPassword = binding.password.text.toString().trim()
         val confirmPassword = binding.checkpassword.text.toString().trim()
 
-        if (email.isEmpty()) {
+        if (email.isNullOrEmpty()) {
             Toast.makeText(requireContext(), "Email may not be blank", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (otp.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "OTP may not be blank", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -74,16 +115,15 @@ class Reset : Fragment() {
         }
 
         if (!isPasswordValid(newPassword)) {
-            Toast.makeText(requireContext(), "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Password must be at least 8 characters \ninclude uppercase, \nlowercase, number, and \nspecial character", Toast.LENGTH_LONG).show()
             return
         }
 
         val passResetRequest = PassResetRequest(
-            confirm_password = confirmPassword,
-            email = email,
+            otp = otp!!, // Using the retrieved OTP
+            email = email!!,
             new_password = newPassword
         )
-
 
         AuthInstance.api.passreset(passResetRequest).enqueue(object : Callback<PassResetResponse> {
             override fun onResponse(call: Call<PassResetResponse>, response: Response<PassResetResponse>) {

@@ -201,15 +201,16 @@
 
             <Button
                 android:id="@+id/signup"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_width="182dp"
+                android:layout_height="48dp"
                 android:text="Get OTP"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/green"
                 android:layout_marginLeft="13dp"
                 android:layout_marginRight="13dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/guideline_button"
                 app:cornerRadius="5.333dp"/>
 

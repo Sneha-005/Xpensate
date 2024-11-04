@@ -21,9 +21,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.os.CountDownTimer
+import android.util.Log
 
 class verify : Fragment() {
     private var _binding: FragmentVerifyBinding? = null
+    private var email: String? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
@@ -40,12 +42,12 @@ class verify : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 navController.navigate(R.id.action_verify_to_sign_up)
             }
         })
+
         val otpDigit1 = view.findViewById<EditText>(R.id.otp_box1)
         val otpDigit2 = view.findViewById<EditText>(R.id.otp_box2)
         val otpDigit3 = view.findViewById<EditText>(R.id.otp_box3)
@@ -58,7 +60,9 @@ class verify : Fragment() {
             otpDigit3.addTextChangedListener(OtpTextWatcher(otpDigit3, otpDigit4, otpDigit2))
             otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3))
         }
+
         val email = arguments?.getString("email") ?: "default@example.com"
+
         binding.verifyButton.setOnClickListener {
             val otp = otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
             if (otp.length == 4) {
@@ -66,6 +70,9 @@ class verify : Fragment() {
             } else {
                 Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
             }
+        }
+        binding.resend.setOnClickListener {
+            resendOtp(email)
         }
         startOtpTimer(email)
     }
@@ -80,7 +87,7 @@ class verify : Fragment() {
             override fun onFinish() {
                 binding.timerTextView.text = "Time expired!"
                 binding.verifyButton.isEnabled = false
-                resendOtp(email)
+                binding.resend.visibility = View.VISIBLE
             }
         }.start()
     }
@@ -115,7 +122,7 @@ class verify : Fragment() {
                     response.body()?.tokens?.let { tokens ->
                         saveTokens(tokens.access, tokens.refresh)
                     }
-                    navController.navigate(R.id.action_verify_to_sign_up)
+                    navController.navigate(R.id.action_verify_to_blankFragment)
                 } else {
                     response.errorBody()?.let {
                         Toast.makeText(requireContext(), "Error: ${it.string()}", Toast.LENGTH_SHORT)

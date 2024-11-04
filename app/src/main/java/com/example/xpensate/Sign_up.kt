@@ -2,6 +2,7 @@ package com.example.xpensate
 
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Email
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ class Sign_up : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
+    private var email: String? = null
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
 
@@ -35,6 +37,9 @@ class Sign_up : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+
+        email = arguments?.getString("email")
+
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -63,8 +68,8 @@ class Sign_up : Fragment() {
 
         binding.signup.setOnClickListener {
             if (validateInput()) {
-                registerUser()
-            }
+                val emailInput = binding.email.text.toString().trim()
+                registerUser(emailInput)             }
         }
 
         binding.oldAccount.setOnClickListener {
@@ -114,7 +119,7 @@ class Sign_up : Fragment() {
         }
 
         if (password.isEmpty() || !passwordRegex.matches(password)) {
-            Toast.makeText(context, "Password must be between 8 and 15 characters, and include at least one uppercase letter, one lowercase letter, one digit, and one special character.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Password must be between 8 and 15 characters and \ninclude at least one uppercase letter, \none lowercase letter, one digit, \nand one special character.", Toast.LENGTH_LONG).show()
             return false
         }
 
@@ -126,8 +131,7 @@ class Sign_up : Fragment() {
         return true
     }
 
-    private fun registerUser() {
-        val email = binding.email.text.toString().trim()
+    private fun registerUser(email: String) {
         val password = binding.password.text.toString().trim()
         val confirmPassword = binding.checkpassword.text.toString().trim()
         val registerRequest = RegisterRequest(confirm_password = confirmPassword, email = email, password = password)
@@ -136,7 +140,8 @@ class Sign_up : Fragment() {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), response.body()?.message ?: "Registration successful", Toast.LENGTH_SHORT).show()
-                    navController.navigate(R.id.action_sign_up_to_verify)
+                    val action = Sign_upDirections.actionSignUpToVerify(email)
+                    navController.navigate(action)
                 } else {
                     Toast.makeText(requireContext(), "Registration failed: ${response.message()}", Toast.LENGTH_SHORT).show()
                 }

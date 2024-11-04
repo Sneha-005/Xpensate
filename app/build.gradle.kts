@@ -2,15 +2,15 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-
+    alias(libs.plugins.androidxNavigationSafeArgsKotlin)
 }
 
 android {
     namespace = "com.example.xpensate"
     compileSdk = 34
 
-    buildFeatures{
-        viewBinding=true
+    buildFeatures {
+        viewBinding = true
 
     }
 

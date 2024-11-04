@@ -12,6 +12,7 @@ constraintlayout = "2.1.4"
 navigation = "2.7.1"
 navigationFragment = "2.8.3"
 retrofit = "2.9.0"
+navigationSafeArgs = "2.8.3"
 
 
 
@@ -31,7 +32,8 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 androidx-datastore = "androidx.datastore:datastore-preferences:1.0.0"
 
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+androidxNavigationSafeArgsKotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationSafeArgs" }
