@@ -8,6 +8,7 @@
         android:id="@+id/register_screen"
         android:backgroundTint="@color/background">
 
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
@@ -15,6 +16,9 @@
             android:fontFamily="@font/poppins_black"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_top"
@@ -238,6 +242,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/guideline_login"
                 android:textAlignment="center"/>
+            </ScrollView>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
