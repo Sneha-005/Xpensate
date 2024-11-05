@@ -1,6 +1,7 @@
 package com.example.xpensate
 
 import android.graphics.Color
+import com.google.android.material.snackbar.Snackbar
 import android.os.Bundle
 import android.provider.ContactsContract.CommonDataKinds.Email
 import android.text.InputType
@@ -39,7 +40,6 @@ class Sign_up : Fragment() {
         navController = Navigation.findNavController(view)
 
         email = arguments?.getString("email")
-
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -93,6 +93,13 @@ class Sign_up : Fragment() {
         binding.password.setSelection(binding.password.text.length)
     }
 
+
+    private fun showSnackbar(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
+            .setAction("OK") { }
+            .show()
+    }
+
     private fun toggleConfirmPasswordVisibility() {
         isConfirmPasswordVisible = !isConfirmPasswordVisible
         if (isConfirmPasswordVisible) {
@@ -119,7 +126,10 @@ class Sign_up : Fragment() {
         }
 
         if (password.isEmpty() || !passwordRegex.matches(password)) {
-            Toast.makeText(context, "Password must be between 8 and 15 characters and \ninclude at least one uppercase letter, \none lowercase letter, one digit, \nand one special character.", Toast.LENGTH_LONG).show()
+            showSnackbar( "Password must be between 8 and 15 characters\n"+
+                    "- at least one uppercase letter\n"+
+                    "one lowercase letter\n"+
+                    "one digit,and one special character.")
             return false
         }
 
@@ -127,7 +137,6 @@ class Sign_up : Fragment() {
             Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
             return false
         }
-
         return true
     }
 
@@ -140,7 +149,7 @@ class Sign_up : Fragment() {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), response.body()?.message ?: "Registration successful", Toast.LENGTH_SHORT).show()
-                    val action = Sign_upDirections.actionSignUpToVerify(email)
+                    val action = Sign_upDirections.actionSignUpToVerify(confirmPassword,email,password)
                     navController.navigate(action)
                 } else {
                     Toast.makeText(requireContext(), "Registration failed: ${response.message()}", Toast.LENGTH_SHORT).show()

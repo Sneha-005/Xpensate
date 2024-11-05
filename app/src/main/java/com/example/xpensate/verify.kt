@@ -26,10 +26,12 @@ import android.util.Log
 class verify : Fragment() {
     private var _binding: FragmentVerifyBinding? = null
     private var email: String? = null
+    private var password: String? = null
+    private var confirmPassword: String? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
-    private val otpTimeout = 300000L
+    private val otpTimeout = 10000L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,21 +62,22 @@ class verify : Fragment() {
             otpDigit3.addTextChangedListener(OtpTextWatcher(otpDigit3, otpDigit4, otpDigit2))
             otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3))
         }
+        confirmPassword = arguments?.getString("confirmPassword")
+        email = arguments?.getString("email")
+        password = arguments?.getString("password")
 
-        val email = arguments?.getString("email") ?: "default@example.com"
-
-        binding.verifyButton.setOnClickListener {
+        binding.resetButton.setOnClickListener {
             val otp = otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
             if (otp.length == 4) {
-                verifyOtp(email, otp)
+                email?.let { verifyOtp(it, otp) }
             } else {
                 Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
             }
         }
         binding.resend.setOnClickListener {
-            resendOtp(email)
+            email?.let { resendOtp(it) }
         }
-        startOtpTimer(email)
+        email?.let { startOtpTimer(it) }
     }
 
     private fun startOtpTimer(email: String) {
@@ -86,31 +89,37 @@ class verify : Fragment() {
 
             override fun onFinish() {
                 binding.timerTextView.text = "Time expired!"
-                binding.verifyButton.isEnabled = false
+                binding.resetButton.isEnabled = false
                 binding.resend.visibility = View.VISIBLE
             }
         }.start()
     }
 
-    private fun resendOtp(email: String) {
-        val verifyRequest = VerifyRequest(email, "placeholder")
+        private fun resendOtp(email: String) {
 
-        AuthInstance.api.verify(verifyRequest).enqueue(object : Callback<VerifyResponse> {
-            override fun onResponse(call: Call<VerifyResponse>, response: Response<VerifyResponse>) {
+        val registerRequest = RegisterRequest(
+            email = email,
+            password = password ?: "Hello@5678",
+            confirm_password = confirmPassword ?: "Hello@5678"
+        )
+
+        AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
+            override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
-                    binding.verifyButton.isEnabled = true
+                    binding.resetButton.isEnabled = true
                 } else {
                     Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<VerifyResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 
     private fun verifyOtp(email: String, otp: String) {
         val verifyRequest = VerifyRequest(email, otp)

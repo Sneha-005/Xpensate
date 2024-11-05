@@ -88,10 +88,10 @@ class VerifyReset : Fragment() {
     }
 
     private fun resendOtp(email: String) {
-        val verifyResetRequest = VerifyResetRequest(email, "placeholder")
+        val forgetPassRequest = ForgetPassRequest(email)
 
-        AuthInstance.api.otpverify(verifyResetRequest).enqueue(object : Callback<VerifyResetResponse> {
-            override fun onResponse(call: Call<VerifyResetResponse>, response: Response<VerifyResetResponse>) {
+        AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
+            override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
@@ -101,7 +101,7 @@ class VerifyReset : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<VerifyResetResponse>, t: Throwable) {
+            override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

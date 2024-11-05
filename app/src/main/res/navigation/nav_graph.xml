@@ -33,6 +33,12 @@
             <argument
                 android:name="email"
                 app:argType="string" />
+            <argument
+                android:name="password"
+                app:argType="string" />
+            <argument
+                android:name="confirmPassword"
+                app:argType="string" />
         </action>
         <action
             android:id="@+id/action_sign_up_to_splashScreen"
@@ -116,6 +122,13 @@
         <argument
             android:name="email"
             app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
+        <argument
+            android:name="confirmPassword"
+            app:argType="string" />
+
         <action
             android:id="@+id/action_verify_to_blankFragment"
             app:destination="@id/blankFragment" />

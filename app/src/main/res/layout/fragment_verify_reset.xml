@@ -211,7 +211,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_resend"
+            app:layout_constraintTop_toBottomOf="@id/timerTextView"
             android:textAlignment="center"/>
 
         <Button
@@ -227,9 +227,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:cornerRadius="5.333dp"/>
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

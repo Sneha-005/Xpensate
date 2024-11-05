@@ -138,12 +138,5 @@
                 android:src="@drawable/unselected_dot" />
         </LinearLayout>
 
-
-
-
-
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

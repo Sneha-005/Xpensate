@@ -1,4 +1,3 @@
-// Slider.kt
 package com.example.xpensate
 
 import android.os.Bundle

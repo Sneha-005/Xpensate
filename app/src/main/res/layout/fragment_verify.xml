@@ -210,11 +210,11 @@
             android:textColor="@color/font_color"
             android:lineHeight="22sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_resend"
+            app:layout_constraintTop_toBottomOf="@id/timerTextView"
             android:textAlignment="center"/>
 
         <Button
-            android:id="@+id/verify_button"
+            android:id="@+id/reset_button"
             android:layout_width="182dp"
             android:layout_height="48dp"
             android:text="Sign Up"
@@ -226,9 +226,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_button"
             app:cornerRadius="5.333dp"/>
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
