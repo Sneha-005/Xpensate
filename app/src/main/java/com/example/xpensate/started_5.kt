@@ -13,14 +13,9 @@ class started_5 : Fragment() {
     private var _binding: FragmentStarted5Binding? = null
     private val binding get() = _binding!!
     private var skipListener: AdapterSlider.SkipListener? = null
-    private var continueListener: AdapterSlider.ContinueListener? = null
 
     fun setSkipListener(listener: AdapterSlider.SkipListener) {
         skipListener = listener
-    }
-
-    fun setContinueListener(listener: AdapterSlider.ContinueListener) {
-        continueListener = listener
     }
 
     override fun onCreateView(

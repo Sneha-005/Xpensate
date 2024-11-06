@@ -1,5 +1,6 @@
 package com.example.xpensate
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +23,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 
 class verify : Fragment() {
     private var _binding: FragmentVerifyBinding? = null
@@ -31,7 +35,11 @@ class verify : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
-    private val otpTimeout = 10000L
+    private val otpTimeout = 300000L
+    private var verifyJob: Job? = null
+    private var loadingDialog: AlertDialog? = null
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,7 +83,11 @@ class verify : Fragment() {
             }
         }
         binding.resend.setOnClickListener {
-            email?.let { resendOtp(it) }
+            verifyJob?.cancel()
+            verifyJob = lifecycleScope.launch {
+                delay(500)
+                email?.let { resendOtp(it) }
+            }
         }
         email?.let { startOtpTimer(it) }
     }
@@ -88,15 +100,18 @@ class verify : Fragment() {
             }
 
             override fun onFinish() {
-                binding.timerTextView.text = "Time expired!"
+                binding.timerTextView.apply{
+                    text = "Time expired!"
+                    setTextColor(Color.RED)
+                }
                 binding.resetButton.isEnabled = false
                 binding.resend.visibility = View.VISIBLE
             }
         }.start()
     }
 
-        private fun resendOtp(email: String) {
-
+    private fun resendOtp(email: String) {
+        showLoadingDialog()
         val registerRequest = RegisterRequest(
             email = email,
             password = password ?: "Hello@5678",
@@ -105,6 +120,7 @@ class verify : Fragment() {
 
         AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
+                dismissLoadingDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
@@ -115,6 +131,7 @@ class verify : Fragment() {
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                dismissLoadingDialog()
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -122,9 +139,11 @@ class verify : Fragment() {
 
 
     private fun verifyOtp(email: String, otp: String) {
+        showLoadingDialog()
         val verifyRequest = VerifyRequest(email, otp)
         AuthInstance.api.verify(verifyRequest).enqueue(object : Callback<VerifyResponse> {
             override fun onResponse(call: Call<VerifyResponse>, response: Response<VerifyResponse>) {
+                dismissLoadingDialog()
                 if (response.isSuccessful) {
                     val message = response.body()?.message ?: "OTP Verified!"
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -145,6 +164,7 @@ class verify : Fragment() {
             }
 
             override fun onFailure(call: Call<VerifyResponse>, t: Throwable) {
+                dismissLoadingDialog()
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -154,6 +174,19 @@ class verify : Fragment() {
         lifecycleScope.launch {
             TokenDataStore.saveTokens(requireContext(), accessToken, refreshToken)
         }
+    }
+
+    private fun showLoadingDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
+        loadingDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {
@@ -178,6 +211,7 @@ class OtpTextWatcher(
             }
         }
     }
+
 
     override fun afterTextChanged(s: Editable?) {
         if (!s.isNullOrEmpty()) {

@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_splashScreen_to_slider"
             app:destination="@id/slider" />
+        <action
+            android:id="@+id/action_splashScreen_to_blankFragment"
+            app:destination="@id/blankFragment" />
     </fragment>
     <fragment
         android:id="@+id/sign_up"

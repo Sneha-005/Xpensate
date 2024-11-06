@@ -2,16 +2,16 @@ package com.example.xpensate
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import kotlinx.coroutines.delay
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 
 
 class splashScreen : Fragment() {
@@ -24,16 +24,31 @@ class splashScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController=Navigation.findNavController(view)
 
+        lifecycleScope.launch {
+            delay(2000)
+            TokenDataStore.getAccessToken(requireContext()).collect { accessToken ->
+                if (accessToken != null) {
+                    safeNavigate(R.id.action_splashScreen_to_blankFragment)
+                } else {
+                    safeNavigate(R.id.action_splashScreen_to_slider)
+                }
+            }
+        }
+
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 requireActivity().finish()
             }
         })
-
-        Handler().postDelayed({
-            findNavController().navigate(R.id.action_splashScreen_to_slider)
-        }, 2000)
     }
+
+    private fun safeNavigate(actionId: Int) {
+        if (findNavController().currentDestination?.id != actionId) {
+            findNavController().navigate(actionId)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,

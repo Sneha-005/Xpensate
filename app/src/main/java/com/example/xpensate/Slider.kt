@@ -8,13 +8,19 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class Slider : Fragment(), AdapterSlider.SkipListener {
     private lateinit var viewPager: ViewPager2
     private lateinit var continueButton: Button
     private lateinit var dotIndicator: LinearLayout
+    private var continueJob: Job? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,11 +46,14 @@ class Slider : Fragment(), AdapterSlider.SkipListener {
 
         adapter.setSkipListener(this)
 
-        adapter.setContinueListener(object : AdapterSlider.ContinueListener {
-            override fun onContinue() {
-                findNavController().navigate(R.id.action_slider_to_login2)
+        val continueButton: Button = view.findViewById(R.id.continueButton)
+        continueButton.setOnClickListener{
+            continueJob?.cancel()
+            continueJob = lifecycleScope.launch {
+                delay(500)
+                onSkip()
             }
-        })
+        }
 
         viewPager.adapter = adapter
 

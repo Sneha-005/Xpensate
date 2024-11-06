@@ -8,10 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.xpensate.databinding.FragmentResetBinding
 import com.example.xpensate.network.AuthInstance
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +28,8 @@ class Reset : Fragment() {
     private lateinit var navController: NavController
     private var email: String? = null
     private var otp: String? = null
+    private var resetJob: Job? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +68,11 @@ class Reset : Fragment() {
         }
 
         binding.loginButton.setOnClickListener {
-            performPasswordReset()
+            resetJob?.cancel()
+            resetJob = lifecycleScope.launch {
+                delay(500)
+                performPasswordReset()
+            }
         }
     }
 
@@ -120,7 +130,7 @@ class Reset : Fragment() {
         }
 
         val passResetRequest = PassResetRequest(
-            otp = otp!!, // Using the retrieved OTP
+            otp = otp!!,
             email = email!!,
             new_password = newPassword
         )

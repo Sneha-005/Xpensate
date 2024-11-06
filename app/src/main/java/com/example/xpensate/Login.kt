@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -19,13 +20,20 @@ import com.example.xpensate.network.AuthInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+
 
 class Login : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private var isPasswordVisible = false
-
+    private var loginJob: Job? = null
+    private val forgotPasswordClicks = MutableStateFlow(0)
+    private var loadingDialog: AlertDialog? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,19 +86,25 @@ class Login : Fragment() {
         }
 
         binding.loginButton.setOnClickListener {
-            if (validateInput()) {
-                performLogin()
+            loginJob?.cancel()
+            loginJob = lifecycleScope.launch {
+                delay(300)
+                if (validateInput()) {
+                    performLogin()
+                }
             }
         }
     }
 
     private fun performLogin() {
+        showLoadingDialog()
         val email = binding.email.text.toString().trim()
         val password = binding.password.text.toString().trim()
         val loginRequest = LoginRequest(email, password)
 
         AuthInstance.api.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                dismissLoadingDialog()
                 if (response.isSuccessful) {
                     response.body()?.let { loginResponse ->
                         saveTokens(loginResponse.tokens.access, loginResponse.tokens.refresh)
@@ -98,12 +112,16 @@ class Login : Fragment() {
                         findNavController().navigate(R.id.action_login2_to_blankFragment)
                     }
                 } else {
-                    binding.errorMessage.visibility = View.VISIBLE
-                    binding.errorMessage.text = "Error: ${response.message()}"
+                    val errorMessage = when (response.code()) {
+                        400 -> "Error: Invalid email"
+                        else -> "Error: ${response.message()}"
+                    }
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                dismissLoadingDialog()
                 binding.errorMessage.visibility = View.VISIBLE
                 binding.errorMessage.text = "Network error: ${t.message}"
             }
@@ -135,29 +153,28 @@ class Login : Fragment() {
 
         AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), response.body()?.message ?: "OTP sent on mail", Toast.LENGTH_SHORT).show()
-                    try {
-                        val action = LoginDirections.actionLogin2ToVerifyReset(email)
-                        navController.navigate(action)
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
-                        Log.e("LoginFragment", "Navigation error: ${e.message}", e)
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), response.body()?.message ?: "OTP sent on mail", Toast.LENGTH_SHORT).show()
+                        try {
+                            val action = LoginDirections.actionLogin2ToVerifyReset(email)
+                            navController.navigate(action)
+                        } catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        val errorMessage = when (response.code()) {
+                            400 -> "Error: Invalid email"
+                            else -> "Error: ${response.message()}"
+                        }
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    val errorMessage = when (response.code()) {
-                        400 -> "Error: Invalid email"
-                        else -> "Error: ${response.message()}"
-                    }
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
-            }
 
-            override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
+                override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
+                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
 
     private fun isEmailValid(email: String): Boolean {
         val emailRegex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
@@ -191,9 +208,20 @@ class Login : Fragment() {
             Toast.makeText(requireContext(), "Please enter your password.", Toast.LENGTH_SHORT).show()
             return false
         }
-
-
         return true
+    }
+
+    private fun showLoadingDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
+        loadingDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {

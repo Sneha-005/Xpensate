@@ -1,5 +1,6 @@
 package com.example.xpensate
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +17,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import com.example.xpensate.databinding.FragmentVerifyResetBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class VerifyReset : Fragment() {
     private var _binding: FragmentVerifyResetBinding? = null
@@ -25,6 +31,8 @@ class VerifyReset : Fragment() {
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
     private val otpTimeout = 300000L
+    private var verifyResetJob: Job? = null
+    private var loadingDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +59,6 @@ class VerifyReset : Fragment() {
         val otpDigit3 = view.findViewById<EditText>(R.id.otp_box3)
         val otpDigit4 = view.findViewById<EditText>(R.id.otp_box4)
 
-
         with(binding) {
             otpDigit1.addTextChangedListener(OtpTextWatcher(otpDigit1, otpDigit2, null))
             otpDigit2.addTextChangedListener(OtpTextWatcher(otpDigit2, otpDigit3, otpDigit1))
@@ -59,11 +66,17 @@ class VerifyReset : Fragment() {
             otpDigit4.addTextChangedListener(OtpTextWatcher(otpDigit4, null, otpDigit3))
         }
         binding.verifyButton.setOnClickListener {
-            val otp = otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
-            if (otp.length == 4) {
-                email?.let { verifyOtp(it, otp) }
-            } else {
-                Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
+            verifyResetJob?.cancel()
+            verifyResetJob = lifecycleScope.launch {
+                delay(500)
+                val otp =
+                    otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
+                if (otp.length == 4) {
+                    email?.let { verifyOtp(it, otp) }
+                } else {
+                    Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
         binding.resend.setOnClickListener {
@@ -80,7 +93,10 @@ class VerifyReset : Fragment() {
             }
 
             override fun onFinish() {
-                binding.timerTextView.text = "Time expired!"
+                binding.timerTextView.apply{
+                    text = "Time expired!"
+                    setTextColor(Color.RED)
+                }
                 binding.verifyButton.isEnabled = false
                 binding.resend.visibility=View.VISIBLE
             }
@@ -88,10 +104,12 @@ class VerifyReset : Fragment() {
     }
 
     private fun resendOtp(email: String) {
+        showLoadingDialog()
         val forgetPassRequest = ForgetPassRequest(email)
 
         AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
+                dismissLoadingDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
@@ -102,15 +120,18 @@ class VerifyReset : Fragment() {
             }
 
             override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
+                dismissLoadingDialog()
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun verifyOtp(email: String, otp: String) {
+        showLoadingDialog()
        val verifyResetRequest=VerifyResetRequest(email, otp)
         AuthInstance.api.otpverify(verifyResetRequest).enqueue(object : Callback<VerifyResetResponse> {
             override fun onResponse(call: Call<VerifyResetResponse>, response: Response<VerifyResetResponse>) {
+               dismissLoadingDialog()
                 if (response.isSuccessful) {
                     val message = response.body()?.message ?: "OTP Verified successfully!"
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -126,11 +147,24 @@ class VerifyReset : Fragment() {
                 }
             }
 
-
             override fun onFailure(call: Call<VerifyResetResponse>, t: Throwable) {
+                dismissLoadingDialog()
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showLoadingDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
+        loadingDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {

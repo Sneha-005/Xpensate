@@ -2,7 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="green">#12B78B</color>
+    <color name="green">#00C06B</color>
     <color name="font_color">#828E8D</color>
     <color name="inputField">#3A3F3F</color>
     <color name="background">#17171F</color>

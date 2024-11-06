@@ -10,14 +10,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.xpensate.databinding.FragmentSignUpBinding
 import com.example.xpensate.network.AuthInstance
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class Sign_up : Fragment() {
     private lateinit var navController: NavController
@@ -26,6 +33,8 @@ class Sign_up : Fragment() {
     private var email: String? = null
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
+    private var signupJob: Job? = null
+    private var loadingDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +58,9 @@ class Sign_up : Fragment() {
                 }
             })
         setupUI()
+        lifecycleScope.launch {
+
+        }
     }
 
     private fun setupUI() {
@@ -67,9 +79,14 @@ class Sign_up : Fragment() {
         }
 
         binding.signup.setOnClickListener {
-            if (validateInput()) {
-                val emailInput = binding.email.text.toString().trim()
-                registerUser(emailInput)             }
+            signupJob?.cancel()
+            signupJob = lifecycleScope.launch {
+                delay(500)
+                if (validateInput()) {
+                    val emailInput = binding.email.text.toString().trim()
+                    registerUser(emailInput)
+                }
+            }
         }
 
         binding.oldAccount.setOnClickListener {
@@ -93,13 +110,6 @@ class Sign_up : Fragment() {
         binding.password.setSelection(binding.password.text.length)
     }
 
-
-    private fun showSnackbar(message: String) {
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
-            .setAction("OK") { }
-            .show()
-    }
-
     private fun toggleConfirmPasswordVisibility() {
         isConfirmPasswordVisible = !isConfirmPasswordVisible
         if (isConfirmPasswordVisible) {
@@ -114,7 +124,7 @@ class Sign_up : Fragment() {
 
     private fun validateInput(): Boolean {
         val emailRegex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,15}$")
+        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,15}$")
 
         val email = binding.email.text.toString().trim()
         val password = binding.password.text.toString().trim()
@@ -126,10 +136,7 @@ class Sign_up : Fragment() {
         }
 
         if (password.isEmpty() || !passwordRegex.matches(password)) {
-            showSnackbar( "Password must be between 8 and 15 characters\n"+
-                    "- at least one uppercase letter\n"+
-                    "one lowercase letter\n"+
-                    "one digit,and one special character.")
+            Toast.makeText(context, "Enter a strong password", Toast.LENGTH_LONG).show()
             return false
         }
 
@@ -141,15 +148,17 @@ class Sign_up : Fragment() {
     }
 
     private fun registerUser(email: String) {
+        showLoadingDialog()
         val password = binding.password.text.toString().trim()
         val confirmPassword = binding.checkpassword.text.toString().trim()
         val registerRequest = RegisterRequest(confirm_password = confirmPassword, email = email, password = password)
 
         AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
+                dismissLoadingDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), response.body()?.message ?: "Registration successful", Toast.LENGTH_SHORT).show()
-                    val action = Sign_upDirections.actionSignUpToVerify(confirmPassword,email,password)
+                    val action = Sign_upDirections.actionSignUpToVerify(email,password,confirmPassword,)
                     navController.navigate(action)
                 } else {
                     Toast.makeText(requireContext(), "Registration failed: ${response.message()}", Toast.LENGTH_SHORT).show()
@@ -157,11 +166,24 @@ class Sign_up : Fragment() {
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+               dismissLoadingDialog()
                 Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    private fun showLoadingDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
+        loadingDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+        loadingDialog?.show()
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
