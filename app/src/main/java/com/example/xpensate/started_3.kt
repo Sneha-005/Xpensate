@@ -6,26 +6,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.xpensate.databinding.FragmentStarted1Binding
+import com.example.xpensate.databinding.FragmentStarted3Binding
 
 class started_3 : Fragment() {
 
+    private var _binding: FragmentStarted3Binding? = null
+    private val binding get() = _binding!!
     private var skipListener: AdapterSlider.SkipListener? = null
 
-    fun setSkipListener(listener: AdapterSlider.SkipListener?) {
+    fun setSkipListener(listener: AdapterSlider.SkipListener) {
         skipListener = listener
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_started_3, container, false)
+    ): View {
+        _binding = FragmentStarted3Binding.inflate(inflater, container, false)
 
-        val skipTextView: TextView = view.findViewById(R.id.skip)
-        skipTextView.setOnClickListener {
-            skipListener?.onSkip()
-        }
+        return binding.root
+    }
 
-        return view
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

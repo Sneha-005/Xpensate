@@ -10,16 +10,16 @@ import com.example.xpensate.databinding.FragmentStarted5Binding
 
 class started_5 : Fragment() {
 
-    private var skipListener: AdapterSlider.SkipListener? = null
-    private var continueListener: AdapterSlider.ContinueListener? = null
     private var _binding: FragmentStarted5Binding? = null
     private val binding get() = _binding!!
+    private var skipListener: AdapterSlider.SkipListener? = null
+    private var continueListener: AdapterSlider.ContinueListener? = null
 
-    fun setSkipListener(listener: AdapterSlider.SkipListener?) {
+    fun setSkipListener(listener: AdapterSlider.SkipListener) {
         skipListener = listener
     }
 
-    fun setContinueListener(listener: AdapterSlider.ContinueListener?) {
+    fun setContinueListener(listener: AdapterSlider.ContinueListener) {
         continueListener = listener
     }
 
@@ -28,24 +28,13 @@ class started_5 : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStarted5Binding.inflate(inflater, container, false)
+
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.skip.setOnClickListener {
-            skipListener?.onSkip()
-        }
-
-        binding.continueButton.setOnClickListener {
-            continueListener?.onContinue()
-        }
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

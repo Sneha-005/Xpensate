@@ -15,45 +15,6 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_black">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.0655" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.27" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.78" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_dots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.8769" />
-
-        <TextView
-            android:id="@+id/skip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="24dp"
-            android:text="Skip"
-            android:textColor="@color/font_color"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_top" />
-
         <ImageView
             android:id="@+id/logo"
             android:layout_width="240dp"
@@ -62,22 +23,17 @@
             android:src="@drawable/__5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/loginTitle"
-            android:layout_width="381dp"
-            android:layout_height="49dp"
-            android:layout_marginTop="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Manage Debt with people"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/signup"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@id/logo"/>
 
         <TextView
             android:id="@+id/signup"
@@ -88,72 +44,9 @@
             android:textAlignment="center"
             android:textColor="@color/font_color"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/continue_button"
+            app:layout_constraintTop_toBottomOf="@id/loginTitle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/continue_button"
-            android:layout_width="182dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="13dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="13dp"
-            android:background="@drawable/button_stroke"
-            android:text="Continue"
-            android:textAllCaps="false"
-            android:textColor="@color/green"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_button" />
-
-        <LinearLayout
-            android:id="@+id/dotLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_dots">
-
-            <ImageView
-                android:id="@+id/dot1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/unselected_dot" />
-
-            <ImageView
-                android:id="@+id/dot2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/unselected_dot" />
-
-            <ImageView
-                android:id="@+id/dot3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/unselected_dot" />
-
-            <ImageView
-                android:id="@+id/dot4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/unselected_dot" />
-
-            <ImageView
-                android:id="@+id/dot5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/selected_dot" />
-        </LinearLayout>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
