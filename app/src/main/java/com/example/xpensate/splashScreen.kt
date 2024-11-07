@@ -35,7 +35,6 @@ class splashScreen : Fragment() {
             }
         }
 
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 requireActivity().finish()
@@ -44,7 +43,7 @@ class splashScreen : Fragment() {
     }
 
     private fun safeNavigate(actionId: Int) {
-        if (findNavController().currentDestination?.id != actionId) {
+        if (findNavController().currentDestination?.id == R.id.splashScreen) {
             findNavController().navigate(actionId)
         }
     }

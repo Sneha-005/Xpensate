@@ -28,6 +28,12 @@ object TokenDataStore {
         }
     }
 
+    suspend fun clearTokens(context: Context) {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     fun getAccessToken(context: Context, isLogin: Boolean = false): Flow<String?> {
         return context.dataStore.data.map { preferences ->
             if (isLogin) {

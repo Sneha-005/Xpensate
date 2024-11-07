@@ -173,12 +173,11 @@
         android:layout_height="48dp"
         android:text="Login"
         android:textAllCaps="false"
-
         android:layout_marginLeft="13dp"
         android:layout_marginRight="13dp"
         android:textSize="14sp"
         app:cornerRadius="5.333dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:backgroundTint="@color/green"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

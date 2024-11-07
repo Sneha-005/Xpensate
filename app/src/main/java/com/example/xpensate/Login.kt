@@ -49,7 +49,7 @@ class Login : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isAdded) {
-                    navController.navigate(R.id.action_login2_to_splashScreen)
+                    requireActivity().finish()
                 }
             }
         })
@@ -135,6 +135,7 @@ class Login : Fragment() {
     }
 
     private fun performForgotPassword() {
+        showLoadingDialog()
         val email = binding.email.text.toString().trim()
 
         binding.errorMessage.visibility = View.GONE
@@ -153,6 +154,7 @@ class Login : Fragment() {
 
         AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
+                dismissLoadingDialog()
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), response.body()?.message ?: "OTP sent on mail", Toast.LENGTH_SHORT).show()
                         try {
@@ -171,6 +173,7 @@ class Login : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
+                    dismissLoadingDialog()
                     Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })

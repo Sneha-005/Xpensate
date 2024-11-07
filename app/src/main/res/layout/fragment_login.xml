@@ -167,7 +167,7 @@
             android:backgroundTint="@color/green"
             android:text="Login"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp"
             app:cornerRadius="5.333dp"
             app:layout_constraintStart_toStartOf="parent"

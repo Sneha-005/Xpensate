@@ -54,7 +54,7 @@ class Sign_up : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    navController.navigate(R.id.action_sign_up_to_splashScreen)
+                    requireActivity().finish()
                 }
             })
         setupUI()

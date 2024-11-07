@@ -5,11 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
+import com.example.xpensate.databinding.FragmentBlankBinding
+import kotlinx.coroutines.launch
 
 
 class BlankFragment : Fragment() {
 
+    private var _binding: FragmentBlankBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,8 +27,8 @@ class BlankFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        return inflater.inflate(R.layout.fragment_blank, container, false)
+        _binding = FragmentBlankBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,6 +42,16 @@ class BlankFragment : Fragment() {
                 }
             }
         )
+        binding.logoutButton.setOnClickListener {
+            lifecycleScope.launch {
+                TokenDataStore.clearTokens(requireContext())
+                Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_blankFragment_to_login2)
+            }
+        }
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

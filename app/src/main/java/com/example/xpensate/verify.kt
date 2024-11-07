@@ -95,12 +95,13 @@ class verify : Fragment() {
     private fun startOtpTimer(email: String) {
         countDownTimer = object : CountDownTimer(otpTimeout, 1000) {
             override fun onTick(millisUntilFinished: Long) {
+                if (_binding == null) return // Ensure binding is not null
                 val secondsRemaining = (millisUntilFinished / 1000).toInt()
                 binding.timerTextView.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
             }
-
             override fun onFinish() {
-                binding.timerTextView.apply{
+                if (_binding == null) return // Ensure binding is not null
+                binding.timerTextView.apply {
                     text = "Time expired!"
                     setTextColor(Color.RED)
                 }
@@ -121,6 +122,7 @@ class verify : Fragment() {
         AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 dismissLoadingDialog()
+                if (_binding == null) return
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
