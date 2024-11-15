@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/blankFragment"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_Budget"
+        android:title="Budget Builder"
+        />
+    <item
+        android:id="@+id/bill_container"
+        android:title="Records"
+        />
+    <item
+        android:id="@+id/nav_Debts"
+        android:title="Debt and Lends"
+        />
+    <item
+        android:id="@+id/nav_Analytics"
+        android:title="Analytics"
+        />
+    <item
+        android:id="@+id/currencyConverter"
+        android:title="Currency Converter"
+        />
+    <item
+        android:id="@+id/nav_Trip_tracker"
+        android:title="Trip Tracker"
+        />
+</menu>

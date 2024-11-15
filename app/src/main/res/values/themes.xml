@@ -3,7 +3,14 @@
     <style name="Base.Theme.Xpensate" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Theme.Xpensate" parent="Base.Theme.Xpensate" />
+    <style name="SoftCorner">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+        <item name="color">@color/white</item>
+    </style>
 </resources>

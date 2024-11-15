@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".Login"
+    tools:context=".auth.Login"
     android:id="@+id/loginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -182,16 +182,6 @@
             android:textColor="@color/font_color"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline_checkbox" />
-
-        <CheckBox
-            android:id="@+id/rememberMe"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:text="Remember me"
-            android:textColor="@color/font_color"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_checkbox" />
 
         <TextView

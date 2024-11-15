@@ -43,21 +43,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.4672" />
+                app:layout_constraintGuide_percent="0.48" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_confirm_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5454" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.6144" />
+                app:layout_constraintGuide_percent="0.58" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline_button"
@@ -165,16 +158,18 @@
                     android:id="@+id/checkpassword"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
                     android:hint="Confirm Password"
+                    android:inputType="textPassword"
+                    android:paddingStart="15dp"
                     android:textColorHint="@color/font_color"
                     android:textSize="14sp"
-                    android:paddingStart="15dp"
-                    android:background="@android:color/transparent"
-                    android:inputType="textPassword"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/checkpasswordVisibility"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintVertical_bias="1.0" />
 
                 <ImageView
                     android:id="@+id/checkpasswordVisibility"
@@ -189,16 +184,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <CheckBox
-                android:id="@+id/myCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Remember me"
-                android:textColor="@color/font_color"
-                android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@id/guideline_checkbox"
-                app:layout_constraintEnd_toEndOf="parent" />
 
             <Button
                 android:id="@+id/signup"

@@ -2,4 +2,6 @@
     <string name="app_name">Xpensate</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open_drawer">Open navigation drawer</string>
+
 </resources>
