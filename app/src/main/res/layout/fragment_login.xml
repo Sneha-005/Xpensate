@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".auth.Login"
+    tools:context=".Fragments.Auth.Login"
     android:id="@+id/loginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

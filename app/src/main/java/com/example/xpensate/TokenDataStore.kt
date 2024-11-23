@@ -1,4 +1,7 @@
+package com.example.xpensate
+
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -12,19 +15,13 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("A
 object TokenDataStore {
     private val ACCESS_TOKEN_KEY = stringPreferencesKey("accessToken")
     private val REFRESH_TOKEN_KEY = stringPreferencesKey("refreshToken")
+    private val USERNAME_KEY = stringPreferencesKey("username")
+    private val EMAIL_KEY = stringPreferencesKey("email")
 
-    private val ACCESS_TOKEN_KEY_LOGIN = stringPreferencesKey("accessTokenLogin")
-    private val REFRESH_TOKEN_KEY_LOGIN = stringPreferencesKey("refreshTokenLogin")
-
-    suspend fun saveTokens(context: Context, accessToken: String, refreshToken: String, isLogin: Boolean = false) {
+    suspend fun saveTokens(context: Context, accessToken: String, refreshToken: String) {
         context.dataStore.edit { preferences ->
-            if (isLogin) {
-                preferences[ACCESS_TOKEN_KEY_LOGIN] = accessToken
-                preferences[REFRESH_TOKEN_KEY_LOGIN] = refreshToken
-            } else {
-                preferences[ACCESS_TOKEN_KEY] = accessToken
-                preferences[REFRESH_TOKEN_KEY] = refreshToken
-            }
+            preferences[ACCESS_TOKEN_KEY] = accessToken
+            preferences[REFRESH_TOKEN_KEY] = refreshToken
         }
     }
 
@@ -34,23 +31,39 @@ object TokenDataStore {
         }
     }
 
-    fun getAccessToken(context: Context, isLogin: Boolean = false): Flow<String?> {
+    fun getAccessToken(context: Context): Flow<String?> {
         return context.dataStore.data.map { preferences ->
-            if (isLogin) {
-                preferences[ACCESS_TOKEN_KEY_LOGIN]
-            } else {
-                preferences[ACCESS_TOKEN_KEY]
-            }
+            preferences[ACCESS_TOKEN_KEY]
         }
     }
 
-    fun getRefreshToken(context: Context, isLogin: Boolean = false): Flow<String?> {
+    fun getRefreshToken(context: Context): Flow<String?> {
         return context.dataStore.data.map { preferences ->
-            if (isLogin) {
-                preferences[REFRESH_TOKEN_KEY_LOGIN]
-            } else {
-                preferences[REFRESH_TOKEN_KEY]
-            }
+            preferences[REFRESH_TOKEN_KEY]
         }
     }
+
+    suspend fun saveUsername(context: Context, username: String) {
+        context.dataStore.edit { preferences ->
+            preferences[USERNAME_KEY] = username
+        }
+    }
+
+    fun getUsername(context: Context): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[USERNAME_KEY]
+        }
+    }
+    suspend fun saveEmail(context: Context, email: String) {
+        context.dataStore.edit { preferences ->
+            preferences[EMAIL_KEY] = email
+        }
+    }
+    fun getEmail(context: Context): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            val email = preferences[EMAIL_KEY]
+            email
+        }
+    }
+
 }

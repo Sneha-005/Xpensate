@@ -2,14 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="green">#00C06B</color>
+    <color name="green">#00DF82</color>
     <color name="link">#A1B7FF</color>
     <color name="red">#FF5757</color>
-    <color name="font_color">#828E8D</color>
+    <color name="selectedRadio">#242828</color>
+    <color name="font_color">#CED3D2</color>
     <color name="inputField">#3A3F3F</color>
     <color name="background">#17171F</color>
     <color name="blue">#7B8FFE</color>
     <color name="error_color">#FF5757</color>
     <color name="inner_box">#525477</color>
+    <color name="unselectedRadio">#4B5253</color>
 
 </resources>

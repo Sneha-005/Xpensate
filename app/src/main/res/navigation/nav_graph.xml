@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashScreen"
-        android:name="com.example.xpensate.splash.splashScreen"
+        android:name="com.example.xpensate.Fragments.pager.splashScreen"
         tools:layout="@layout/fragment_splash_screen" >
         <action
             android:id="@+id/action_splashScreen_to_started_1"
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/sign_up"
-        android:name="com.example.xpensate.auth.Sign_up"
+        android:name="com.example.xpensate.Fragments.Auth.Sign_up"
         android:label="Sign_up" >
         <action
             android:id="@+id/action_sign_up_to_login2"
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/started_1"
-        android:name="com.example.xpensate.splash.started_1"
+        android:name="com.example.xpensate.Fragments.pager.started_1"
         android:label="fragment_started_1"
         tools:layout="@layout/fragment_started_1" >
         <action
@@ -57,7 +57,7 @@
     </fragment>
     <fragment
         android:id="@+id/login2"
-        android:name="com.example.xpensate.auth.Login"
+        android:name="com.example.xpensate.Fragments.Auth.Login"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -79,7 +79,7 @@
     </fragment>
     <fragment
         android:id="@+id/started_2"
-        android:name="com.example.xpensate.splash.started_2"
+        android:name="com.example.xpensate.Fragments.pager.started_2"
         android:label="fragment_started_4"
         tools:layout="@layout/fragment_started_4" >
         <action
@@ -88,7 +88,7 @@
     </fragment>
     <fragment
         android:id="@+id/started_5"
-        android:name="com.example.xpensate.splash.started_5"
+        android:name="com.example.xpensate.Fragments.pager.started_5"
         android:label="fragment_started_5"
         tools:layout="@layout/fragment_started_5" >
         <action
@@ -97,7 +97,7 @@
     </fragment>
     <fragment
         android:id="@+id/started_3"
-        android:name="com.example.xpensate.splash.started_3"
+        android:name="com.example.xpensate.Fragments.pager.started_3"
         android:label="started_3" >
         <action
             android:id="@+id/action_started_3_to_login2"
@@ -105,7 +105,7 @@
     </fragment>
     <fragment
         android:id="@+id/reset"
-        android:name="com.example.xpensate.auth.Reset"
+        android:name="com.example.xpensate.Fragments.Auth.Reset"
         android:label="reset" >
         <argument
             android:name="email"
@@ -119,7 +119,7 @@
     </fragment>
     <fragment
         android:id="@+id/verify"
-        android:name="com.example.xpensate.auth.verify"
+        android:name="com.example.xpensate.Fragments.Auth.verify"
         android:label="verify" >
         <argument
             android:name="email"
@@ -140,7 +140,7 @@
     </fragment>
     <fragment
         android:id="@+id/slider"
-        android:name="com.example.xpensate.splash.Slider"
+        android:name="com.example.xpensate.Fragments.pager.Slider"
         android:label="fragment_slider"
         tools:layout="@layout/fragment_slider" >
         <action
@@ -149,7 +149,7 @@
     </fragment>
     <fragment
         android:id="@+id/started_4"
-        android:name="com.example.xpensate.splash.started_4"
+        android:name="com.example.xpensate.Fragments.pager.started_4"
         android:label="started_4" >
         <action
             android:id="@+id/action_started_4_to_login2"
@@ -157,7 +157,7 @@
     </fragment>
     <fragment
         android:id="@+id/verifyReset"
-        android:name="com.example.xpensate.auth.VerifyReset"
+        android:name="com.example.xpensate.Fragments.Auth.VerifyReset"
         android:label="VerifyReset" >
         <argument
             android:name="email"
@@ -175,7 +175,7 @@
     </fragment>
     <fragment
         android:id="@+id/blankFragment"
-        android:name="com.example.xpensate.BlankFragment"
+        android:name="com.example.xpensate.Fragments.Dashboard.BlankFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" >
         <action
@@ -190,23 +190,80 @@
         <action
             android:id="@+id/action_blankFragment_to_records"
             app:destination="@id/records" />
+        <action
+            android:id="@+id/action_blankFragment_to_profile2"
+            app:destination="@id/profile2" />
+        <action
+            android:id="@+id/action_blankFragment_to_bill_container2"
+            app:destination="@id/bill_container" />
+        <action
+            android:id="@+id/action_blankFragment_to_debtsAndLends"
+            app:destination="@id/debtsAndLends" />
     </fragment>
     <fragment
-        android:id="@+id/record_entry2"
-        android:name="com.example.xpensate.RecordEntry"
-        android:label="record_entry" />
-    <fragment
         android:id="@+id/currencyConverter"
-        android:name="com.example.xpensate.CurrencyConverter"
-        android:label="fragment_currency_converter"
-        tools:layout="@layout/fragment_currency_converter" />
+        android:name="com.example.xpensate.Fragments.Dashboard.CurrencyConverter"
+        android:label="Currency Converter"
+        tools:layout="@layout/fragment_currency_converter" >
+        <action
+            android:id="@+id/action_currencyConverter_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
     <fragment
         android:id="@+id/bill_container"
-        android:name="com.example.xpensate.bill_container"
-        android:label="bill_container" />
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container"
+        android:label="bill_container" >
+        <action
+            android:id="@+id/action_bill_container_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
     <fragment
         android:id="@+id/records"
-        android:name="com.example.xpensate.Records"
-        android:label="fragment_records"
-        tools:layout="@layout/fragment_records" />
+        android:name="com.example.xpensate.Fragments.Dashboard.Records"
+        android:label="Records"
+        tools:layout="@layout/fragment_records" >
+        <action
+            android:id="@+id/action_records_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profile2"
+        android:name="com.example.xpensate.Fragments.Profile.Profile"
+        android:label="Profile" >
+        <action
+            android:id="@+id/action_profile2_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_profile2_to_updateContact"
+            app:destination="@id/updateContact" />
+        <action
+            android:id="@+id/action_profile2_to_preferredCurrency"
+            app:destination="@id/preferredCurrency" />
+        <action
+            android:id="@+id/action_profile2_to_appLock"
+            app:destination="@id/appLock" />
+        <action
+            android:id="@+id/action_profile2_to_splashScreen"
+            app:destination="@id/splashScreen" />
+    </fragment>
+    <fragment
+        android:id="@+id/appLock"
+        android:name="com.example.xpensate.Fragments.Profile.AppLock"
+        android:label="App Lock" />
+    <fragment
+        android:id="@+id/preferredCurrency"
+        android:name="com.example.xpensate.Fragments.Profile.PreferredCurrency"
+        android:label="Preferred Currency" />
+    <fragment
+        android:id="@+id/updateContact"
+        android:name="com.example.xpensate.Fragments.Profile.UpdateContact"
+        android:label="Update Contact" >
+        <action
+            android:id="@+id/action_updateContact_to_profile2"
+            app:destination="@id/profile2" />
+    </fragment>
+    <fragment
+        android:id="@+id/debtsAndLends"
+        android:name="com.example.xpensate.DebtsAndLends"
+        android:label="Debts &amp; Lends" />
 </navigation>

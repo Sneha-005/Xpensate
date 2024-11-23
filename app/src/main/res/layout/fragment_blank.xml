@@ -21,16 +21,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
-                android:id="@+id/drawer_icon_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/hamburger_icon"
-                android:contentDescription="@string/open_drawer"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
             <TextView
                 android:id="@+id/overviewText"
                 android:layout_width="114dp"
@@ -67,7 +57,7 @@
                 android:background="@drawable/box"
                 android:backgroundTint="@color/white"
                 android:lineHeight="21.79sp"
-                android:text="November"
+                android:text="October"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@android:color/black"
@@ -85,9 +75,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/monthText" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         <TextView
             android:id="@+id/recent_head"
@@ -104,6 +92,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
+
         <TextView
             android:id="@+id/link"
             android:layout_width="wrap_content"
@@ -119,18 +108,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/billSplitRecycler"
+            android:layout_marginTop="340dp"
+            android:scrollbars="horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="visible"/>
+
         <androidx.cardview.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             app:cardElevation="5dp"
             app:cardCornerRadius="8dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:id="@+id/cardItem"
             android:backgroundTint="#343446"
-            android:layout_marginTop="520dp"
+            android:layout_marginTop="535dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -157,7 +156,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="See more"
+                    android:text="Change"
                     android:textColor="@color/link"
                     android:textSize="16sp"
                     android:paddingTop="19dp"
@@ -172,29 +171,40 @@
                     android:id="@+id/semipieChart"
                     android:layout_width="318dp"
                     android:layout_height="250dp"
-                    android:layout_marginTop="76dp"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/budget_heading"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
+                    app:layout_constraintStart_toStartOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
+        <ImageView
+            android:id="@+id/recordIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/home_records"
+            android:layout_marginTop="805dp"
+            android:layout_marginLeft="15dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/record"
+            app:layout_constraintHorizontal_chainStyle="packed"/>
+
         <TextView
             android:id="@+id/record"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Records"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:lineHeight="30sp"
+            android:layout_marginLeft="10dp"
             android:textFontWeight="400"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="785dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_marginTop="805dp"
+            app:layout_constraintStart_toEndOf="@id/recordIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"/>
 
         <TextView
             android:id="@+id/moreRecords"
@@ -206,7 +216,7 @@
             android:textSize="16sp"
             android:lineHeight="21.79sp"
             android:textFontWeight="600"
-            android:layout_marginTop="785dp"
+            android:layout_marginTop="805dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"/>
@@ -215,23 +225,22 @@
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:id="@+id/record_container"
-            android:layout_marginTop="830dp"
+            android:layout_marginTop="850dp"
+            android:layout_marginHorizontal="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="235dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         app:cardElevation="5dp"
         app:cardCornerRadius="8dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:backgroundTint="#343446"
-        android:layout_marginTop="1196dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="1226dp"
+        android:layout_marginBottom="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -266,15 +275,40 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"/>
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pieChart"
-                android:layout_width="308dp"
-                android:layout_height="162dp"
-                android:layout_marginTop="56dp"
-                android:padding="10dp"
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="50dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/legend_list_view" />
+
+                <ListView
+                    android:id="@+id/legend_list_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:divider="@android:color/transparent"
+                    android:dividerHeight="0dp"
+                    android:paddingBottom="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/pieChart"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:scrollbars="vertical"
+                    android:nestedScrollingEnabled="true"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,56 +2,34 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_height="wrap_content">
 
-    <com.github.mikephil.charting.charts.HorizontalBarChart
-        android:id="@+id/barChart"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/split_bill"
+        android:layout_width="wrap_content"
+        android:layout_height="490dp"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:paddingStart="10dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <SeekBar
-        android:id="@+id/seekBarMe"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/barChart"
+    <Button
+        android:id="@+id/new_group_button"
+        android:layout_width="182dp"
+        android:layout_height="50dp"
+        android:text="New Group"
+        android:textSize="14sp"
+        android:textFontWeight="600"
+        android:letterSpacing="0.05"
+        android:lineHeight="20sp"
+        android:textAllCaps="false"
+        android:backgroundTint="#00FF88"
+        android:textColor="#000000"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/split_bill"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/textViewMe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Me: 0%"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/seekBarMe"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <SeekBar
-        android:id="@+id/seekBarArjun"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/textViewMe"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-        android:id="@+id/textViewArjun"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Arjun: 0%"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/seekBarArjun"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

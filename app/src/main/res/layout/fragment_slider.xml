@@ -70,7 +70,7 @@
             android:layout_width="182dp"
             android:layout_height="48dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/bottom_border"
+            android:background="@drawable/button_border"
             android:text="Continue"
             android:textAllCaps="false"
             android:textColor="@color/green"
