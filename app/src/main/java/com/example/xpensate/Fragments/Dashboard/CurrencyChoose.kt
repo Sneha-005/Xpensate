@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.xpensate.API.home.CurrencyData
+import com.example.xpensate.API.home.CurrencyConverter.CurrencyData
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.CurrencyAdapter
 import com.example.xpensate.Modals.CurrencyClass

@@ -26,21 +26,18 @@ class LabelAdapter(
 
         val labelItem = getItem(position) as LabelItem
 
-        // Bind data to views
         val colorCircle = view.findViewById<View>(R.id.colorIndicator)
         val labelText = view.findViewById<TextView>(R.id.legendText)
 
-        // Set label text
         labelText.text = labelItem.label
 
-        // Set the background color of the circle, keeping the circular shape
         (colorCircle.background as GradientDrawable).setColor(labelItem.color)
 
         return view
     }
     fun updateLegend(newLabelList: List<LabelItem>) {
         labelList = newLabelList
-        notifyDataSetChanged()  // Notify the ListView to refresh
+        notifyDataSetChanged()
     }
 
 }

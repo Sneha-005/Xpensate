@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    android:background="@color/background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:background="@drawable/background_border"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="8dp"
+            android:backgroundTint="#343446"
+            app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/back_arrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/back_arrow"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tripName"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <TextView
+                    android:id="@+id/tripName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineHeight="30sp"
+                    android:text="Trip Name"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/back_arrow" />
+
+                <Button
+                    android:id="@+id/edit_button"
+                    android:layout_width="60dp"
+                    android:layout_height="26dp"
+                    android:text="Edit"
+                    android:textSize="14sp"
+                    android:textFontWeight="600"
+                    android:letterSpacing="0.05"
+                    android:lineHeight="20sp"
+                    android:textAllCaps="false"
+                    android:layout_marginRight="10dp"
+                    android:textColor="#000000"
+                    android:background="@drawable/circular_button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/pay_button"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <Button
+                    android:id="@+id/pay_button"
+                    android:layout_width="60dp"
+                    android:layout_height="26dp"
+                    android:text="Invite"
+                    android:textSize="14sp"
+                    android:textFontWeight="600"
+                    android:letterSpacing="0.05"
+                    android:lineHeight="20sp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#00FF88"
+                    android:textColor="#000000"
+                    android:background="@drawable/circular_button"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="440dp"
+            android:id="@+id/trips_container"
+            android:layout_marginTop="85dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/split_button"
+            android:layout_width="182dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="532dp"
+            android:background="@drawable/box"
+            android:backgroundTint="#00DF82"
+            android:lineHeight="20sp"
+            android:text="SPLIT"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textFontWeight="600"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

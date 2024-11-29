@@ -35,7 +35,7 @@
         android:layout_marginTop="23dp">
 
         <RadioButton
-            android:id="@+id/income_button"
+            android:id="@+id/debt_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:button="@null"
@@ -47,7 +47,7 @@
             android:checked="true"/>
 
         <RadioButton
-            android:id="@+id/expense_button"
+            android:id="@+id/lend_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:button="@null"

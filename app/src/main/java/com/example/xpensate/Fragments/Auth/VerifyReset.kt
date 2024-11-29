@@ -91,10 +91,11 @@ class VerifyReset : Fragment() {
     }
 
     private fun startOtpTimer(email: String) {
+        binding.notRecieve.visibility = View.GONE
         countDownTimer = object : CountDownTimer(otpTimeout, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = (millisUntilFinished / 1000).toInt()
-                binding.timerTextView.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
+                binding.timerTextView.text = "Resend in " + String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
             }
 
             override fun onFinish() {
@@ -102,6 +103,7 @@ class VerifyReset : Fragment() {
                     text = "Time expired!"
                     setTextColor(Color.RED)
                 }
+                binding.notRecieve.visibility = View.VISIBLE
                 binding.verifyButton.isEnabled = false
                 binding.resend.visibility=View.VISIBLE
             }

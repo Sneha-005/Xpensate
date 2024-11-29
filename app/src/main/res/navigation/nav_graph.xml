@@ -182,9 +182,6 @@
             android:id="@+id/action_blankFragment_to_login2"
             app:destination="@id/login2" />
         <action
-            android:id="@+id/action_blankFragment_to_currencyConverter"
-            app:destination="@id/currencyConverter" />
-        <action
             android:id="@+id/action_blankFragment_to_bill_container"
             app:destination="@id/bill_container" />
         <action
@@ -199,6 +196,15 @@
         <action
             android:id="@+id/action_blankFragment_to_debtsAndLends"
             app:destination="@id/debtsAndLends" />
+        <action
+            android:id="@+id/action_blankFragment_to_budgetBuilder"
+            app:destination="@id/budgetBuilder" />
+        <action
+            android:id="@+id/action_blankFragment_to_tripTrackerDashBoard"
+            app:destination="@id/tripTrackerDashBoard" />
+        <action
+            android:id="@+id/action_blankFragment_to_splitBillMore"
+            app:destination="@id/splitBillMore" />
     </fragment>
     <fragment
         android:id="@+id/currencyConverter"
@@ -206,8 +212,8 @@
         android:label="Currency Converter"
         tools:layout="@layout/fragment_currency_converter" >
         <action
-            android:id="@+id/action_currencyConverter_to_blankFragment"
-            app:destination="@id/blankFragment" />
+            android:id="@+id/action_currencyConverter_to_profile2"
+            app:destination="@id/profile2" />
     </fragment>
     <fragment
         android:id="@+id/bill_container"
@@ -216,6 +222,30 @@
         <action
             android:id="@+id/action_bill_container_to_blankFragment"
             app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_bill_container_to_addMember"
+            app:destination="@id/addMember">
+            <argument
+                android:name="groupId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_bill_container_to_splitAmountPage2"
+            app:destination="@id/splitAmountPage" >
+            <argument
+                android:name="groupId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_bill_container_to_splitBillGroupShow"
+            app:destination="@id/splitBillGroupShow" >
+            <argument
+                android:name="groupId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_bill_container_to_updateGroup"
+            app:destination="@id/updateGroup" />
     </fragment>
     <fragment
         android:id="@+id/records"
@@ -245,6 +275,12 @@
         <action
             android:id="@+id/action_profile2_to_splashScreen"
             app:destination="@id/splashScreen" />
+        <action
+            android:id="@+id/action_profile2_to_currencyConverter"
+            app:destination="@id/currencyConverter" />
+        <action
+            android:id="@+id/action_profile2_to_login2"
+            app:destination="@id/login2" />
     </fragment>
     <fragment
         android:id="@+id/appLock"
@@ -264,6 +300,178 @@
     </fragment>
     <fragment
         android:id="@+id/debtsAndLends"
-        android:name="com.example.xpensate.DebtsAndLends"
-        android:label="Debts &amp; Lends" />
+        android:name="com.example.xpensate.Fragments.Dashboard.DebtsAndLends.DebtsAndLends"
+        android:label="Debts &amp; Lends" >
+        <action
+            android:id="@+id/action_debtsAndLends_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addMemberFragment"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.AddMember"
+        android:label="AddMember" >
+    <argument
+        android:name="group"
+        app:argType="com.example.xpensate.API.home.SplitBillFeature.Groups.OwnerGroup" />
+    </fragment>
+    <fragment
+        android:id="@+id/budgetBuilder"
+        android:name="com.example.xpensate.Fragments.Dashboard.BudgetBuilder.BudgetBuilder"
+        android:label="BudgetBuilder" >
+        <action
+            android:id="@+id/action_budgetBuilder_to_blankFragment"
+            app:destination="@id/blankFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateGroup"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.UpdateGroup"
+        android:label="fragment_update_group"
+        tools:layout="@layout/fragment_update_group" />
+    <fragment
+        android:id="@+id/split_bill2"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.split_bill"
+        android:label="split_bill" >
+        <action
+            android:id="@+id/action_split_bill2_to_updateGroup"
+            app:destination="@id/updateGroup" />
+    </fragment>
+    <fragment
+        android:id="@+id/addMember"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.AddMember"
+        android:label="AddMember" >
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_addMember_to_bill_container"
+            app:destination="@id/bill_container" />
+    </fragment>
+    <fragment
+        android:id="@+id/splitAmountPage"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitAmountPage"
+        android:label="SplitAmountPage">
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripTrackerDashBoard"
+        android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.TripTrackerDashBoard"
+        android:label="TripTrackerDashBoard" >
+        <action
+            android:id="@+id/action_tripTrackerDashBoard_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_tripTrackerDashBoard_to_selectedTripDetails"
+            app:destination="@id/selectedTripDetails" >
+            <argument
+                android:name="groupId"
+                app:argType="string" />
+            <argument
+                android:name="name"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/selectedTripDetails"
+        android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.SelectedTripDetails"
+        android:label="SelectedTripDetails"  >
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_selectedTripDetails_to_removeFromTrip"
+            app:destination="@id/removeFromTrip">
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_selectedTripDetails_to_addTripMember"
+            app:destination="@id/addTripMember" >
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_selectedTripDetails_to_addSplit"
+            app:destination="@id/addSplit" >
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/splitBillGroupShow"
+        android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitBillGroupShow"
+        android:label="SplitBillGroupShow" >
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/removeFromTrip"
+        android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.RemoveFromTrip"
+        android:label="RemoveFromTrip" >
+        <action
+            android:id="@+id/action_removeFromTrip_to_selectedTripDetails"
+            app:destination="@id/selectedTripDetails" />
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTripMember"
+        android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.AddTripMember"
+        android:label="AddTripMember" >
+        <action
+            android:id="@+id/action_addTripMember_to_selectedTripDetails"
+            app:destination="@id/selectedTripDetails" />
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSplit"
+        android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.AddSplit"
+        android:label="AddSplit" >
+        <action
+            android:id="@+id/action_addSplit_to_selectedTripDetails"
+            app:destination="@id/selectedTripDetails" />
+        <argument
+            android:name="groupId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/splitBillMore"
+        android:name="com.example.xpensate.Fragments.Dashboard.SplitBillMore"
+        android:label="SplitBillMore" >
+        <action
+            android:id="@+id/action_splitBillMore_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_bill_container_to_addMember"
+            app:destination="@id/addMemberFragment" />
+        <action
+            android:id="@+id/action_bill_container_to_splitBillGroupShow"
+            app:destination="@id/splitBillGroupShow" />
+        <action
+            android:id="@+id/action_bill_container_to_splitAmountPage2"
+            app:destination="@id/splitAmountPage" >
+            <argument
+                android:name="groupId"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_bill_container_to_updateGroup"
+            app:destination="@id/updateGroup" />
+        <action
+            android:id="@+id/action_splitBillMore_to_updateGroup"
+            app:destination="@id/updateGroup" />
+
+
+    </fragment>
 </navigation>

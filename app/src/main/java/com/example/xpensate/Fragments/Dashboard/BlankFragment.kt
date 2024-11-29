@@ -1,12 +1,10 @@
 package com.example.xpensate.Fragments.Dashboard
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import com.example.xpensate.R
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -22,7 +20,9 @@ import com.example.xpensate.Adapters.LabelAdapter
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.RecordAdapter
 import com.example.xpensate.Adapters.SplitBillAdapter
+import com.example.xpensate.LoadingDialogFragment
 import com.example.xpensate.Modals.LabelItem
+import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentBlankBinding
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
@@ -32,8 +32,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.renderer.PieChartRenderer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,6 +48,8 @@ class BlankFragment : Fragment() {
     private var _binding: FragmentBlankBinding? = null
     private val binding get() = _binding!!
     private var adapter: LabelAdapter? = null
+    private var loadingDialog: LoadingDialogFragment? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +66,17 @@ class BlankFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
+
+        binding.budgetBuilder.setOnClickListener {
+            navController.navigate(R.id.action_blankFragment_to_budgetBuilder)
+        }
+        binding.moreRecords.setOnClickListener {
+            navController.navigate(R.id.action_blankFragment_to_records)
+        }
+        binding.moreSplits.setOnClickListener {
+            navController.navigate(R.id.action_blankFragment_to_splitBillMore)
+        }
+
 
         val pieChart = _binding?.pieChart
         val legendListView = _binding?.legendListView
@@ -85,7 +98,6 @@ class BlankFragment : Fragment() {
 
         fetchRecordsData(recordAdapter)
         setLineChartData()
-        setupSemiCirclePieChart(binding.semipieChart)
 
         if (pieChart != null && legendListView != null) {
             setupPieChart(pieChart)
@@ -112,16 +124,18 @@ class BlankFragment : Fragment() {
                 val response = AuthInstance.api.getSplitGroups().execute()
                 if (response.isSuccessful) {
                     val splitBillsResponse = response.body()
-                    if (splitBillsResponse != null && splitBillsResponse.data != null && splitBillsResponse.data.isNotEmpty()) {
+                    if (splitBillsResponse != null && splitBillsResponse.data.isNotEmpty()) {
                         val splitList = splitBillsResponse.data
                         withContext(Dispatchers.Main) {
                             adapter.updateSplits(splitList)
                         }
                     } else {
+                        dismissLoadingDialog()
                         Log.d("API Response", "No records found or data is null")
                     }
                 } else {
                     Log.e("API Error", "Response code: ${response.code()}")
+                    Log.d("API Error","Error: ${response.errorBody()}")
                 }
             } catch (e: Exception) {
                 Log.e("Network Error", "Exception: ${e.message}")
@@ -156,24 +170,18 @@ class BlankFragment : Fragment() {
         val lineChart = binding.lineChart
 
         val xAxis = lineChart.xAxis
-        xAxis.axisMinimum = 0f
-        xAxis.axisMaximum = 30f
-        xAxis.position = XAxis.XAxisPosition.BOTTOM_INSIDE
-        xAxis.granularity = 1f
+        xAxis.axisMinimum = 0f   // Start from 0
+        xAxis.axisMaximum = 30f  // End at 30
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f // Show a label for each day
         xAxis.textColor = Color.BLACK
-        xAxis.textSize = 16f
+        xAxis.textSize = 12f
         xAxis.setDrawAxisLine(false)
         xAxis.setDrawGridLines(false)
-        xAxis.valueFormatter = DoubleDigitFormatter()
-
-        val leftAxis = lineChart.axisLeft
-        leftAxis.granularity = 10f
-        leftAxis.textColor = Color.RED
-        leftAxis.textSize = 12f
-        leftAxis.setDrawGridLines(false)
 
         lineChart.axisLeft.isEnabled = false
         lineChart.axisRight.isEnabled = false
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             AuthInstance.api.getLineGraphData().enqueue(object : Callback<lineGraph> {
@@ -182,30 +190,46 @@ class BlankFragment : Fragment() {
                     if (response.isSuccessful) {
                         val lineGraphData = response.body()
                         binding.balanceText.text = "₹${lineGraphData?.total_expenses ?: 0}"
+
                         if (lineGraphData != null && lineGraphData.expenses_by_day.isNotEmpty()) {
                             val lineEntries = ArrayList<Entry>()
-                            lineGraphData.expenses_by_day.forEachIndexed { index, expensesByDay ->
-                                val dateIndex = index.toFloat()
-                                val totalExpense = expensesByDay.total.toFloat()
-                                lineEntries.add(Entry(dateIndex, totalExpense))
+
+                            val fullMonthData = mutableMapOf<Int, Float>().apply {
+                                for (day in 0..30) {
+                                    this[day] = 0f
+                                }
                             }
 
-                            val lineDataSet = LineDataSet(lineEntries, "Expenses by Day")
-                            lineDataSet.color = Color.WHITE
-                            lineDataSet.setDrawFilled(true)
-                            lineDataSet.fillAlpha = 30
-                            lineDataSet.lineWidth = 4f
+                            // Fill in actual expenses for specific days
+                            lineGraphData.expenses_by_day.forEach { expensesByDay ->
+                                val day = expensesByDay.date.split("-").last().toInt() // Extract day (DD)
+                                fullMonthData[day] = expensesByDay.total.toFloat()
+                            }
 
-                            val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_white)
-                            lineDataSet.fillDrawable = drawable
+                            // Create entries from fullMonthData
+                            fullMonthData.toSortedMap().forEach { (day, totalExpense) ->
+                                lineEntries.add(Entry(day.toFloat(), totalExpense))
+                            }
 
-                            lineDataSet.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-                            lineDataSet.setDrawCircles(false)
-                            lineChart.axisLeft.isEnabled = false
-                            lineChart.axisRight.isEnabled = false
-                            val data = LineData(lineDataSet)
+                            // Custom X-Axis Formatter for Days
+                            xAxis.valueFormatter = IndexAxisValueFormatter((0..30).map { it.toString() })
+
+                            // Create dataset
+                            val lineDataSet = LineDataSet(lineEntries, "Expenses by Day").apply {
+                                color = Color.WHITE
+                                setDrawFilled(true)
+                                fillAlpha = 30
+                                lineWidth = 4f
+                                fillDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.fade_white)
+                                mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+                                setDrawCircles(false)
+                            }
+
+                            // Apply data to chart
+                            val data = LineData(lineDataSet).apply { setDrawValues(false) }
                             lineChart.data = data
-                            data.setDrawValues(false)
+
+                            // Final chart settings
                             lineChart.legend.isEnabled = false
                             lineChart.description.isEnabled = false
                             lineChart.invalidate()
@@ -222,59 +246,10 @@ class BlankFragment : Fragment() {
         }
     }
 
-    private fun setupSemiCirclePieChart(semiPieChart: PieChart) {
-        val semipieEntries = ArrayList<PieEntry>()
-        semipieEntries.add(PieEntry(80f, "Category 1"))
-        semipieEntries.add(PieEntry(20f, "Category 2"))
-
-        val semipieDataSet = PieDataSet(semipieEntries, "")
-        semipieDataSet.colors = listOf(Color.GREEN, Color.GRAY)
-
-        val semipieData = PieData(semipieDataSet)
-        semipieData.setDrawValues(false)
-
-        with(semiPieChart) {
-            setHoleColor(Color.GREEN)
-            setTransparentCircleColor(Color.GREEN)
-            setTransparentCircleAlpha(0)
-            holeRadius = 90f
-            transparentCircleRadius = 95f
-            data = semipieData
-            rotationAngle = 180f
-            maxAngle = 180f
-            description.isEnabled = false
-            setDrawRoundedSlices(true)
-            setDrawHoleEnabled(true)
-            legend.isEnabled = false
-            isRotationEnabled = false
-            setCenterText("Spent of ₹0")
-            setDrawEntryLabels(false)
-            setDrawMarkers(false)
-            setExtraOffsets(0f, -10f, 0f, -10f)
-
-            val vectorDrawable = ContextCompat.getDrawable(context, R.drawable.wallet)
-            vectorDrawable?.let { drawable ->
-                val imageRenderer = object : PieChartRenderer(this@with, animator, viewPortHandler) {
-                    override fun drawExtras(c: Canvas) {
-                        super.drawExtras(c)
-
-                        val center = getCenterCircleBox()
-                        val imageSize = 80f
-                        val left = center.x - imageSize / 2
-                        val top = center.y - imageSize / 2
-                        val right = center.x + imageSize / 2
-                        val bottom = center.y + imageSize / 2
-
-                        drawable.setBounds(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
-                        drawable.draw(c)
-                    }
-                }
-                renderer = imageRenderer
-                extraTopOffset = 0f
-                extraBottomOffset = 0f
-
-                invalidate()
-            }
+    class IndexAxisValueFormatter(private val days: List<String>) : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            val index = value.toInt()
+            return if (index in days.indices) String.format("%02d", days[index].toInt()) else ""
         }
     }
 
@@ -289,18 +264,30 @@ class BlankFragment : Fragment() {
                             val pieEntries = ArrayList<PieEntry>()
                             var totalSpent = 0f
 
+                            val threshold = 5f
+                            var othersTotal = 0f
                             categoryChartData.expenses_by_category.forEach { category ->
-                                pieEntries.add(PieEntry(category.total.toFloat(), category.category))
-                                totalSpent += category.total.toFloat()
+                                if (category.total.toFloat() < threshold) {
+                                    othersTotal += category.total.toFloat()
+                                } else {
+                                    pieEntries.add(PieEntry(category.total.toFloat(), category.category))
+                                }
+                            }
+                            if (othersTotal > 0) {
+                                pieEntries.add(PieEntry(othersTotal, "Others"))
                             }
 
-                            val pieDataSet = PieDataSet(pieEntries, "")
                             val randomColors = categoryChartData.expenses_by_category.map { getRandomColor() }
-                            pieDataSet.colors = randomColors
+                            val pieDataSet = PieDataSet(pieEntries, "").apply {
+                                colors = randomColors
+                                sliceSpace = 5f
+                                selectionShift = 5f
+                            }
 
                             val pieData = PieData(pieDataSet)
                             pieData.setDrawValues(false)
-
+                            pieData.setValueFormatter(PercentFormatter(pieChart))
+                            pieChart.setUsePercentValues(true)
                             with(pieChart) {
                                 data = pieData
                                 setHoleColor(Color.TRANSPARENT)
@@ -346,6 +333,16 @@ class BlankFragment : Fragment() {
     private fun getRandomColor(): Int {
         val random = java.util.Random()
         return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256))
+    }
+
+    private fun showLoadingDialog() {
+        loadingDialog = LoadingDialogFragment.newInstance()
+        loadingDialog?.isCancelable = false
+        loadingDialog?.show(childFragmentManager, "loading")
+    }
+
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {

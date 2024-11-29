@@ -46,7 +46,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class Records : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentRecordsBinding? = null

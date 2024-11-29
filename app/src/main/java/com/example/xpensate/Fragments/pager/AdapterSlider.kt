@@ -31,7 +31,6 @@ class AdapterSlider(
     override fun getItemCount(): Int = fragments.size
 
     override fun createFragment(position: Int): Fragment {
-        // This will return the specific fragment for each page
         return fragments[position]
     }
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.os.Handler
 import android.os.Looper
+import android.view.KeyEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +60,12 @@ class Profile : Fragment() {
                 navController.navigate(R.id.action_profile2_to_blankFragment)
             }
         })
+        binding.userName.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                return@setOnKeyListener true
+            }
+            false
+        }
         lifecycleScope.launch {
             val savedUsername = TokenDataStore.getUsername(requireContext()).first()
             if (!savedUsername.isNullOrBlank()) {
@@ -96,27 +103,35 @@ class Profile : Fragment() {
         card3.setOnClickListener {
             navController.navigate(R.id.action_profile2_to_appLock)
         }
+
+        val card4: View = view.findViewById(R.id.card4)
+        card4.setOnClickListener {
+            navController.navigate(R.id.action_profile2_to_currencyConverter)
+        }
         binding.logoutButton.setOnClickListener {
             lifecycleScope.launch {
                 TokenDataStore.clearTokens(requireContext())
                 Toast.makeText(requireContext(),"Logged out Successfully",Toast.LENGTH_SHORT).show()
-                requireActivity().finish()
+                navController.navigate(R.id.action_profile2_to_login2)
+
             }
         }
 
         binding.userName.setOnClickListener {
-            updateUserName(binding.userName.text)
+            binding.userName.text?.let { it1 -> updateUserName(it1) }
         }
 
         binding.card2.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.currency_preference)
         binding.card2.textView.text = "Currency Preference"
         binding.card3.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.applock)
         binding.card3.textView.text = "App Lock"
-        binding.card4.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.notification)
-        binding.card4.textView.text = "Push Notifications"
-        binding.card5.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.share)
-        binding.card5.textView.text = "Share App"
-        binding.card4.arrow.background= ContextCompat.getDrawable(requireContext(),R.drawable.switcher)
+        binding.card4.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.currency_nav)
+        binding.card4.textView.text = "Exchanger"
+        binding.card5.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.notification)
+        binding.card5.textView.text = "Push Notifications"
+        binding.card6.logo.background = ContextCompat.getDrawable(requireContext(), R.drawable.share)
+        binding.card6.textView.text = "Share App"
+        binding.card5.arrow.background= ContextCompat.getDrawable(requireContext(),R.drawable.switcher)
     }
 
     private fun setupRealTimeNameUpdate() {

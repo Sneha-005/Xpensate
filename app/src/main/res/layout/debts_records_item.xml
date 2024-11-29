@@ -16,17 +16,17 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <ImageView
             android:id="@+id/image"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:shapeAppearanceOverlay="@style/SoftCorner"
+            android:src="@drawable/profile_debt"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/heading"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textFontWeight="400"
@@ -48,7 +48,7 @@
             android:textSize="14sp"
             android:lineHeight="20sp"
             android:textColor="@color/font_color"
-            app:layout_constraintTop_toBottomOf="@id/heading"
+            app:layout_constraintTop_toBottomOf="@id/name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/image" />
 
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:textFontWeight="400"
             android:textSize="16sp"
-            android:textColor="@color/red"
+            android:textColor="@color/green"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/resolve_button"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -74,7 +74,7 @@
             android:textFontWeight="600"
             android:lineHeight="20sp"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/short_form"
+            app:layout_constraintTop_toBottomOf="@id/amount"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

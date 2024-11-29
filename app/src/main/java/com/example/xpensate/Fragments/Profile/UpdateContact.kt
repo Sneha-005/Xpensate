@@ -13,13 +13,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import com.example.xpensate.API.home.OtpVerifyRequest
-import com.example.xpensate.API.home.UpdateContactOtpVerify
-import com.example.xpensate.API.home.UpdateContactResponse
+import androidx.navigation.fragment.findNavController
+import com.example.xpensate.API.home.UpdateContact.OtpVerifyRequest
+import com.example.xpensate.API.home.UpdateContact.UpdateContactOtpVerify
+import com.example.xpensate.API.home.UpdateContact.UpdateContactResponse
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Fragments.Auth.OtpTextWatcher
 import com.example.xpensate.R
-import com.example.xpensate.TokenDataStore.saveTokens
 import com.example.xpensate.databinding.FragmentUpdateContactBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -50,13 +50,14 @@ class UpdateContact : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = findNavController()
         var otpLayout = binding.otpLayout
         var phone = binding.phoneNo.text.toString()
         val updateButton = view.findViewById<View>(R.id.OtpButton)
         otpLayout?.visibility = View.GONE
 
         updateButton.setOnClickListener {
-            val phone = binding.phoneNo.text.toString().trim()
+            phone = binding.phoneNo.text.toString().trim()
             if (phone.isNotEmpty()) {
                 sendOtp(phone, otpLayout)
             } else {
@@ -160,8 +161,7 @@ class UpdateContact : Fragment() {
         AuthInstance.api.updateVerify(request).enqueue(object : Callback<UpdateContactOtpVerify> {
             override fun onResponse(call: Call<UpdateContactOtpVerify>, response: Response<UpdateContactOtpVerify>) {
                 if (response.isSuccessful) {
-                    val message = response.body()?.message ?: "OTP Verified!"
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "OTP Verified", Toast.LENGTH_SHORT).show()
                     navController.navigate(R.id.action_updateContact_to_profile2)
                 } else {
                     response.errorBody()?.let {

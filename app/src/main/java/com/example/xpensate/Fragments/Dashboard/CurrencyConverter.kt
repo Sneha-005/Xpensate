@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.example.xpensate.API.home.CurrencyConvertAPI
+import com.example.xpensate.API.home.CurrencyConverter.CurrencyConvertAPI
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.OnCurrencySelectedListener
 import com.example.xpensate.R
@@ -53,6 +53,21 @@ class CurrencyConverter : Fragment(), OnCurrencySelectedListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        binding.reverse.setOnClickListener{
+            val from =binding.from.text
+            val to = binding.to.text
+            val fromSymbol = binding.fromSymbol.text
+            val toSymbol = binding.toSymbol.text
+            val amountFrom = binding.amountFrom.text
+            val amountTo = binding.amountTo.text
+            binding.from.text = to
+            binding.to.text = from
+            binding.toSymbol.text = fromSymbol
+            binding.fromSymbol.text = toSymbol
+            binding.amountFrom.setText(amountTo)
+            binding.amountTo.setText(amountFrom)
+
+        }
 
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -68,7 +83,8 @@ class CurrencyConverter : Fragment(), OnCurrencySelectedListener {
                         binding.to.text = shortForm
                     }
                 }
-                navController.navigate(R.id.action_currencyConverter_to_blankFragment)
+
+                navController.navigate(R.id.action_currencyConverter_to_profile2)
             }
         })
 

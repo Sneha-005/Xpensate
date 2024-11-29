@@ -1,6 +1,8 @@
 package com.example.xpensate.Fragments.Auth
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +29,7 @@ import retrofit2.Response
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import okhttp3.internal.http2.Http2Reader
 
 
 class Login : Fragment() {
@@ -231,7 +234,9 @@ class Login : Fragment() {
     }
 
     private fun dismissLoadingDialog() {
-        loadingDialog?.dismiss()
+        Handler(Looper.getMainLooper()).postDelayed({
+            loadingDialog?.dismiss()
+        }, 2000)
     }
 
     override fun onDestroyView() {

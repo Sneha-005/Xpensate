@@ -68,7 +68,6 @@ class verify : Fragment() {
         val otpDigit3 = view.findViewById<EditText>(R.id.otp_box3)
         val otpDigit4 = view.findViewById<EditText>(R.id.otp_box4)
 
-
         with(binding) {
             otpDigit1.addTextChangedListener(OtpTextWatcher(otpDigit1, otpDigit2, null))
             otpDigit2.addTextChangedListener(OtpTextWatcher(otpDigit2, otpDigit3, otpDigit1))
@@ -98,18 +97,20 @@ class verify : Fragment() {
     }
 
     private fun startOtpTimer(email: String) {
+        binding.notRecieve.visibility = View.GONE
         countDownTimer = object : CountDownTimer(otpTimeout, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                if (_binding == null) return // Ensure binding is not null
+                if (_binding == null) return
                 val secondsRemaining = (millisUntilFinished / 1000).toInt()
-                binding.timerTextView.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
+                binding.timerTextView.text = "Resend in " + String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
             }
             override fun onFinish() {
-                if (_binding == null) return // Ensure binding is not null
+                if (_binding == null) return
                 binding.timerTextView.apply {
-                    text = "Time expired!"
+                    Toast.makeText(context,"OTP Expired",Toast.LENGTH_SHORT).show()
                     setTextColor(Color.RED)
                 }
+                binding.notRecieve.visibility = View.VISIBLE
                 binding.resetButton.isEnabled = false
                 binding.resend.visibility = View.VISIBLE
             }

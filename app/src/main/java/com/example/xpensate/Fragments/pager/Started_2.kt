@@ -23,7 +23,6 @@ class started_2 : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStarted2Binding.inflate(inflater, container, false)
-
         return binding.root
     }
 

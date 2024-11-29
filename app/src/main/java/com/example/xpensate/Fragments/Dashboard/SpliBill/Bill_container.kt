@@ -5,17 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitAmountPage
+import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.UpdateGroup
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.split_bill
 import com.example.xpensate.R
 
 class bill_container : Fragment() {
     private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -44,27 +49,41 @@ class bill_container : Fragment() {
             replace(R.id.fragment_container, RecordEntry())
         }
 
-        tabRecord.setOnClickListener {
-            tabRecord.background = ContextCompat.getDrawable(requireContext(),
-                R.drawable.bottom_border
-            )
+        val newGroupButton = view.findViewById<Button>(R.id.new_group_button)
+        newGroupButton?.setOnClickListener {
+            if (tabSplitBill.background != null) {
+                replaceFragmentWithUpdateGroup()
+            }
+        }
+
+        tabRecord?.setOnClickListener {
+            tabRecord.background = ContextCompat.getDrawable(requireContext(), R.drawable.bottom_border)
             tabSplitBill.background = null
             childFragmentManager.commit {
                 replace(R.id.fragment_container, RecordEntry())
             }
-
         }
 
-        tabSplitBill.setOnClickListener {
-            tabSplitBill.background = ContextCompat.getDrawable(requireContext(),
-                R.drawable.bottom_border
-            )
+        tabSplitBill?.setOnClickListener {
+            tabSplitBill.background = ContextCompat.getDrawable(requireContext(), R.drawable.bottom_border)
             tabRecord.background = null
             childFragmentManager.commit {
                 replace(R.id.fragment_container, split_bill())
             }
-
         }
+    }
 
+    fun replaceFragmentWithUpdateGroup() {
+        childFragmentManager.commit {
+            replace(R.id.fragment_container, UpdateGroup())
+            addToBackStack(null)
+        }
+    }
+
+    fun replaceFragmentWithSplitBill() {
+        childFragmentManager.commit {
+            replace(R.id.fragment_container, split_bill())
+            addToBackStack(null)
+        }
     }
 }

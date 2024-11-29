@@ -12,13 +12,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import com.google.gson.GsonBuilder
 import java.util.concurrent.TimeUnit
 
-
 object AuthInstance {
 
-    private const val BASE_URL = "https://xpensate-app-dev.onrender.com/"
+    private const val BASE_URL = "http://13.201.141.215/"
     private var retrofit: Retrofit? = null
+    private var authenticated = false
 
     fun init(context: Context) {
+        authenticated = checkAuthentication(context)
         val token = runBlocking {
             TokenDataStore.getAccessToken(context).first()
         }
@@ -42,7 +43,16 @@ object AuthInstance {
             .build()
     }
 
+    fun isAuthenticated(): Boolean {
+        return authenticated
+    }
+
+    private fun checkAuthentication(context: Context): Boolean {
+        // Implement your authentication check logic here
+        return true
+    }
+
     val api: ApiService by lazy {
-        retrofit!!.create(ApiService::class.java)
+        retrofit?.create(ApiService::class.java) ?: throw IllegalStateException("Retrofit instance is not initialized")
     }
 }

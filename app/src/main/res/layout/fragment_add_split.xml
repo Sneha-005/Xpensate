@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    android:background="@color/background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_border"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="8dp"
+            android:backgroundTint="#343446"
+            app:layout_constraintTop_toTopOf="parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/back_arrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/back_arrow"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginVertical="25dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tripName"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <TextView
+                    android:id="@+id/tripName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineHeight="30sp"
+                    android:text="Trip Name"
+                    android:textColor="@color/white"
+                    android:textFontWeight="500"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toEndOf="@id/back_arrow" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineHeight="30sp"
+                android:text="Who Paid ?"
+                android:textColor="@color/white"
+                android:textFontWeight="500"
+                android:textSize="20sp"
+                android:layout_marginTop="70dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/box"
+                android:drawablePadding="12dp"
+                android:hint="Enter Email"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="15dp"
+                android:textColorHint="@color/font_color"
+                android:textSize="14sp"
+                android:layout_marginTop="110dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineHeight="30sp"
+                android:text="Amount"
+                android:textColor="@color/white"
+                android:textFontWeight="500"
+                android:textSize="20sp"
+                android:layout_marginTop="190dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/box"
+                android:drawablePadding="12dp"
+                android:hint="Enter Amount"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="15dp"
+                android:textColorHint="@color/font_color"
+                android:textSize="14sp"
+                android:layout_marginTop="230dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineHeight="30sp"
+                android:text="Paid For"
+                android:textColor="@color/white"
+                android:textFontWeight="500"
+                android:textSize="20sp"
+                android:layout_marginTop="310dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/paidFor"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/box"
+                android:drawablePadding="12dp"
+                android:hint="Enter Category"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="15dp"
+                android:textColorHint="@color/font_color"
+                android:textSize="14sp"
+                android:layout_marginTop="350dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <Button
+                android:id="@+id/split_button"
+                android:layout_width="182dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="598dp"
+                android:background="@drawable/box"
+                android:backgroundTint="@color/green"
+                android:text="SPLIT"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:cornerRadius="5.333dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

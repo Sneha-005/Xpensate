@@ -11,28 +11,30 @@ import com.example.xpensate.R
 class RecordAdapter(private val recordList: MutableList<RecordsResponseItem>) :
 
     RecyclerView.Adapter<RecordAdapter.RecordViewHolder>() {
-
+    private val imageMap = mapOf(
+        "Food and Drinks" to R.drawable.food_icon,
+        "Housing" to R.drawable.housing_icon,
+        "Shopping" to R.drawable.shopping_icon,
+        "Investment" to R.drawable.investment_icon,
+        "Life & Entertainment" to R.drawable.life_icon,
+        "Technical Appliance" to R.drawable.tech_icon,
+        "Transportation" to R.drawable.transportation_icon
+    )
     inner class RecordViewHolder(private val binding: RecordsRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(recordItem: RecordsResponseItem) {
             binding.heading.text = recordItem.category
             binding.shortForm.text = recordItem.amount
             binding.dateText.text = recordItem.date
-            val imageResource = recordItem.image as? Int
 
-            if (imageResource != null) {
-                binding.image.setImageResource(imageResource)
-            } else {
-                val imageUrl = recordItem.image as? String
-                if (imageUrl != null) {
-                    Glide.with(binding.image.context)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.wallet)
-                        .into(binding.image)
-                } else {
-                    binding.image.setImageResource(R.drawable.wallet)
-                }
+            if(recordItem.is_credit == true) {
+                binding.shortForm.setTextColor(binding.root.context.resources.getColor(R.color.green))
+            }else{
+                binding.shortForm.setTextColor(binding.root.context.resources.getColor(R.color.red))
             }
+
+            val imageResource = imageMap[recordItem.category] ?: R.drawable.other_icon
+            binding.image.setImageResource(imageResource)
         }
     }
 

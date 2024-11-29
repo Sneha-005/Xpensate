@@ -1,7 +1,8 @@
 package com.example.xpensate.Activity
 
+import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -10,11 +11,11 @@ import com.example.xpensate.R
 import com.example.xpensate.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
+    private var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -24,6 +25,18 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (AuthInstance.isAuthenticated() || destination.id == R.id.blankFragment) {
+                navigateToHome()
+            }
+        }
+    }
+
+    private fun navigateToHome() {
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
+        overridePendingTransition(0, 0)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -35,5 +48,14 @@ class MainActivity : AppCompatActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dialog?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+        }
     }
 }

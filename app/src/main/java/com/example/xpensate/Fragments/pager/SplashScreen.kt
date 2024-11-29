@@ -26,6 +26,7 @@ class splashScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController=Navigation.findNavController(view)
 
+
         lifecycleScope.launch {
             delay(2000)
             TokenDataStore.getAccessToken(requireContext()).collect { accessToken ->

@@ -1,86 +1,131 @@
 package com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature
 
-import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.example.xpensate.R
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.xpensate.API.home.SplitBillFeature.Groups.MembersGroup
+import com.example.xpensate.API.home.SplitBillFeature.Groups.OwnerGroup
+import com.example.xpensate.AuthInstance
+import com.example.xpensate.Adapters.SplitBillFeature.SplitBillFeatureAdapter
+import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
+import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_containerDirections
+import com.example.xpensate.Fragments.Dashboard.SplitBillMore
+import com.example.xpensate.databinding.FragmentSplitBillBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class split_bill : Fragment() {
+
+    private var _binding: FragmentSplitBillBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var groupAdapter: SplitBillFeatureAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_split_bill, container, false)
+    ): View {
+        _binding = FragmentSplitBillBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val barChart = view.findViewById<HorizontalBarChart>(R.id.barChart)
+        groupAdapter = SplitBillFeatureAdapter(emptyList(), this)
 
-        val entries = mutableListOf(
-            BarEntry(0f, 65f),
-            BarEntry(1f, 35f)
-        )
+        binding.splitBill.layoutManager = LinearLayoutManager(context)
+        binding.splitBill.adapter = groupAdapter
 
-        val dataSet = BarDataSet(entries, "User Data")
-        dataSet.colors = listOf(Color.GREEN, Color.YELLOW)
-        dataSet.valueTextColor = Color.WHITE
-        dataSet.valueTextSize = 14f
-
-        val barData = BarData(dataSet)
-        barData.barWidth = 0.5f
-
-        barChart.data = barData
-        barChart.setFitBars(true)
-        barChart.animateY(1500)
-
-        barChart.setDrawGridBackground(false)
-        barChart.description = Description().apply { text = "" }
-        barChart.axisLeft.setDrawLabels(false)
-        barChart.axisRight.setDrawLabels(false)
-        barChart.axisLeft.setDrawGridLines(false)
-        barChart.axisRight.setDrawGridLines(false)
-        barChart.xAxis.setDrawGridLines(false)
-        barChart.legend.isEnabled = false
-
-        val xAxis = barChart.xAxis
-        xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                return when (value.toInt()) {
-                    0 -> "Me"
-                    1 -> "Arjun"
-                    else -> ""
+        binding.newGroupButton.setOnClickListener {
+            when (val parent = parentFragment) {
+                is bill_container -> parent.replaceFragmentWithUpdateGroup()
+                is SplitBillMore -> parent.replaceFragmentWithUpdateGroup()
+                else -> {
+                    // Handle case if parent is neither
+                    Toast.makeText(requireContext(), "Unsupported parent fragment", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        xAxis.textColor = Color.WHITE
-        xAxis.textSize = 14f
-        xAxis.setDrawLabels(true)
-        xAxis.position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
 
-        val yAxis = barChart.axisLeft
-        yAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                return "${value.toInt()}%"
+        fetchGroupData()
+    }
+
+    fun onItemClick(group: Any){
+        val id = when(group){
+            is OwnerGroup -> group.id
+            is MembersGroup -> group.id
+            else -> ""
+        }
+        val action = bill_containerDirections.actionBillContainerToSplitBillGroupShow(id.toString())
+        findNavController().navigate(action)
+    }
+    fun onSplitButtonClick(group: Any) {
+        Log.d("SplitBill", "Split button clicked for group: $group")
+        val id = when (group) {
+            is OwnerGroup -> group.id
+            is MembersGroup -> group.id
+            else -> ""
+        }
+        val action = bill_containerDirections.actionBillContainerToSplitAmountPage2(id.toString())
+        findNavController().navigate(action)
+    }
+
+    fun onAddMemberButtonClick(group: Any) {
+        Log.d("SplitBill", "Add member button clicked for group: $group")
+        val id = when (group) {
+            is OwnerGroup -> group.id
+            is MembersGroup -> group.id
+            else -> ""
+        }
+        val action = bill_containerDirections.actionBillContainerToAddMember(id.toString())
+        findNavController().navigate(action)
+    }
+
+    private fun fetchGroupData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val response = AuthInstance.api.getGroups().execute()
+                    if (response.isSuccessful) {
+                        val groupsResponse = response.body()
+                        withContext(Dispatchers.Main) {
+                            if (groupsResponse != null) {
+                                Log.d("SplitBill", "Fetched groups: $groupsResponse")
+                                val combinedGroups = (groupsResponse.ownerGroups ?: emptyList()) + (groupsResponse.membersGroups ?: emptyList())
+                                updateGroupData(combinedGroups)
+                            } else {
+                                Log.e("SplitBill", "Response body is null")
+                            }
+                        }
+                    } else {
+                        Log.e("SplitBill", "Response code: ${response.code()}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("SplitBill", "Failed to fetch data", e)
+                withContext(Dispatchers.Main) {
+                    context?.let {
+                        Toast.makeText(it, "Failed to fetch data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
-        yAxis.textColor = Color.WHITE
-        yAxis.textSize = 14f
-        yAxis.setDrawLabels(true)
-        yAxis.setDrawGridLines(false)
+    }
 
-        barChart.invalidate()
+    private fun updateGroupData(newData: List<Any>) {
+        groupAdapter.updateData(newData)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
