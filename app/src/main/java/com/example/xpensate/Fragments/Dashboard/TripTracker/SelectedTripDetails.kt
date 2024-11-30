@@ -108,7 +108,7 @@ class SelectedTripDetails : Fragment() {
                 }
 
                 override fun onFailure(call: Call<CreateGroupResponse>, t: Throwable) {
-                    // Handle failure
+                    Toast.makeText(context,"Network issue",Toast.LENGTH_SHORT).show()
                 }
             })
         }

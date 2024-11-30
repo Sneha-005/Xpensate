@@ -317,7 +317,7 @@
     <fragment
         android:id="@+id/budgetBuilder"
         android:name="com.example.xpensate.Fragments.Dashboard.BudgetBuilder.BudgetBuilder"
-        android:label="BudgetBuilder" >
+        android:label="Budget Builder" >
         <action
             android:id="@+id/action_budgetBuilder_to_blankFragment"
             app:destination="@id/blankFragment" />

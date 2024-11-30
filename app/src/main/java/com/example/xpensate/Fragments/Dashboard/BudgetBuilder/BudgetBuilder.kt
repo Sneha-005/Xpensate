@@ -38,22 +38,32 @@ class BudgetBuilder : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val need = binding.needsText.text.toString().toDouble()
-        val luxury = binding.LuxuryText.text.toString().toDouble()
-        val savings = binding.savingText.text.toString().toDouble()
-        val monthlyLimit = binding.amount.text.toString().toDouble()
-        val needAmount = monthlyLimit * need / 100f
-        val luxuryAmount = monthlyLimit * luxury / 100f
-        val savingsAmount = monthlyLimit * savings / 100f
+        val needString = binding.needsText.text.toString()
+        val luxuryString = binding.LuxuryText.text.toString()
+        val savingsString = binding.savingText.text.toString()
+        val monthlyLimitString = binding.amount.text.toString()
 
-        binding.needAmount.text = needAmount.toString()
-        binding.luxuryAmount.text = luxuryAmount.toString()
-        binding.savingAmount.text = savingsAmount.toString()
+        val need = needString.toDoubleOrNull()
+        val luxury = luxuryString.toDoubleOrNull()
+        val savings = savingsString.toDoubleOrNull()
+        val monthlyLimit = monthlyLimitString.toDoubleOrNull()
 
-        submitBudget(luxury, need, savings)
-        submitMonthlyLimit(monthlyLimit)
+        if (need != null && luxury != null && savings != null && monthlyLimit != null) {
+            val needAmount = monthlyLimit * need / 100f
+            val luxuryAmount = monthlyLimit * luxury / 100f
+            val savingsAmount = monthlyLimit * savings / 100f
 
-        fetchBudgetExpenses(need, luxury, savings)
+            binding.needAmount.text = needAmount.toString()
+            binding.luxuryAmount.text = luxuryAmount.toString()
+            binding.savingAmount.text = savingsAmount.toString()
+
+            submitBudget(luxury, need, savings)
+            submitMonthlyLimit(monthlyLimit)
+
+            fetchBudgetExpenses(need, luxury, savings)
+        } else {
+            Toast.makeText(context, "Please enter valid numbers", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun fetchBudgetExpenses(need: Double, luxury: Double, savings: Double) {

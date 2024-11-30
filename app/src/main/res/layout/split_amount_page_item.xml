@@ -41,9 +41,10 @@
                 android:textSize="16sp"
                 android:textFontWeight="600"
                 android:lineHeight="22sp"
+                android:paddingBottom="8dp"
                 android:textColor="@color/white"
                 android:padding="3dip" />
-            <EditText
+            <TextView
                 android:id="@+id/amountBill"
                 android:gravity="center"
                 android:text="Amount"

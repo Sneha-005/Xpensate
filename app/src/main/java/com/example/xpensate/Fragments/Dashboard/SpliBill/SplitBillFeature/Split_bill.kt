@@ -16,7 +16,6 @@ import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.SplitBillFeature.SplitBillFeatureAdapter
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_containerDirections
-import com.example.xpensate.Fragments.Dashboard.SplitBillMore
 import com.example.xpensate.databinding.FragmentSplitBillBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
@@ -45,16 +44,8 @@ class split_bill : Fragment() {
         binding.splitBill.adapter = groupAdapter
 
         binding.newGroupButton.setOnClickListener {
-            when (val parent = parentFragment) {
-                is bill_container -> parent.replaceFragmentWithUpdateGroup()
-                is SplitBillMore -> parent.replaceFragmentWithUpdateGroup()
-                else -> {
-                    // Handle case if parent is neither
-                    Toast.makeText(requireContext(), "Unsupported parent fragment", Toast.LENGTH_SHORT).show()
-                }
-            }
+            (parentFragment as? bill_container)?.replaceFragmentWithUpdateGroup()
         }
-
         fetchGroupData()
     }
 

@@ -80,6 +80,13 @@ class bill_container : Fragment() {
         }
     }
 
+    fun replaceFragmentWithAplitAmountPage(groupId: String) {
+        childFragmentManager.commit {
+            replace(R.id.fragment_container, SplitAmountPage())
+            addToBackStack(null)
+        }
+    }
+
     fun replaceFragmentWithSplitBill() {
         childFragmentManager.commit {
             replace(R.id.fragment_container, split_bill())

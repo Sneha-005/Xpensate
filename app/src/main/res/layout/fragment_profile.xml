@@ -10,22 +10,31 @@
     app:layout_constraintTop_toTopOf="parent"
     android:background="@color/background">
 
+    <ImageView
+        android:id="@+id/selected_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/userName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Your Name"
         android:textColor="@color/white"
         android:textFontWeight="500"
         android:textSize="24sp"
-        android:drawableStart="@drawable/profile"
         android:drawableEnd="@drawable/edit_pencil"
         android:drawablePadding="20dp"
         android:lineHeight="36sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
         android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/selected_image"/>
 
 
     <include

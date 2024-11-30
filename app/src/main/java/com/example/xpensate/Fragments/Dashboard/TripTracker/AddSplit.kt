@@ -61,13 +61,11 @@ class AddSplit: Fragment() {
                     Log.d("AddExpense", "Expense added successfully: ${response.body()}")
                     Toast.makeText(requireContext(),"Record added successfully",Toast.LENGTH_SHORT).show()
                 } else {
-                    // Handle API error
                     Log.e("AddExpense", "Failed: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<AddTripExpense>, t: Throwable) {
-                // Handle failure
                 Log.e("AddExpense", "Error: ${t.message}")
             }
         })

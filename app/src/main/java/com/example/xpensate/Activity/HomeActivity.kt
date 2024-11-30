@@ -62,7 +62,7 @@ class HomeActivity : AppCompatActivity() {
         bottomNav.add(CurvedBottomNavigation.Model(0, "Home", R.drawable.home_nav))
         bottomNav.add(CurvedBottomNavigation.Model(1, "Debts", R.drawable.debts_nav))
         bottomNav.add(CurvedBottomNavigation.Model(2, "add", R.drawable.add))
-        bottomNav.add(CurvedBottomNavigation.Model(3, "Exchanger", R.drawable.currency_nav))
+        bottomNav.add(CurvedBottomNavigation.Model(3, "Trip Tracker", R.drawable.trip_nav))
         bottomNav.add(CurvedBottomNavigation.Model(4, "Profile", R.drawable.profile_nav))
 
         bottomNav.setOnClickMenuListener { model ->

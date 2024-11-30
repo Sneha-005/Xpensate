@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.xpensate.API.home.SplitBillFeature.SplitGroupShowDetails.SplitGroupDetails
 import com.example.xpensate.Adapters.SlitBillFeature.SplitAmountShowAdapter
@@ -21,6 +23,8 @@ class SplitBillGroupShow : Fragment() {
     private lateinit var adapter: SplitAmountShowAdapter
     private var selectedGroupId: String? = null
     private lateinit var userName: String
+    private lateinit var navController: NavController
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +36,8 @@ class SplitBillGroupShow : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = findNavController()
+
         selectedGroupId = arguments?.getString("groupId")
         setupRecyclerView()
         fetchGroupData()
@@ -60,7 +66,6 @@ class SplitBillGroupShow : Fragment() {
                 }
 
                 override fun onFailure(call: Call<SplitGroupDetails>, t: Throwable) {
-                    // Handle failure
                 }
             })
         }

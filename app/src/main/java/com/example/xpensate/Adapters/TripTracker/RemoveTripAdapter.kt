@@ -17,8 +17,8 @@ import retrofit2.Response
 class RemoveTripAdapter(
     private var memberList: List<Member>,
     private val groupId: String,
-    private val context: Context, // Pass context from fragment/activity
-    private val onMemberRemoved: () -> Unit // Callback to refresh data on success
+    private val context: Context,
+    private val onMemberRemoved: () -> Unit
 ) : RecyclerView.Adapter<RemoveTripAdapter.MemberViewHolder>() {
 
     inner class MemberViewHolder(private val binding: RemoveTripItemsBinding) :
@@ -50,7 +50,7 @@ class RemoveTripAdapter(
                 Log.d("RemoveTripAdapter", "group id: $groupId, email: $memberEmail")
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Member removed successfully", Toast.LENGTH_SHORT).show()
-                    onMemberRemoved() // Notify parent to refresh data
+                    onMemberRemoved()
                 } else {
                     Toast.makeText(context, "Failed to remove member: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }

@@ -30,7 +30,7 @@ class BudgetProgressView @JvmOverloads constructor(
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = 30f
-        color = Color.parseColor("#4CAF50")  // Material Design Green
+        color = Color.parseColor("#4CAF50")
         strokeCap = Paint.Cap.ROUND
     }
 
@@ -46,7 +46,6 @@ class BudgetProgressView @JvmOverloads constructor(
     fun setProgress(spent: Float, total: Float) {
         spentAmount = spent
         maxBudget = total
-        // Ensure the progress doesn't exceed 180 degrees
         progress = ((spent / total).coerceIn(0f, 1f) * 180f)
         Log.d("BudgetProgressView", "Progress set to: $progress")
         invalidate()
@@ -70,7 +69,6 @@ class BudgetProgressView @JvmOverloads constructor(
         val centerY = height / 2f
         val radius = (width.coerceAtMost(height) / 2f) - backgroundPaint.strokeWidth
 
-        // Draw background arc
         canvas.drawArc(
             rect,
             180f,
@@ -79,7 +77,6 @@ class BudgetProgressView @JvmOverloads constructor(
             backgroundPaint
         )
 
-        // Draw progress arc
         if (progress > 0f) {
             canvas.drawArc(
                 rect,
@@ -90,7 +87,6 @@ class BudgetProgressView @JvmOverloads constructor(
             )
         }
 
-        // Draw wallet icon
         walletDrawable?.let {
             val iconSize = radius * 0.2f
             val left = centerX - iconSize
@@ -104,7 +100,6 @@ class BudgetProgressView @JvmOverloads constructor(
             it.draw(canvas)
         }
 
-        // Draw text
         val spentText = "Spent ₹${spentAmount.toInt()} of ₹${maxBudget.toInt()}"
         canvas.drawText(
             spentText,

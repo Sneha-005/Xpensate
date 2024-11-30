@@ -55,6 +55,7 @@ class SplitAmountPage : Fragment() {
 
         fetchGroupData()
 
+
         binding.splitButton.setOnClickListener {
             createBill(adapter)
         }
@@ -146,6 +147,7 @@ class SplitAmountPage : Fragment() {
             bill_participants = selectedParticipants,
             group = selectedGroupId ?: ""
         )
+        val amount = binding.amount.text
 
         AuthInstance.api.createBill(request).enqueue(object : Callback<CreateBillResponse> {
             override fun onResponse(call: Call<CreateBillResponse>, response: Response<CreateBillResponse>) {

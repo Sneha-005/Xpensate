@@ -1,6 +1,5 @@
 package com.example.xpensate.network
 
-import android.text.Editable
 import com.example.xpensate.API.BudgetBuilder.BudgetExpensesResponse
 import com.example.xpensate.API.BudgetBuilder.CreateBudgetResponse
 import com.example.xpensate.API.BudgetBuilder.CreateMonthlyLimitResponse
@@ -23,6 +22,7 @@ import com.example.xpensate.API.auth.request.VerifyRequest
 import com.example.xpensate.API.auth.request.VerifyResetRequest
 import com.example.xpensate.API.auth.response.VerifyResetResponse
 import com.example.xpensate.API.auth.response.VerifyResponse
+import com.example.xpensate.API.fcmTokenResponse
 import com.example.xpensate.API.home.AddExpenses
 import com.example.xpensate.API.home.AppCurrency
 import com.example.xpensate.API.home.CategoryChartResponse
@@ -46,15 +46,20 @@ import com.example.xpensate.API.home.UpdateContact.UpdateContactResponse
 import com.example.xpensate.API.home.UpdateUsernameResponse
 import com.example.xpensate.API.home.lineGraph
 import com.example.xpensate.API.home.CategoryList.CategoriesList
+import com.example.xpensate.API.home.UpdateContact.ProfileImage
 import com.example.xpensate.Modals.CreateDebtResponse
 import com.example.xpensate.Modals.RecordsResponse
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -99,7 +104,7 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("auth/username/")
-    fun updateName(@Field("name") name: Editable):Call<UpdateUsernameResponse>
+    fun updateName(@Field("name") name: String):Call<UpdateUsernameResponse>
 
     @FormUrlEncoded
     @POST("auth/phoneverify/")
@@ -232,6 +237,7 @@ interface ApiService {
         @Path("email") email: String
     ): Call<AddTripMemberResponse>
 
+    @FormUrlEncoded
     @POST("expense/create-budget/")
     fun createBudgetLimit(
         @Field("need") need: Double,
@@ -249,4 +255,15 @@ interface ApiService {
 
     @GET("expense/category/")
     fun getCategoryList(): Call<CategoriesList>
+
+    @Multipart
+    @POST("upload/profile-image")
+    fun uploadProfileImage(@Part image: MultipartBody.Part): Call<ProfileImage>
+
+    @FormUrlEncoded
+
+    @POST("auth/recive/devicetoken/")
+    fun fcmToken(
+        @Field("fcm_token") fcmToken: String
+    ): Call<fcmTokenResponse>
 }

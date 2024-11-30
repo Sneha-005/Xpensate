@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.xpensate.API.BudgetBuilder.Data
 import com.example.xpensate.API.home.CategoryChartResponse
 import com.example.xpensate.API.home.lineGraph
 import com.example.xpensate.Adapters.LabelAdapter
@@ -38,6 +39,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.PercentFormatter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,6 +47,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Calendar
 
 class Records : Fragment() {
     private lateinit var navController: NavController
@@ -52,6 +55,10 @@ class Records : Fragment() {
     private val binding get() = _binding!!
     private lateinit var barChart: BarChart
     private var adapter: LabelAdapter? = null
+    private var total_expenses: String = "0.0"
+    private var savings: String = "0.0"
+    private var Income: String ="0.0"
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,14 +88,13 @@ class Records : Fragment() {
             adapter = LabelAdapter(requireContext(), emptyList())
             legendListView.adapter = adapter
         }
-        loadBarChart()
-        loadLineChart()
         fetchRecordsData(recordAdapter)
         heatmap()
     }
 
     fun heatmap() {
         val heatmapGrid = binding.heatmapGrid
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = AuthInstance.api.getLineGraphData().execute()
@@ -99,31 +105,44 @@ class Records : Fragment() {
                         val expensesByDay = lineGraphData.expenses_by_day
                         val maxExpense = expensesByDay.maxOfOrNull { it.total } ?: 1.0
 
+                        val dayToExpenseMap = mutableMapOf<Int, Double>()
+                        expensesByDay.forEach { day ->
+                            val dayOfMonth = day.date.split("-").last().toInt()
+                            dayToExpenseMap[dayOfMonth] = day.total
+                        }
+
+                        val calendar = Calendar.getInstance()
+                        val totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+
                         withContext(Dispatchers.Main) {
                             heatmapGrid.removeAllViews()
+                            heatmapGrid.columnCount = 10
 
-                            expensesByDay.forEach { day ->
+                            for (day in 1..totalDays) {
                                 val cellView = View(requireContext())
-                                val color = getHeatMapColor(day.total.toInt(), maxExpense.toInt())
+                                val expense = dayToExpenseMap[day] ?: 0.0
+                                val color = if (expense > 0) getHeatMapColor(expense.toInt(), maxExpense.toInt()) else Color.LTGRAY
 
-                                cellView.setBackgroundColor(color)
-
-                                val layoutParams = GridLayout.LayoutParams().apply {
-                                    width = 70
-                                    height = 70
-                                    leftMargin = 8
-                                    rightMargin = 8
-                                    topMargin = 8
-                                    bottomMargin = 8
-                                }
-
+                                cellView.tag = day
                                 cellView.background = GradientDrawable().apply {
                                     shape = GradientDrawable.RECTANGLE
                                     cornerRadius = 16f
                                     setColor(color)
                                 }
+                                cellView.layoutParams = GridLayout.LayoutParams().apply {
+                                    width = 70
+                                    height = 70
+                                    setMargins(8, 8, 8, 8)
+                                }
 
-                                cellView.layoutParams = layoutParams
+                                cellView.setOnClickListener {
+                                    val message = if (expense > 0) {
+                                        "Date: $day, Expense: ₹$expense"
+                                    } else {
+                                        "Date: $day, No expenses recorded"
+                                    }
+                                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                                }
 
                                 heatmapGrid.addView(cellView)
                             }
@@ -142,40 +161,53 @@ class Records : Fragment() {
 
 
     private fun fetchRecordsData(adapter: RecordAdapter) {
-       CoroutineScope(Dispatchers.IO).launch {
-           try {
-               val response = AuthInstance.api.expenselist().execute()
-               if (response.isSuccessful) {
-                   val recordsResponse = response.body()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = AuthInstance.api.expenselist().execute()
+                if (response.isSuccessful) {
+                    val recordsResponse = response.body()
 
-                   if (recordsResponse != null && recordsResponse.expenses.isNotEmpty()) {
-                       val recordsList = recordsResponse.expenses
+                    if (recordsResponse != null && recordsResponse.expenses.isNotEmpty()) {
+                        val recordsList = recordsResponse.expenses
 
-                       withContext(Dispatchers.Main) {
-                           adapter.updateRecords(recordsList)
-                           val totalExpense = recordsResponse.total_expense
-                           binding.totalExpenseTextView.text = "₹$totalExpense"
-                       }
+                        val incomeEntries = mutableListOf<Entry>()
+                        val expenseEntries = mutableListOf<Entry>()
 
-                   } else {
-                       Log.d("API Response", "No records found")
-                   }
-               } else {
-                   Log.e("API Error", "Response code: ${response.code()}")
-               }
-           } catch (e: Exception) {
-               Log.e("Network Error", "Exception: ${e.message}")
-           }
-       }
-   }
+                        recordsList.forEachIndexed { index, record ->
+                            if (record.is_credit) {
+                                incomeEntries.add(Entry(index.toFloat(), record.amount.toFloat()))
+                            } else {
+                                expenseEntries.add(Entry(index.toFloat(), record.amount.toFloat()))
+                            }
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            adapter.updateRecords(recordsList)
+                            val totalExpense = recordsResponse.total_expense
+                            binding.totalExpenseTextView.text = "₹$totalExpense"
+
+                            loadLineChart(incomeEntries, expenseEntries)
+                        }
+
+                    } else {
+                        Log.d("API Response", "No records found")
+                    }
+                } else {
+                    Log.e("API Error", "Response code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("Network Error", "Exception: ${e.message}")
+            }
+        }
+    }
 
     fun getHeatMapColor(value: Int, max: Int): Int {
         val percentage = value.toFloat() / max
         return when {
-            percentage > 0.75 -> Color.parseColor("#004D00")
-            percentage > 0.5 -> Color.parseColor("#006600")
-            percentage > 0.25 -> Color.parseColor("#009900")
-            else -> Color.parseColor("#00CC00")
+            percentage > 0.75 -> Color.parseColor("#07603D")
+            percentage > 0.5 -> Color.parseColor("#009657")
+            percentage > 0.25 -> Color.parseColor("#00DF82")
+            else -> Color.parseColor("#70FFC5")
         }
     }
 
@@ -188,20 +220,31 @@ class Records : Fragment() {
                         val categoryChartData = response.body()
                         if (categoryChartData != null && categoryChartData.expenses_by_category.isNotEmpty()) {
                             val pieEntries = ArrayList<PieEntry>()
-                            var totalSpent = 0f
-
+                            var totalSpent = categoryChartData.total_expenses
+                            val threshold = 5f
+                            var othersTotal = 0f
                             categoryChartData.expenses_by_category.forEach { category ->
-                                pieEntries.add(PieEntry(category.total.toFloat(), category.category))
-                                totalSpent += category.total.toFloat()
+                                if (category.total.toFloat() < threshold) {
+                                    othersTotal += category.total.toFloat()
+                                } else {
+                                    pieEntries.add(PieEntry(category.total.toFloat(), category.category))
+                                }
+                            }
+                            if (othersTotal > 0) {
+                                pieEntries.add(PieEntry(othersTotal, "Others"))
                             }
 
-                            val pieDataSet = PieDataSet(pieEntries, "")
                             val randomColors = categoryChartData.expenses_by_category.map { getRandomColor() }
-                            pieDataSet.colors = randomColors
+                            val pieDataSet = PieDataSet(pieEntries, "").apply {
+                                colors = randomColors
+                                sliceSpace = 5f
+                                selectionShift = 5f
+                            }
 
                             val pieData = PieData(pieDataSet)
                             pieData.setDrawValues(false)
-
+                            pieData.setValueFormatter(PercentFormatter(pieChart))
+                            pieChart.setUsePercentValues(true)
                             with(pieChart) {
                                 data = pieData
                                 setHoleColor(Color.TRANSPARENT)
@@ -217,6 +260,10 @@ class Records : Fragment() {
                                 setDrawEntryLabels(false)
                                 invalidate()
                             }
+                            total_expenses = "$totalSpent"
+                            savings = (Income.toFloat() - total_expenses.toFloat()).toString()
+                            loadBarChart()
+
 
                             populateCustomLegend(categoryChartData, randomColors)
                         } else {
@@ -234,31 +281,35 @@ class Records : Fragment() {
         }
     }
 
+
     private fun populateCustomLegend(categoryChartData: CategoryChartResponse, colors: List<Int>) {
         val labelItems = categoryChartData.expenses_by_category.mapIndexed { index, category ->
             LabelItem(label = category.category, color = colors[index])
         }
+
         adapter?.let {
             it.updateLegend(labelItems)
         }
+
     }
 
     private fun loadBarChart() {
         barChart = binding.barChart
 
+
         val entries = listOf(
-            BarEntry(1f, 10f),
-            BarEntry(2f, 20f),
-            BarEntry(3f, 30f)
+            BarEntry(1f, Income.toFloat()),
+            BarEntry(2f, total_expenses.toFloat()),
+            BarEntry(3f, savings.toFloat())
         )
 
-        val labels = listOf("Label 1", "Label 2", "Label 3")
+        val labels = listOf("Income", "Expenses", "Savings")
 
         val dataSet = BarDataSet(entries, "Sample Data")
         dataSet.colors = listOf(
+            Color.BLUE,
             Color.RED,
-            Color.GREEN,
-            Color.BLUE
+            Color.GREEN
         )
 
         val data = BarData(dataSet)
@@ -283,40 +334,39 @@ class Records : Fragment() {
         barChart.invalidate()
     }
 
-    private fun loadLineChart() {
+    private fun loadLineChart(incomeEntries: List<Entry>, expenseEntries: List<Entry>) {
         val lineChart = binding.lineChart
 
-        val entries1 = listOf(
-            Entry(0f, 10f),
-            Entry(1f, 15f),
-            Entry(2f, 12f),
-            Entry(3f, 18f),
-            Entry(4f, 20f)
-        )
+        val incomeDataSet = LineDataSet(incomeEntries, "Income").apply {
+            color = Color.GREEN
+            valueTextColor = Color.GREEN
+            lineWidth = 2f
+            circleRadius = 4f
+            setCircleColor(Color.GREEN)
+        }
 
-        val entries2 = listOf(
-            Entry(0f, 8f),
-            Entry(1f, 10f),
-            Entry(2f, 16f),
-            Entry(3f, 12f),
-            Entry(4f, 22f)
-        )
+        val expenseDataSet = LineDataSet(expenseEntries, "Expenses").apply {
+            color = Color.RED
+            valueTextColor = Color.RED
+            lineWidth = 2f
+            circleRadius = 4f
+            setCircleColor(Color.RED)
+        }
 
-        val dataSet1 = LineDataSet(entries1, "Line 1")
-        dataSet1.color = Color.BLUE
-        dataSet1.valueTextColor = Color.BLUE
-        dataSet1.lineWidth = 2f
+        val lineData = LineData(incomeDataSet, expenseDataSet)
 
-        val dataSet2 = LineDataSet(entries2, "Line 2")
-        dataSet2.color = Color.RED
-        dataSet2.valueTextColor = Color.RED
-        dataSet2.lineWidth = 2f
+        val xAxis = lineChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawGridLines(false)
+        xAxis.granularity = 1f
+        xAxis.valueFormatter = IndexAxisValueFormatter(incomeEntries.mapIndexed { index, _ -> "Day ${index + 1}" })
 
-        val lineData = LineData(dataSet1, dataSet2)
+        val leftAxis = lineChart.axisLeft
+        leftAxis.setDrawGridLines(false)
+
+        lineChart.axisRight.isEnabled = false
 
         lineChart.description.isEnabled = false
-        lineChart.axisRight.isEnabled = false
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
 
         lineChart.data = lineData
         lineChart.invalidate()

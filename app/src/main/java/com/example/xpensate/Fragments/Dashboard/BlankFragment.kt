@@ -170,10 +170,10 @@ class BlankFragment : Fragment() {
         val lineChart = binding.lineChart
 
         val xAxis = lineChart.xAxis
-        xAxis.axisMinimum = 0f   // Start from 0
-        xAxis.axisMaximum = 30f  // End at 30
+        xAxis.axisMinimum = 0f
+        xAxis.axisMaximum = 30f
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.granularity = 1f // Show a label for each day
+        xAxis.granularity = 1f
         xAxis.textColor = Color.BLACK
         xAxis.textSize = 12f
         xAxis.setDrawAxisLine(false)
@@ -200,21 +200,17 @@ class BlankFragment : Fragment() {
                                 }
                             }
 
-                            // Fill in actual expenses for specific days
                             lineGraphData.expenses_by_day.forEach { expensesByDay ->
-                                val day = expensesByDay.date.split("-").last().toInt() // Extract day (DD)
+                                val day = expensesByDay.date.split("-").last().toInt()
                                 fullMonthData[day] = expensesByDay.total.toFloat()
                             }
 
-                            // Create entries from fullMonthData
                             fullMonthData.toSortedMap().forEach { (day, totalExpense) ->
                                 lineEntries.add(Entry(day.toFloat(), totalExpense))
                             }
 
-                            // Custom X-Axis Formatter for Days
                             xAxis.valueFormatter = IndexAxisValueFormatter((0..30).map { it.toString() })
 
-                            // Create dataset
                             val lineDataSet = LineDataSet(lineEntries, "Expenses by Day").apply {
                                 color = Color.WHITE
                                 setDrawFilled(true)
@@ -225,11 +221,9 @@ class BlankFragment : Fragment() {
                                 setDrawCircles(false)
                             }
 
-                            // Apply data to chart
                             val data = LineData(lineDataSet).apply { setDrawValues(false) }
                             lineChart.data = data
 
-                            // Final chart settings
                             lineChart.legend.isEnabled = false
                             lineChart.description.isEnabled = false
                             lineChart.invalidate()
@@ -262,8 +256,7 @@ class BlankFragment : Fragment() {
                         val categoryChartData = response.body()
                         if (categoryChartData != null && categoryChartData.expenses_by_category.isNotEmpty()) {
                             val pieEntries = ArrayList<PieEntry>()
-                            var totalSpent = 0f
-
+                            var totalSpent = categoryChartData.total_expenses
                             val threshold = 5f
                             var othersTotal = 0f
                             categoryChartData.expenses_by_category.forEach { category ->
@@ -351,8 +344,3 @@ class BlankFragment : Fragment() {
     }
 }
 
-class DoubleDigitFormatter : ValueFormatter() {
-    override fun getFormattedValue(value: Float): String {
-        return String.format("%02d", value.toInt())
-    }
-}

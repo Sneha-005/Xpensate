@@ -18,8 +18,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        // createNotificationChannel()
         AuthInstance.init(this)
+        //getFcmToken()
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
     private fun navigateToHome() {
         val intent = Intent(this, HomeActivity::class.java)

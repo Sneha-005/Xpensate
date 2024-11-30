@@ -168,7 +168,7 @@
                 android:id="@+id/heatmapGrid"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_margin="5dp"
+                android:layout_margin="15dp"
                 android:columnCount="7"
                 android:rowCount="5"
                 android:paddingTop="50dp">
