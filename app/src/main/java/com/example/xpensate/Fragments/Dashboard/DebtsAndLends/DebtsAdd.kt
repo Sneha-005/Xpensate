@@ -70,15 +70,16 @@ class DebtsAdd : Fragment() {
         binding.addButton.setOnClickListener {
             createDebt()
         }
-
     }
     private fun createDebt() {
-        val amount = binding.amountField.text.toString().trim().toDouble()
+        val amountString = binding.amountField.text.toString().trim()
         val note = binding.customTagsField.text.toString().trim()
         val date = binding.dateField.text.toString().trim()
         val time = binding.timeField.text.toString().trim()
         val name = binding.categoryField.text.toString().trim()
         val isLend = binding.lendButton.isChecked
+
+        val amount = amountString.toDoubleOrNull()
 
         if (amount == null || name.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill amount and name fields", Toast.LENGTH_SHORT).show()

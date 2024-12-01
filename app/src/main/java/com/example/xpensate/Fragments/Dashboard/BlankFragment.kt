@@ -1,6 +1,7 @@
 package com.example.xpensate.Fragments.Dashboard
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -34,6 +35,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.qamar.curvedbottomnaviagtion.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,7 +51,6 @@ class BlankFragment : Fragment() {
     private val binding get() = _binding!!
     private var adapter: LabelAdapter? = null
     private var loadingDialog: LoadingDialogFragment? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,7 +224,8 @@ class BlankFragment : Fragment() {
 
                             val data = LineData(lineDataSet).apply { setDrawValues(false) }
                             lineChart.data = data
-
+                            lineChart.setNoDataText("No data available")
+                            lineChart.setNoDataTextColor(Color.WHITE)
                             lineChart.legend.isEnabled = false
                             lineChart.description.isEnabled = false
                             lineChart.invalidate()
@@ -281,6 +283,8 @@ class BlankFragment : Fragment() {
                             pieData.setDrawValues(false)
                             pieData.setValueFormatter(PercentFormatter(pieChart))
                             pieChart.setUsePercentValues(true)
+                            pieChart.setNoDataText("No data available")
+                            pieChart.setNoDataTextColor(Color.WHITE)
                             with(pieChart) {
                                 data = pieData
                                 setHoleColor(Color.TRANSPARENT)
@@ -302,6 +306,7 @@ class BlankFragment : Fragment() {
                             Toast.makeText(requireContext(), "No data available for the Pie chart", Toast.LENGTH_SHORT).show()
                         }
                     } else {
+                        Log.d("API Error", "Response body: ${response.code()}");
                         Toast.makeText(requireContext(), "Failed to fetch data for the Pie chart", Toast.LENGTH_SHORT).show()
                     }
                 }

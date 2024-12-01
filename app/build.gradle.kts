@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.androidxNavigationSafeArgsKotlin)
-   // id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -25,6 +25,7 @@ android {
     }
 
     buildTypes {
+
         release {
             isMinifyEnabled = true
             proguardFiles(
@@ -65,9 +66,10 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.androidx.datastore)
-
- //   implementation(platform("com.google.firebase:firebase-bom:32.0.0"))
- //   implementation("com.google.firebase:firebase-messaging:23.1.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.appcompat:appcompat:1.3.1")

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,6 +116,7 @@ class Login : Fragment() {
                     response.body()?.let { loginResponse ->
                         saveTokens(loginResponse.tokens.access, loginResponse.tokens.refresh)
                         Toast.makeText(requireContext(), loginResponse.message ?: "Login successful", Toast.LENGTH_SHORT).show()
+                        Log.d("login","${response.body()}")
                         findNavController().navigate(R.id.action_login2_to_blankFragment)
                     }
                 } else {

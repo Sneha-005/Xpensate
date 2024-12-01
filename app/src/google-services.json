@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "267664303057",
+    "project_id": "xpensate-c82e9",
+    "storage_bucket": "xpensate-c82e9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267664303057:android:fc844a850f35691f1376f0",
+        "android_client_info": {
+          "package_name": "com.example.xpensate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALRkAyq3f-W3Fmhm_IYtzwQrCH23XC9o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

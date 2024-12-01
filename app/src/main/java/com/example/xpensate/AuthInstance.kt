@@ -23,6 +23,7 @@ object AuthInstance {
         val token = runBlocking {
             TokenDataStore.getAccessToken(context).first()
         }
+        Log.d("TokenStoreData","$token")
 
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -48,7 +49,6 @@ object AuthInstance {
     }
 
     private fun checkAuthentication(context: Context): Boolean {
-        // Implement your authentication check logic here
         return true
     }
 

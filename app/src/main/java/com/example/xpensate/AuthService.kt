@@ -180,7 +180,7 @@ interface ApiService {
     ): Call<DeleteMember>
 
     @POST("split/createbill/")
-     fun createBill(
+    fun createBill(
         @Body createBillRequest: CreateBillRequest
     ): Call<CreateBillResponse>
 
@@ -211,15 +211,15 @@ interface ApiService {
     fun userGrpDetails(): Call<UserGroupDetailsResponse>
 
     @GET("triptrack/tripgroup/{id}/")
-   fun getTripGroupDetails(
+    fun getTripGroupDetails(
         @Path("id") groupId: String
     ): Call<CreateGroupResponse>
 
-   @DELETE("triptrack/add-remove/{id}/{email}/")
-   fun removeTripMember(
-       @Path("id") id: String,
-       @Path("email") email: String
-   ): Call<RemoveDataResponse>
+    @DELETE("triptrack/add-remove/{id}/{email}/")
+    fun removeTripMember(
+        @Path("id") id: String,
+        @Path("email") email: String
+    ): Call<RemoveDataResponse>
 
     @FormUrlEncoded
     @POST("triptrack/addexp/{tripId}/")

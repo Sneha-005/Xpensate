@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,7 @@ object TokenDataStore {
             encodedImage?.let { base64ToBitmap(it) }
         }
     }
+
     suspend fun saveTokens(context: Context, accessToken: String, refreshToken: String) {
         context.dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN_KEY] = accessToken
@@ -58,6 +60,7 @@ object TokenDataStore {
 
     suspend fun clearTokens(context: Context) {
         context.dataStore.edit { preferences ->
+            Log.d("clear","$preferences")
             preferences.clear()
         }
     }
@@ -85,11 +88,13 @@ object TokenDataStore {
             preferences[USERNAME_KEY]
         }
     }
+
     suspend fun saveEmail(context: Context, email: String) {
         context.dataStore.edit { preferences ->
             preferences[EMAIL_KEY] = email
         }
     }
+
     fun getEmail(context: Context): Flow<String?> {
         return context.dataStore.data.map { preferences ->
             val email = preferences[EMAIL_KEY]

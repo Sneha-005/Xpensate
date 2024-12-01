@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-
         android:elevation="4dp"
         android:title="App Title"
         android:titleTextColor="@android:color/white" />
@@ -20,8 +19,6 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigation"
-        android:layout_below="@id/main_toolbar"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
 
