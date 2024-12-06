@@ -22,11 +22,17 @@ class AddTripAdapter(
             binding.name.text = member.user.name
             binding.email.text = member.user.email
 
-            Glide.with(context)
-                .load(member.user.profile_image)
-                .placeholder(R.drawable.avatar3)
-                .error(R.drawable.avatar3)
-                .into(binding.image)
+            if (!member.user.profile_image.isNullOrEmpty()) {
+                Glide.with(context)
+                    .load(member.user.profile_image)
+                    .placeholder(R.drawable.avatar3)
+                    .error(R.drawable.avatar3)
+                    .into(binding.image)
+            } else {
+                Glide.with(context)
+                    .load(R.drawable.avatar3)
+                    .into(binding.image)
+            }
         }
     }
 
@@ -42,7 +48,9 @@ class AddTripAdapter(
     override fun getItemCount(): Int = memberList.size
 
     fun updateData(newGroupMembers: List<Member>) {
-        memberList = newGroupMembers
-        notifyDataSetChanged()
+        if (memberList != newGroupMembers) {
+            memberList = newGroupMembers
+            notifyDataSetChanged()
+        }
     }
 }

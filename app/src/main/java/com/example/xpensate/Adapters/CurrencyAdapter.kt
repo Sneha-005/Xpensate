@@ -15,7 +15,8 @@ class CurrencyAdapter(
     private val listener: OnCurrencySelectedListener
 ) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
-    var filteredList = ArrayList(currencyList)
+    private val originalList = ArrayList(currencyList)
+    private var filteredList = ArrayList(currencyList)
 
     inner class CurrencyViewHolder(private val binding: FragmentCurrencyConverterRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -46,13 +47,14 @@ class CurrencyAdapter(
 
     fun filter(query: String) {
         filteredList.clear()
-        if (query.isEmpty()) {
+        if (query.isNullOrEmpty()) {
             filteredList.addAll(currencyList)
         } else {
-            currencyList.filter {
-                it[1].contains(query, ignoreCase = true) || it[0].contains(query, ignoreCase = true)
-            }.let {
-                filteredList.addAll(it)
+            originalList.filter { currencyItem ->
+                currencyItem.getOrNull(0)?.contains(query, ignoreCase = true) == true ||
+                        currencyItem.getOrNull(1)?.contains(query, ignoreCase = true) == true
+            }.let { filteredResults ->
+                filteredList.addAll(filteredResults)
             }
         }
         notifyDataSetChanged()

@@ -1,12 +1,13 @@
 package com.example.xpensate.Fragments.Dashboard.TripTracker
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +15,6 @@ import com.example.xpensate.API.TripTracker.CreateGroupResponse.CreateGroupRespo
 import com.example.xpensate.Adapters.TripTracker.SelectedTripDetailsAdapter
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.R
-import com.example.xpensate.databinding.FragmentAddTripMemberBinding
 import com.example.xpensate.databinding.FragmentSelectedTripDetailsBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,14 +28,10 @@ class SelectedTripDetails : Fragment() {
     private var selectedGroupId: String? = null
     private var selectedGroupName: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSelectedTripDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,76 +39,91 @@ class SelectedTripDetails : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
-        selectedGroupId = arguments?.getString("groupId")
-        selectedGroupName = arguments?.getString("name")
-
-        adapter = SelectedTripDetailsAdapter(mutableListOf())
-        binding.tripsContainer.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@SelectedTripDetails.adapter
-        }
-
-        binding.tripName.text = selectedGroupName
-
+        initArgs()
+        setupUI()
+        setupRecyclerView()
+        fetchTripDetails()
         binding.backArrow.setOnClickListener {
             navController.navigateUp()
         }
+    }
+
+    private fun initArgs() {
+        selectedGroupId = arguments?.getString("groupId")
+        selectedGroupName = arguments?.getString("name")
+        binding.tripName.text = selectedGroupName
+    }
+
+    private fun setupUI() {
+        binding.backArrow.setOnClickListener { findNavController().navigateUp() }
+
         binding.splitButton.setOnClickListener {
-            val action = selectedGroupId?.let { it1 ->
-                SelectedTripDetailsDirections.actionSelectedTripDetailsToAddSplit(
-                    it1
-                )
+            selectedGroupId?.let {
+                val action = SelectedTripDetailsDirections.actionSelectedTripDetailsToAddSplit(it)
+                findNavController().navigate(action)
             }
-            if (action != null) {
-                navController.navigate(action)
+        }
+
+        binding.viewStatus.setOnClickListener {
+            selectedGroupId?.let {
+                childFragmentManager.commit {
+                    replace(R.id.trips_container, ViewStatus())
+                }
             }
         }
         binding.payButton.setOnClickListener {
-            val action = selectedGroupId?.let { it1 ->
-                SelectedTripDetailsDirections.actionSelectedTripDetailsToAddTripMember(
-                    it1
-                )
-            }
-            if (action != null) {
-                navController.navigate(action)
+            selectedGroupId?.let {
+                // Uncomment and add appropriate navigation logic
+                // val action = SelectedTripDetailsDirections.actionSelectedTripDetailsToAddTripMember(it)
+                // findNavController().navigate(action)
             }
         }
 
         binding.editButton.setOnClickListener {
-            val action = selectedGroupId?.let { it1 ->
-                SelectedTripDetailsDirections.actionSelectedTripDetailsToRemoveFromTrip(
-                    it1
-                )
-            }
-            if (action != null) {
-                navController.navigate(action)
+            selectedGroupId?.let {
+                val action = SelectedTripDetailsDirections.actionSelectedTripDetailsToRemoveFromTrip(it)
+                findNavController().navigate(action)
             }
         }
-        fetchTripDetails()
+    }
+
+    private fun setupRecyclerView() {
+        Log.e("recycle","set up")
+        adapter = SelectedTripDetailsAdapter(mutableListOf())
+        binding.tripsContainer.layoutManager = LinearLayoutManager(context)
+        binding.tripsContainer.adapter = adapter
     }
 
     private fun fetchTripDetails() {
         selectedGroupId?.let { groupId ->
-            AuthInstance.api.getTripGroupDetails(groupId).enqueue(object :
-                Callback<CreateGroupResponse> {
+            AuthInstance.api.getTripGroupDetails(groupId).enqueue(object : Callback<CreateGroupResponse> {
                 override fun onResponse(
                     call: Call<CreateGroupResponse>,
                     response: Response<CreateGroupResponse>
                 ) {
                     if (response.isSuccessful) {
-                        val expenses = response.body()?.expenses ?: emptyList()
+                        val expenses = response.body()?.expenses.orEmpty()
                         adapter.updateRecords(expenses)
                     } else {
-                        Toast.makeText(context,"Failed to fetch group details",Toast.LENGTH_SHORT).show()
+                        if(response.code() == 500){
+                            Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<CreateGroupResponse>, t: Throwable) {
-                    Toast.makeText(context,"Network issue",Toast.LENGTH_SHORT).show()
+                    showToast("Network issue")
                 }
             })
         }
     }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

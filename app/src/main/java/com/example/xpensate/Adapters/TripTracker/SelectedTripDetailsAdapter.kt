@@ -1,5 +1,7 @@
 package com.example.xpensate.Adapters.TripTracker
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,22 +14,24 @@ class SelectedTripDetailsAdapter(private var groupList: MutableList<Expense>) :
     private fun formatShare(share: Double): String {
         return String.format("%.2f", share)
     }
+
     inner class RecordViewHolder(private val binding: SelectedTripDetailsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(groupList: List<Expense>) {
-            binding.Name.text = groupList.joinToString { it.paidby_email }
-            binding.amount.text = groupList.joinToString { it.amount }
-            if(groupList.map { it.is_paid }.contains(true)){
-                binding.paidButton.setBackgroundColor(0x00FF00)
-                binding.paidButton.text = "Paid "+ groupList.joinToString { formatShare(it.share) }
-            }
-            else{
-                binding.paidButton.text = "Pay" + groupList.joinToString { formatShare(it.share) }
+        fun bind(expense: Expense) {
+            Log.d("expense","$expense")
+            binding.Name.text = expense.paidby_email?: "No name"
+            binding.amount.text = expense.amount.toString()?: "0.00"
+            val amountValue = expense.amount.toDoubleOrNull() ?: 0.0
 
+            if (expense.is_paid) {
+                binding.paidButton.setBackgroundColor(Color.GREEN)
+                binding.paidButton.text = "Paid ${formatShare(expense.share)}"
+            } else {
+                binding.paidButton.setBackgroundColor(Color.RED)
+                binding.paidButton.text = "Pay ${formatShare(expense.share)}"
             }
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordViewHolder {
         val binding = SelectedTripDetailsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -35,7 +39,9 @@ class SelectedTripDetailsAdapter(private var groupList: MutableList<Expense>) :
     }
 
     override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
-        holder.bind(listOf(groupList[position]))
+        groupList.getOrNull(position)?.let {
+            holder.bind(it)
+        }
     }
 
     override fun getItemCount(): Int = groupList.size

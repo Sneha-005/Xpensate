@@ -17,6 +17,7 @@ import com.example.xpensate.API.auth.request.RegisterRequest
 import com.example.xpensate.API.auth.response.RegisterResponse
 import com.example.xpensate.databinding.FragmentSignUpBinding
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -147,41 +148,28 @@ class Sign_up : Fragment() {
     }
 
     private fun registerUser(email: String) {
-        showLoadingDialog()
+        ProgressDialogHelper.showProgressDialog(requireContext())
         val password = binding.password.text.toString().trim()
         val confirmPassword = binding.checkpassword.text.toString().trim()
         val registerRequest = RegisterRequest(confirm_password = confirmPassword, email = email, password = password)
 
         AuthInstance.api.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
-                dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), response.body()?.message ?: "Registration successful", Toast.LENGTH_SHORT).show()
                     val action = Sign_upDirections.actionSignUpToVerify(email,password,confirmPassword,)
                     navController.navigate(action)
                 } else {
-                    Toast.makeText(requireContext(), "Registration failed: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "User exist already", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-               dismissLoadingDialog()
-                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                ProgressDialogHelper.hideProgressDialog()
+                Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun showLoadingDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
-        loadingDialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-        loadingDialog?.show()
-    }
-
-    private fun dismissLoadingDialog() {
-        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {

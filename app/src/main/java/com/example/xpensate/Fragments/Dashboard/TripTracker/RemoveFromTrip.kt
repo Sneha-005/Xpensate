@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.xpensate.API.TripTracker.CreateGroupResponse.CreateGroupResponse
 import com.example.xpensate.Adapters.TripTracker.RemoveTripAdapter
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentRemoveFromTripBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +24,7 @@ class RemoveFromTrip : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: RemoveTripAdapter
     private var selectedGroupId: String? = null
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class RemoveFromTrip : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController=findNavController()
 
         selectedGroupId = arguments?.getString("groupId")
 
@@ -55,6 +60,10 @@ class RemoveFromTrip : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@RemoveFromTrip.adapter
         }
+        binding.backArrow.setOnClickListener {
+            navController.navigateUp()
+        }
+
 
         fetchGroupData()
     }
@@ -71,14 +80,17 @@ class RemoveFromTrip : Fragment() {
                         adapter.updateData(groupMembers)
                         Log.d("RemoveFromTrip", "Fetched members: $groupMembers")
                     } else {
-                        Log.e("RemoveFromTrip", "Error: ${response.code()}")
-                        Toast.makeText(context, "Failed to fetch group details", Toast.LENGTH_SHORT).show()
+                        if(response.code() == 500){
+                            Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<CreateGroupResponse>, t: Throwable) {
                     Log.e("RemoveFromTrip", "API Error: ${t.message}")
-                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
                 }
             })
         } ?: run {

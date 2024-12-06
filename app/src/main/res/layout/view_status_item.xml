@@ -1,0 +1,66 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="8dp"
+    android:layout_marginVertical="8dp"
+    android:backgroundTint="@color/inner_box">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textFontWeight="400"
+            android:layout_marginLeft="25dp"
+            android:textSize="14sp"
+            android:lineHeight="20sp"
+            android:textColor="@color/font_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/amount" />
+        <TextView
+            android:id="@+id/amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textFontWeight="400"
+            android:layout_marginLeft="25dp"
+            android:textSize="14sp"
+            android:lineHeight="20sp"
+            android:textColor="@color/font_color"
+            app:layout_constraintTop_toBottomOf="@id/Name"
+            app:layout_constraintBottom_toTopOf="@id/seekBar"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/amount"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Button
+            android:id="@+id/paid_button"
+            android:layout_width="106dp"
+            android:layout_height="26dp"
+            android:text="Pay"
+            android:textSize="14sp"
+            android:textFontWeight="600"
+            android:letterSpacing="0.05"
+            android:lineHeight="20sp"
+            android:textAllCaps="false"
+            android:backgroundTint="#00FF88"
+            android:textColor="#000000"
+            android:background="@drawable/circular_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

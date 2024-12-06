@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.xpensate"
-    compileSdk = 34
+    compileSdk = 35
 
     buildFeatures {
         viewBinding = true
@@ -27,11 +27,9 @@ android {
     buildTypes {
 
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -52,12 +50,13 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.viewpager2)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation("com.auth0:java-jwt:4.0.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.github.qamarelsafadi:CurvedBottomNavigation:0.1.3")
-    implementation("androidx.databinding:databinding-runtime:7.4.0")
+    implementation("androidx.databinding:databinding-runtime:8.7.2")
+    implementation(libs.androidx.ui.test.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,13 +65,17 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.androidx.datastore)
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    androidTestImplementation ("androidx.test:runner:1.5.0")
+    androidTestImplementation ("androidx.test:rules:1.5.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-messaging")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.airbnb.android:lottie:6.1.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    implementation("com.airbnb.android:lottie:6.6.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation ("com.seosh817:circularseekbar:1.0.2")
+
 }

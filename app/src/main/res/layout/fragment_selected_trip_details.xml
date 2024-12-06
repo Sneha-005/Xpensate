@@ -7,12 +7,21 @@
     android:layout_height="match_parent"
     android:padding="15dp"
     android:background="@color/background">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         android:background="@drawable/background_border"
         tools:ignore="MissingConstraints"
+        android:layout_marginBottom="70dp"
         app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.925" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/header"
@@ -86,24 +95,43 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="440dp"
+            android:layout_height="0dp"
             android:id="@+id/trips_container"
-            android:layout_marginTop="85dp"
+            android:layout_margin="15dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintBottom_toTopOf="@id/guideline_top"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/split_button"
-            android:layout_width="182dp"
+            android:id="@+id/view_status"
+            android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginTop="532dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_border"
+            android:lineHeight="20sp"
+            android:text="VIEW STATUS"
+            android:textAllCaps="false"
+            android:textColor="@color/green"
+            android:textFontWeight="600"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/split_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf= "@id/guideline_top" />
+
+        <Button
+            android:id="@+id/split_button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/box"
             android:backgroundTint="#00DF82"
             android:lineHeight="20sp"
@@ -113,8 +141,8 @@
             android:textFontWeight="600"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/view_status"
+            app:layout_constraintTop_toBottomOf= "@id/guideline_top" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

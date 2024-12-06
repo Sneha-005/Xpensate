@@ -14,8 +14,8 @@ class TripTrackerDashboardAdapter(
     class RecordViewHolder(private val binding: TripTrackerDashboardItemsBinding, private val onItemClick: (Data) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Data) {
-            binding.inviteCodeRecycler.text = data.invitecode
-            binding.tripNameRecycler.text = data.name
+            binding.inviteCodeRecycler.text = data.invitecode ?: "No invite code"
+            binding.tripNameRecycler.text = data.name ?: "Unnamed Trip"
             binding.root.setOnClickListener {
                 onItemClick(data)
             }
@@ -28,7 +28,10 @@ class TripTrackerDashboardAdapter(
     }
 
     override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
-        holder.bind(groupList[position])
+        val data = groupList.getOrNull(position)
+        data?.let {
+            holder.bind(it)
+        }
     }
 
     override fun getItemCount(): Int = groupList.size

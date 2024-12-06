@@ -3,8 +3,10 @@ package com.example.xpensate.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.test.isSelected
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -15,6 +17,7 @@ import com.qamar.curvedbottomnaviagtion.CurvedBottomNavigation
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
+    private var selectedModelId: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,16 +41,14 @@ class HomeActivity : AppCompatActivity() {
                     R.id.debtsAndLends -> binding.bottomNavigation.show(1)
                     R.id.bill_container -> binding.bottomNavigation.show(2)
                     R.id.tripTrackerDashBoard -> binding.bottomNavigation.show(3)
-                    R.id.profile2 -> binding.bottomNavigation.show(4)
-                    R.id.preferredCurrency -> binding.bottomNavigation.show(5)
-                    R.id.updateContact -> binding.bottomNavigation.show(6)
-                    R.id.appLock -> binding.bottomNavigation.show(7)
-                    R.id.currencyConverter -> binding.bottomNavigation.show(8)
                 }
                 if (restrictToolBar(destination.id)) {
                     supportActionBar?.hide()
                     binding.bottomNavigation.visibility = View.VISIBLE
-                } else if (isLaterFragment(destination.id)) {
+                } else if (restrictNavBar(destination.id)) {
+                    supportActionBar?.show()
+                    binding.bottomNavigation.visibility = View.GONE
+                } else if (restrictBoth(destination.id)) {
                     supportActionBar?.hide()
                     binding.bottomNavigation.visibility = View.GONE
                 } else {
@@ -57,7 +58,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        val bottomNav: CurvedBottomNavigation= binding.bottomNavigation
+        val bottomNav: CurvedBottomNavigation = binding.bottomNavigation
 
         bottomNav.add(CurvedBottomNavigation.Model(0, "Home", R.drawable.home_nav))
         bottomNav.add(CurvedBottomNavigation.Model(1, "Debts", R.drawable.debts_nav))
@@ -65,47 +66,60 @@ class HomeActivity : AppCompatActivity() {
         bottomNav.add(CurvedBottomNavigation.Model(3, "Trip Tracker", R.drawable.trip_nav))
         bottomNav.add(CurvedBottomNavigation.Model(4, "Profile", R.drawable.profile_nav))
 
-        bottomNav.setOnClickMenuListener { model ->
-                when (model.id) {
-                    0 -> {
-                        if (navController?.currentDestination?.id != R.id.blankFragment) {
-                            navController?.navigate(R.id.blankFragment)
-                        }
-                    }
-                    1 -> {
-                        if (navController?.currentDestination?.id != R.id.debtsAndLends) {
-                            navController?.navigate(R.id.debtsAndLends)
-                        }
-                    }
-                    2 -> {
-                        if (navController?.currentDestination?.id != R.id.bill_container) {
-                            navController?.navigate(R.id.bill_container)
-                        }
-                    }
-                    3 -> {
-                        if (navController?.currentDestination?.id != R.id.tripTrackerDashBoard) {
-                            navController?.navigate(R.id.tripTrackerDashBoard)
-                        }
-                    }
-                    4 -> {
-                        if (navController?.currentDestination?.id != R.id.profile2) {
-                            navController?.navigate(R.id.profile2)
-                        }
-                    }
-                    5 -> {
-                        if (navController?.currentDestination?.id != R.id.preferredCurrency) {
-                            navController?.navigate(R.id.preferredCurrency)
-                        }
-                    }
-                }
-            }
 
+        bottomNav.setOnClickMenuListener { model ->
+            if (selectedModelId != model.id) {
+                selectedModelId = model.id
+                navigateToDestination(model.id, navController)
+            }
+        }
         ViewCompat.setOnApplyWindowInsetsListener(bottomNav) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
     }
+    private fun navigateToDestination(modelId: Int, navController: NavController?) {
+        when (modelId) {
+            0 -> {
+                if (navController?.currentDestination?.id != R.id.blankFragment) {
+                    navController?.navigate(R.id.blankFragment)
+                }
+            }
+
+            1 -> {
+                if (navController?.currentDestination?.id != R.id.debtsAndLends) {
+                    navController?.navigate(R.id.debtsAndLends)
+                }
+            }
+
+            2 -> {
+                if (navController?.currentDestination?.id != R.id.bill_container) {
+                    navController?.navigate(R.id.bill_container)
+                }
+            }
+
+            3 -> {
+                if (navController?.currentDestination?.id != R.id.tripTrackerDashBoard) {
+                    navController?.navigate(R.id.tripTrackerDashBoard)
+                }
+            }
+
+            4 -> {
+                if (navController?.currentDestination?.id != R.id.profile2) {
+                    navController?.navigate(R.id.profile2)
+                }
+            }
+
+            5 -> {
+                if (navController?.currentDestination?.id != R.id.preferredCurrency) {
+                    navController?.navigate(R.id.preferredCurrency)
+                }
+            }
+        }
+    }
+
+
 
     private fun restrictToolBar(destinationId: Int): Boolean {
         val restrictToolBar = setOf(
@@ -120,28 +134,41 @@ class HomeActivity : AppCompatActivity() {
             R.id.addMember,
             R.id.splitBillGroupShow,
             R.id.addSplit,
-            R.id.updateGroup
+            R.id.updateGroup,
+            R.id.addMember,
+            R.id.selectedTripDetails,
+            R.id.addTripMember,
+            R.id.addSplit,
+            R.id.profile2,
+            R.id.split_bill2
+
         )
         return destinationId in restrictToolBar
     }
 
-    private fun isLaterFragment(destinationId: Int): Boolean {
+    private fun restrictNavBar(destinationId: Int): Boolean {
         val visibleFragments = setOf(
-            R.id.blankFragment,
+            R.id.updateContact,
+            R.id.appLock
+        )
+        return destinationId in visibleFragments
+    }
+    private fun restrictBoth(destinationId: Int): Boolean {
+        val restrictBoth = setOf(
             R.id.login2,
-            R.id.splashScreen,
             R.id.sign_up,
+            R.id.reset,
+            R.id.verifyReset,
+            R.id.slider,
             R.id.started_1,
             R.id.started_2,
             R.id.started_3,
             R.id.started_4,
             R.id.started_5,
-            R.id.reset,
             R.id.verify,
-            R.id.slider,
-            R.id.verifyReset
+            R.id.splashScreen
         )
-        return destinationId in visibleFragments
+        return destinationId in restrictBoth
     }
 
     override fun onSupportNavigateUp(): Boolean {

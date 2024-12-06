@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentDebtsAndLendsBinding
 
@@ -25,9 +26,12 @@ class DebtsAndLends : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ProgressDialogHelper.showProgressDialog(requireContext())
 
         binding.tabAdd.background = ContextCompat.getDrawable(requireContext(), R.drawable.bottom_border)
         childFragmentManager.commit {
+            ProgressDialogHelper.hideProgressDialog()
+
             replace(R.id.fragment_container, DebtsAdd())
         }
 

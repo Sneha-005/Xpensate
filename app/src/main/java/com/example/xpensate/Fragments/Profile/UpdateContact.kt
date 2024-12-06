@@ -19,6 +19,7 @@ import com.example.xpensate.API.home.UpdateContact.UpdateContactOtpVerify
 import com.example.xpensate.API.home.UpdateContact.UpdateContactResponse
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Fragments.Auth.OtpTextWatcher
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentUpdateContactBinding
 import kotlinx.coroutines.Job
@@ -33,7 +34,7 @@ class UpdateContact : Fragment() {
     private val binding get() = _binding!!
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
-    private val otpTimeout = 300000L
+    private val otpTimeout = 60000L
     private var verifyJob: Job? = null
     private var loadingDialog: AlertDialog? = null
 
@@ -46,13 +47,14 @@ class UpdateContact : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentUpdateContactBinding.inflate(inflater, container, false)
-        return binding.root    }
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         var otpLayout = binding.otpLayout
-        var phone = binding.phoneNo.text.toString()
+        var phone = binding.phoneNo.text.toString().trim()
         val updateButton = view.findViewById<View>(R.id.OtpButton)
         otpLayout?.visibility = View.GONE
 
@@ -80,7 +82,7 @@ class UpdateContact : Fragment() {
         binding.VerifyButton.setOnClickListener {
             val otp = otpDigit1.text.toString() + otpDigit2.text.toString() + otpDigit3.text.toString() + otpDigit4.text.toString()
             if (otp.length == 4) {
-                verifyOtp(phone,otp)
+                verifyOtp(phone, otp)
             } else {
                 Toast.makeText(requireContext(), "Please enter a valid OTP", Toast.LENGTH_SHORT).show()
             }
@@ -96,46 +98,56 @@ class UpdateContact : Fragment() {
     }
 
     private fun startOtpTimer(phone: String) {
+        binding.notRecieve.visibility = View.GONE
         countDownTimer = object : CountDownTimer(otpTimeout, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 if (_binding == null) return
                 val secondsRemaining = (millisUntilFinished / 1000).toInt()
-                binding.timerTextView.text = String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
+                binding.timerTextView.text = "Resend in" + String.format("%02d:%02d", secondsRemaining / 60, secondsRemaining % 60)
             }
             override fun onFinish() {
                 if (_binding == null) return
                 binding.timerTextView.apply {
-                    text = "Time expired!"
+                    Toast.makeText(context,"OTP Expired",Toast.LENGTH_SHORT).show()
                     setTextColor(Color.RED)
                 }
+                binding.notRecieve.visibility = View.VISIBLE
                 binding.VerifyButton.isEnabled = false
-                binding.timerTextView.visibility = View.VISIBLE
+                binding.resend.visibility = View.VISIBLE
             }
         }.start()
     }
 
     private fun resendOtp(phone: String) {
+        ProgressDialogHelper.showProgressDialog(requireContext())
         AuthInstance.api.updateContact(phone).enqueue(object : Callback<UpdateContactResponse> {
             override fun onResponse(call: Call<UpdateContactResponse>, response: Response<UpdateContactResponse>) {
+                ProgressDialogHelper.hideProgressDialog()
                 if (_binding == null) return
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(phone)
                     binding.VerifyButton.isEnabled = true
                 } else {
-                    Toast.makeText(requireContext(), "Failed to resend OTP", Toast.LENGTH_SHORT).show()
-                }
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()                }
             }
 
             override fun onFailure(call: Call<UpdateContactResponse>, t: Throwable) {
+                ProgressDialogHelper.hideProgressDialog()
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    private fun sendOtp(phone: String,otpLayout:View?=null) {
+    private fun sendOtp(phone: String, otpLayout: View? = null) {
+        ProgressDialogHelper.showProgressDialog(requireContext())
         AuthInstance.api.updateContact(phone).enqueue(object : Callback<UpdateContactResponse> {
             override fun onResponse(call: Call<UpdateContactResponse>, response: Response<UpdateContactResponse>) {
+                ProgressDialogHelper.hideProgressDialog()
                 try {
                     Log.d("sendOtp", "${response.code()}")
                     if (response.isSuccessful) {
@@ -145,33 +157,40 @@ class UpdateContact : Fragment() {
                         otpLayout?.visibility = View.VISIBLE
                         startOtpTimer(phone)
                     }
-                }catch (e: Exception) {
-                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                } catch (e: Exception) {
+                    ProgressDialogHelper.hideProgressDialog()
+                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onFailure(call: Call<UpdateContactResponse>, t: Throwable) {
+                ProgressDialogHelper.hideProgressDialog()
                 Toast.makeText(context, "Error: Failed to send OTP", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
     private fun verifyOtp(contact: String, otp: String) {
+        ProgressDialogHelper.showProgressDialog(requireContext())
         val request = OtpVerifyRequest(contact, otp)
         Log.d("verifyOtp", "Request: $request")
         AuthInstance.api.updateVerify(request).enqueue(object : Callback<UpdateContactOtpVerify> {
             override fun onResponse(call: Call<UpdateContactOtpVerify>, response: Response<UpdateContactOtpVerify>) {
+                ProgressDialogHelper.hideProgressDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Verified", Toast.LENGTH_SHORT).show()
                     navController.navigate(R.id.action_updateContact_to_profile2)
                 } else {
-                    response.errorBody()?.let {
-                        Log.e("verifyOtp", "Error: ${it.string()}")
-                        Toast.makeText(requireContext(), "Error: ${it.string()}", Toast.LENGTH_SHORT).show()
-                    } ?: Toast.makeText(requireContext(), "OTP Verification Failed", Toast.LENGTH_SHORT).show()
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<UpdateContactOtpVerify>, t: Throwable) {
+                ProgressDialogHelper.hideProgressDialog()
                 Log.e("verifyOtp", "Network Error: ${t.message}")
                 Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }

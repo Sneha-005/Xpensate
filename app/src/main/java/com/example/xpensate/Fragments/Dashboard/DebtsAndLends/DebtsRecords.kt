@@ -21,6 +21,8 @@ import com.example.xpensate.databinding.FragmentDebtsRecordsBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.app.ProgressDialog
+import com.example.xpensate.ProgressDialogHelper
 
 class DebtsRecords : Fragment() {
 
@@ -45,11 +47,7 @@ class DebtsRecords : Fragment() {
 
         setupRecyclerViews()
         fetchDebtsData()
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navController.navigate(R.id.action_debtsAndLends_to_blankFragment)
-            }
-        })
+        setupOnBackPressedCallback()
     }
 
     private fun setupRecyclerViews() {
@@ -65,28 +63,63 @@ class DebtsRecords : Fragment() {
     }
 
     private fun fetchDebtsData() {
-        AuthInstance.api.getDebts().enqueue(object : Callback<DebtsData> {
-            override fun onResponse(call: Call<DebtsData>, response: Response<DebtsData>) {
-                Log.d("Debt", response.body().toString())
-                if (response.isSuccessful) {
-                    response.body()?.data?.let { debts: List<DebtsList> ->
-                        debtsAdapter.updateRecords(debts)
-                        lendsAdapter.updateRecords(debts)
-                    }
-                } else {
-                    context?.let {
-                        Toast.makeText(it, "Failed to fetch debts data", Toast.LENGTH_SHORT).show()
+        ProgressDialogHelper.showProgressDialog(requireContext())
+        try {
+            AuthInstance.api.getDebts().enqueue(object : Callback<DebtsData> {
+                override fun onResponse(call: Call<DebtsData>, response: Response<DebtsData>) {
+                    ProgressDialogHelper.hideProgressDialog()
+                    try {
+                        if (response.isSuccessful) {
+                            response.body()?.data?.let { debts: List<DebtsList> ->
+                                debtsAdapter.updateRecords(debts)
+                                lendsAdapter.updateRecords(debts)
+                            }
+                        } else {
+                            context?.let {
+                                if(response.code() == 500){
+                                    Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                                }
+                                val errorBody = response.message().toString()
+                                Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("DebtsRecords", "Error parsing response: ${e.message}")
+                        context?.let {
+                            Toast.makeText(it, "An error occurred while processing data", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<DebtsData>, t: Throwable) {
-                context?.let {
-                    Toast.makeText(it, "API call failed", Toast.LENGTH_SHORT).show()
+                override fun onFailure(call: Call<DebtsData>, t: Throwable) {
+                    ProgressDialogHelper.hideProgressDialog()
+                    Log.e("DebtsRecords", "API call failed: ${t.message}")
+                    context?.let {
+                        Toast.makeText(it, "API call failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+        } catch (e: Exception) {
+            ProgressDialogHelper.hideProgressDialog()
+            Log.e("DebtsRecords", "Error initiating API call: ${e.message}")
+            context?.let {
+                Toast.makeText(it, "Failed to initiate API call", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setupOnBackPressedCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                try {
+                    navController.navigate(R.id.action_debtsAndLends_to_blankFragment)
+                } catch (e: Exception) {
+                    Log.e("DebtsRecords", "Error navigating back: ${e.message}")
                 }
             }
         })
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -2,6 +2,8 @@ package com.example.xpensate.Adapters.SlitBillFeature
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,14 +15,15 @@ class SplitAmountpageAdapter(
     private val groupId: String,
     private val markBillAsPaid: (String, String, Boolean) -> Unit
 ) : RecyclerView.Adapter<SplitAmountpageAdapter.TableViewHolder>() {
+
     private val checkboxState = mutableMapOf<String, Boolean>()
 
     inner class TableViewHolder(private val binding: SplitAmountPageItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: BillParticipantX) {
             binding.name.text = item.participant
-            binding.share.setText(item.amount)
-            binding.checkbox.isChecked = checkboxState[item.participant] ?: false
+
+            binding.share.setText(item.amount.toString())
 
             binding.share.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -28,10 +31,23 @@ class SplitAmountpageAdapter(
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
-                    item.amount = s.toString()
+                    val inputText = s.toString().replace("%", "").trim()
+                    val sharePercentage = inputText.toDoubleOrNull()
+
+                    if (sharePercentage != null) {
+                        val totalAmount = binding.amountBill.text.toString().toDoubleOrNull() ?: 0.0
+                        val percentage = if (totalAmount > 0) (sharePercentage * totalAmount) / 100 else 0.0
+                        Log.d("Split","$totalAmount $sharePercentage $percentage")
+
+                        binding.amountBill.text = "%.2f".format(percentage)
+                    } else {
+                        binding.amountBill.text = "100"
+                    }
                 }
+
             })
 
+            binding.checkbox.isChecked = checkboxState[item.participant] ?: false
             binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
                 checkboxState[item.participant] = isChecked
                 markBillAsPaid(groupId, item.participant, isChecked)

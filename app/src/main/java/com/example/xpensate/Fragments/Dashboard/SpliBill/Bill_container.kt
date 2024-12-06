@@ -14,6 +14,7 @@ import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitAmountPage
+import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitBillGroupShow
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.UpdateGroup
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.split_bill
 import com.example.xpensate.R
@@ -49,6 +50,7 @@ class bill_container : Fragment() {
             replace(R.id.fragment_container, RecordEntry())
         }
 
+
         val newGroupButton = view.findViewById<Button>(R.id.new_group_button)
         newGroupButton?.setOnClickListener {
             if (tabSplitBill.background != null) {
@@ -80,9 +82,27 @@ class bill_container : Fragment() {
         }
     }
 
-    fun replaceFragmentWithAplitAmountPage(groupId: String) {
+    fun replaceFragmentWithSplitAmountPage(groupId: String, name: String) {
+        val fragment = SplitAmountPage().apply {
+            arguments = Bundle().apply {
+                putString("id", groupId)
+                putString("name", name)
+            }
+        }
         childFragmentManager.commit {
-            replace(R.id.fragment_container, SplitAmountPage())
+            replace(R.id.fragment_container, fragment)
+            addToBackStack(null)
+        }
+    }
+
+    fun replaceFragmentWithSplitBillGroupShow(groupId: String) {
+        val fragment = SplitBillGroupShow().apply {
+            arguments = Bundle().apply {
+                putString("groupId", groupId)
+            }
+        }
+        childFragmentManager.commit {
+            replace(R.id.fragment_container, fragment)
             addToBackStack(null)
         }
     }

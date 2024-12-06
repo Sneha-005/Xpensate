@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xpensate.API.home.DebtsAndLends.Debtmark
 import com.example.xpensate.API.home.DebtsAndLends.DebtsList
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.LendsRecordsItemBinding
 import retrofit2.Call
@@ -21,9 +23,15 @@ class LendsAdapter(private val recordList: MutableList<DebtsList>) :
         RecyclerView.ViewHolder(binding.root) {
 
         private fun markDebtAsPaid(debtId: String) {
+
+            binding.resolveButton.apply {
+                text = "Processing..."
+                isEnabled = false
+            }
             AuthInstance.api.markDebtPaid(debtId.toInt()).enqueue(object : Callback<Debtmark> {
                 override fun onResponse(call: Call<Debtmark>, response: Response<Debtmark>) {
                     if (response.isSuccessful) {
+
                         binding.resolveButton.apply {
                             text = "Resolved"
                             setTextColor(context.resources.getColor(R.color.black))
@@ -42,18 +50,18 @@ class LendsAdapter(private val recordList: MutableList<DebtsList>) :
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        Toast.makeText(
-                            binding.root.context,
-                            "Failed to mark as paid. Please try again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if(response.code() == 500){
+                            Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(binding.root.context,"$errorBody",Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<Debtmark>, t: Throwable) {
                     Toast.makeText(
                         binding.root.context,
-                        "Error: ${t.message}",
+                        "Network Error",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

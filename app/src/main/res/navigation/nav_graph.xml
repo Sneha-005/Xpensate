@@ -179,6 +179,13 @@
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" >
         <action
+            android:id="@+id/action_records_to_deleteRecord"
+            app:destination="@id/deleteRecord" >
+        <argument
+            android:name="id"
+            app:argType="string" />
+        </action>
+        <action
             android:id="@+id/action_blankFragment_to_login2"
             app:destination="@id/login2" />
         <action
@@ -205,6 +212,9 @@
         <action
             android:id="@+id/action_blankFragment_to_splitBillMore"
             app:destination="@id/splitBillMore" />
+        <action
+            android:id="@+id/action_blankFragment_to_budgetBuilderShow"
+            app:destination="@id/budgetBuilderShow" />
     </fragment>
     <fragment
         android:id="@+id/currencyConverter"
@@ -235,6 +245,9 @@
             <argument
                 android:name="groupId"
                 app:argType="string" />
+            <argument
+                android:name="name"
+                app:argType="string" />
         </action>
         <action
             android:id="@+id/action_bill_container_to_splitBillGroupShow"
@@ -255,6 +268,13 @@
         <action
             android:id="@+id/action_records_to_blankFragment"
             app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_records_to_deleteRecord"
+            app:destination="@id/deleteRecord" >
+        <argument
+            android:name="id"
+            app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/profile2"
@@ -321,6 +341,9 @@
         <action
             android:id="@+id/action_budgetBuilder_to_blankFragment"
             app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_budgetBuilder_to_budgetBuilderShow"
+            app:destination="@id/budgetBuilderShow" />
     </fragment>
     <fragment
         android:id="@+id/updateGroup"
@@ -334,6 +357,9 @@
         <action
             android:id="@+id/action_split_bill2_to_updateGroup"
             app:destination="@id/updateGroup" />
+        <action
+            android:id="@+id/action_split_bill2_to_splitBillGroupShow"
+            app:destination="@id/splitBillGroupShow" />
     </fragment>
     <fragment
         android:id="@+id/addMember"
@@ -351,13 +377,19 @@
         android:name="com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.SplitAmountPage"
         android:label="SplitAmountPage">
         <argument
-            android:name="groupId"
+            android:name="id"
             app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_splitAmountPage_to_bill_container"
+            app:destination="@id/bill_container" />
     </fragment>
     <fragment
         android:id="@+id/tripTrackerDashBoard"
         android:name="com.example.xpensate.Fragments.Dashboard.TripTracker.TripTrackerDashBoard"
-        android:label="TripTrackerDashBoard" >
+        android:label="Trip Tracker" >
         <action
             android:id="@+id/action_tripTrackerDashBoard_to_blankFragment"
             app:destination="@id/blankFragment" />
@@ -411,6 +443,9 @@
         <argument
             android:name="groupId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_splitBillGroupShow_to_split_bill2"
+            app:destination="@id/split_bill2" />
     </fragment>
     <fragment
         android:id="@+id/removeFromTrip"
@@ -422,6 +457,9 @@
         <argument
             android:name="groupId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_removeFromTrip_to_addTripMember"
+            app:destination="@id/addTripMember" />
     </fragment>
     <fragment
         android:id="@+id/addTripMember"
@@ -431,7 +469,7 @@
             android:id="@+id/action_addTripMember_to_selectedTripDetails"
             app:destination="@id/selectedTripDetails" />
         <argument
-            android:name="groupId"
+            android:name="id"
             app:argType="string" />
     </fragment>
     <fragment
@@ -474,4 +512,23 @@
 
 
     </fragment>
+    <fragment
+        android:id="@+id/deleteRecord"
+        android:name="com.example.xpensate.Fragments.Dashboard.DeleteRecord"
+        android:label="DeleteRecord" />
+    <argument
+        android:name="groupId"
+        app:argType="string" />
+    <fragment
+        android:id="@+id/budgetBuilderShow"
+        android:name="com.example.xpensate.Fragments.Dashboard.BudgetBuilder.BudgetBuilderShow"
+        android:label="Budget Builder" >
+        <action
+            android:id="@+id/action_budgetBuilderShow_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_budgetBuilderShow_to_budgetBuilder"
+            app:destination="@id/budgetBuilder" />
+    </fragment>
+
 </navigation>

@@ -25,8 +25,12 @@ class AddSplit: Fragment() {
     private val binding get() = _binding!!
     private var selectedGroupId: String? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        arguments?.let {
+            selectedGroupId = it.getString("groupId")
+        }
     }
 
     override fun onCreateView(
@@ -41,14 +45,22 @@ class AddSplit: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         val paidBy = binding.name.text.toString()
-        val amount = binding.amount.text.toString().toDouble()
+        val input = binding.amount.text.toString()
+        val amount = input.toDoubleOrNull()?: 0.0
         val whatFor = binding.paidFor.text.toString()
         val tripId = selectedGroupId?.toInt()
         binding.splitButton.setOnClickListener {
+            Log.d("Groupid","$tripId")
             if (tripId != null) {
                 addExpense(tripId,amount,paidBy,whatFor)
             }
+            else{
+                Toast.makeText(context,"group id is not provided",Toast.LENGTH_SHORT).show()
+            }
 
+        }
+        binding.backArrow.setOnClickListener {
+            navController.navigateUp()
         }
 
 
@@ -57,16 +69,32 @@ class AddSplit: Fragment() {
         AuthInstance.api.addExpense(tripId, amount, paidBy, whatFor).enqueue(object :
             Callback<AddTripExpense> {
             override fun onResponse(call: Call<AddTripExpense>, response: Response<AddTripExpense>) {
-                if (response.isSuccessful) {
-                    Log.d("AddExpense", "Expense added successfully: ${response.body()}")
-                    Toast.makeText(requireContext(),"Record added successfully",Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.e("AddExpense", "Failed: ${response.errorBody()?.string()}")
+                if (isAdded) {
+                    if (response.isSuccessful) {
+                        Log.d("AddExpense", "Expense added successfully: ${response.body()}")
+                        Toast.makeText(
+                            requireContext(),
+                            "Record added successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigateUp()
+                    } else {
+                        if (response.code() == 500) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Something went wrong",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(requireContext(), "$errorBody", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<AddTripExpense>, t: Throwable) {
                 Log.e("AddExpense", "Error: ${t.message}")
+                Toast.makeText(requireContext(),"Network issue",Toast.LENGTH_SHORT).show()
             }
         })
     }

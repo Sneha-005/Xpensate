@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:padding="16dp"
         android:background="@drawable/background_border"
+        android:layout_marginBottom="60dp"
         tools:ignore="MissingConstraints"
         app:layout_constraintTop_toTopOf="parent">
 

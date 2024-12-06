@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,13 @@ class Slider : Fragment(), AdapterSlider.SkipListener {
             started_4().apply { setSkipListener(this@Slider) },
             started_5().apply { setSkipListener(this@Slider) }
         )
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                    requireActivity().finish()
+            }
+        })
 
         val adapter = AdapterSlider(requireActivity(), fragmentList)
 

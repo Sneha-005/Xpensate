@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#00DF82</color>
+    <color name="greenShade">#007947</color>
     <color name="link">#A1B7FF</color>
     <color name="red">#FF5757</color>
     <color name="selectedRadio">#242828</color>

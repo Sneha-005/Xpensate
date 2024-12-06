@@ -24,6 +24,7 @@ import com.example.xpensate.R
 import com.example.xpensate.TokenDataStore
 import com.example.xpensate.databinding.FragmentLoginBinding
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -104,14 +105,14 @@ class Login : Fragment() {
     }
 
     private fun performLogin() {
-        showLoadingDialog()
+        ProgressDialogHelper.showProgressDialog(requireContext())
         val email = binding.email.text.toString().trim()
         val password = binding.password.text.toString().trim()
         val loginRequest = LoginRequest(email, password)
 
         AuthInstance.api.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                 if (response.isSuccessful) {
                     response.body()?.let { loginResponse ->
                         saveTokens(loginResponse.tokens.access, loginResponse.tokens.refresh)
@@ -121,17 +122,17 @@ class Login : Fragment() {
                     }
                 } else {
                     val errorMessage = when (response.code()) {
-                        400 -> "Error: Invalid email"
-                        else -> "Error: ${response.message()}"
+                        400 -> "Invalid email"
+                        else -> "Network Error"
                     }
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                 binding.errorMessage.visibility = View.VISIBLE
-                binding.errorMessage.text = "Network error: ${t.message}"
+                Toast.makeText(context,"Network Error",Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -158,35 +159,36 @@ class Login : Fragment() {
         }
 
         else{
-            showLoadingDialog()
+            ProgressDialogHelper.showProgressDialog(requireContext())
 
         }
 
         val forgetPassRequest = ForgetPassRequest(email)
+        ProgressDialogHelper.showProgressDialog(requireContext())
 
         AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
-                dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), response.body()?.message ?: "OTP sent on mail", Toast.LENGTH_SHORT).show()
                         try {
                             val action = LoginDirections.actionLogin2ToVerifyReset(email)
                             navController.navigate(action)
                         } catch (e: Exception) {
-                            Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Navigation error", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         val errorMessage = when (response.code()) {
-                            400 -> "Error: Invalid email"
-                            else -> "Error: ${response.message()}"
+                            400 -> "Invalid email"
+                            else -> "Network Error"
                         }
                         Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
-                    dismissLoadingDialog()
-                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    ProgressDialogHelper.hideProgressDialog()
+                    Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
                 }
             })
         }
@@ -224,21 +226,6 @@ class Login : Fragment() {
             return false
         }
         return true
-    }
-
-    private fun showLoadingDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
-        loadingDialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-        loadingDialog?.show()
-    }
-
-    private fun dismissLoadingDialog() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            loadingDialog?.dismiss()
-        }, 2000)
     }
 
     override fun onDestroyView() {

@@ -39,7 +39,7 @@ class AddTripMember : Fragment() {
 
         navController = findNavController()
 
-        selectedGroupId = arguments?.getString("GROUP_ID")
+        selectedGroupId = arguments?.getString("groupId")
         if (selectedGroupId == null) {
             Toast.makeText(context, "Group ID is missing", Toast.LENGTH_SHORT).show()
             navController.navigateUp()
@@ -71,14 +71,17 @@ class AddTripMember : Fragment() {
                 if (response.isSuccessful && response.body()?.success == "true") {
                     Toast.makeText(context, "Member added successfully", Toast.LENGTH_SHORT).show()
                 } else {
-                    Log.e("AddTripMember", "Error: ${response.code()}")
-                    Toast.makeText(context, "Failed to add member: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<AddTripMemberResponse>, t: Throwable) {
                 Log.e("AddTripMember", "API Error: ${t.message}")
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "API Error", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -94,14 +97,17 @@ class AddTripMember : Fragment() {
                         adapter.updateData(groupMembers)
                         Log.d("RemoveFromTrip", "Fetched members: $groupMembers")
                     } else {
-                        Log.e("RemoveFromTrip", "Error: ${response.code()}")
-                        Toast.makeText(context, "Failed to fetch group details", Toast.LENGTH_SHORT).show()
+                        if(response.code() == 500){
+                            Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<CreateGroupResponse>, t: Throwable) {
                     Log.e("RemoveFromTrip", "API Error: ${t.message}")
-                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
                 }
             })
         } ?: run {

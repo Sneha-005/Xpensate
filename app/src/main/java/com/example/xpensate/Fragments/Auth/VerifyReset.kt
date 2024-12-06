@@ -24,6 +24,7 @@ import com.example.xpensate.API.auth.response.ForgetPassResponse
 import com.example.xpensate.R
 import com.example.xpensate.API.auth.request.VerifyResetRequest
 import com.example.xpensate.API.auth.response.VerifyResetResponse
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.databinding.FragmentVerifyResetBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,9 +36,8 @@ class VerifyReset : Fragment() {
     private var email: String? = null
     private lateinit var navController: NavController
     private lateinit var countDownTimer: CountDownTimer
-    private val otpTimeout = 300000L
+    private val otpTimeout = 60000L
     private var verifyResetJob: Job? = null
-    private var loadingDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,7 +100,7 @@ class VerifyReset : Fragment() {
 
             override fun onFinish() {
                 binding.timerTextView.apply{
-                    text = "Time expired!"
+                    Toast.makeText(context,"OTP Expired",Toast.LENGTH_SHORT).show()
                     setTextColor(Color.RED)
                 }
                 binding.notRecieve.visibility = View.VISIBLE
@@ -111,12 +111,12 @@ class VerifyReset : Fragment() {
     }
 
     private fun resendOtp(email: String) {
-        showLoadingDialog()
+        ProgressDialogHelper.showProgressDialog(requireContext())
         val forgetPassRequest = ForgetPassRequest(email)
 
         AuthInstance.api.passforget(forgetPassRequest).enqueue(object : Callback<ForgetPassResponse> {
             override fun onResponse(call: Call<ForgetPassResponse>, response: Response<ForgetPassResponse>) {
-                dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "OTP Resent!", Toast.LENGTH_SHORT).show()
                     startOtpTimer(email)
@@ -127,18 +127,18 @@ class VerifyReset : Fragment() {
             }
 
             override fun onFailure(call: Call<ForgetPassResponse>, t: Throwable) {
-                dismissLoadingDialog()
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                ProgressDialogHelper.hideProgressDialog()
+                Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun verifyOtp(email: String, otp: String) {
-        showLoadingDialog()
+        ProgressDialogHelper.showProgressDialog(requireContext())
        val verifyResetRequest= VerifyResetRequest(email, otp)
         AuthInstance.api.otpverify(verifyResetRequest).enqueue(object : Callback<VerifyResetResponse> {
             override fun onResponse(call: Call<VerifyResetResponse>, response: Response<VerifyResetResponse>) {
-               dismissLoadingDialog()
+                ProgressDialogHelper.hideProgressDialog()
                 if (response.isSuccessful) {
                     val message = response.body()?.message ?: "OTP Verified successfully!"
                     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -146,7 +146,7 @@ class VerifyReset : Fragment() {
                         val action = VerifyResetDirections.actionVerifyResetToReset(email,otp)
                         navController.navigate(action)
                     } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "Navigation error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Navigation error", Toast.LENGTH_SHORT).show()
                         Log.e("LoginFragment", "Navigation error: ${e.message}", e)
                     }
                 } else {
@@ -155,23 +155,10 @@ class VerifyReset : Fragment() {
             }
 
             override fun onFailure(call: Call<VerifyResetResponse>, t: Throwable) {
-                dismissLoadingDialog()
-                Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                ProgressDialogHelper.hideProgressDialog()
+                Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun showLoadingDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
-        loadingDialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-        loadingDialog?.show()
-    }
-
-    private fun dismissLoadingDialog() {
-        loadingDialog?.dismiss()
     }
 
     override fun onDestroyView() {

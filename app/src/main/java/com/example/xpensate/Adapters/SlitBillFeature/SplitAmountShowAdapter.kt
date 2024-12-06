@@ -16,11 +16,17 @@ class SplitAmountShowAdapter (
         fun bind(item: Bill){
             binding.userPaid.text = item.amount
             binding.ownerName.text = ownerName
-            binding.contactContainer.layoutManager = LinearLayoutManager(
-                binding.root.context, LinearLayoutManager.VERTICAL, false
-            )
-            val adapter = MemberDetailAdapter(item.bill_participants)
-            binding.contactContainer.adapter = adapter
+            if (binding.contactContainer.layoutManager == null) {
+                binding.contactContainer.layoutManager = LinearLayoutManager(
+                    binding.root.context, LinearLayoutManager.VERTICAL, false
+                )
+            }
+            if (item.bill_participants.isNotEmpty()) {
+                val adapter = MemberDetailAdapter(item.bill_participants)
+                binding.contactContainer.adapter = adapter
+            } else {
+                binding.contactContainer.adapter = null
+            }
         }
     }
 

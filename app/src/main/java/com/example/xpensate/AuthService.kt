@@ -1,12 +1,14 @@
 package com.example.xpensate.network
 
 import com.example.xpensate.API.BudgetBuilder.BudgetExpensesResponse
+import com.example.xpensate.API.BudgetBuilder.BudgetbuildShowResponse
 import com.example.xpensate.API.BudgetBuilder.CreateBudgetResponse
 import com.example.xpensate.API.BudgetBuilder.CreateMonthlyLimitResponse
 import com.example.xpensate.API.TripTracker.AddTripExpense
 import com.example.xpensate.API.TripTracker.AddTripMemberResponse
 import com.example.xpensate.API.TripTracker.CreateGroupResponse.CreateGroupResponse
 import com.example.xpensate.API.TripTracker.CreateTripResponse
+import com.example.xpensate.API.TripTracker.DeleteGroup
 import com.example.xpensate.API.TripTracker.JoinGroupResponse
 import com.example.xpensate.API.TripTracker.RemoveDataResponse
 import com.example.xpensate.API.TripTracker.UserGroupDetailsResponse
@@ -46,7 +48,11 @@ import com.example.xpensate.API.home.UpdateContact.UpdateContactResponse
 import com.example.xpensate.API.home.UpdateUsernameResponse
 import com.example.xpensate.API.home.lineGraph
 import com.example.xpensate.API.home.CategoryList.CategoriesList
+import com.example.xpensate.API.home.DeleteRecords
+import com.example.xpensate.API.home.IncomevsExpense
+import com.example.xpensate.API.home.RecordDetails
 import com.example.xpensate.API.home.UpdateContact.ProfileImage
+import com.example.xpensate.API.home.UpdateRecords
 import com.example.xpensate.Modals.CreateDebtResponse
 import com.example.xpensate.Modals.RecordsResponse
 import okhttp3.MultipartBody
@@ -59,6 +65,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -83,13 +90,22 @@ interface ApiService {
     fun otpverify(@Body verifyResetRequest: VerifyResetRequest): Call<VerifyResetResponse>
 
     @GET("expense/days-expense/")
-    fun getLineGraphData():Call<lineGraph>
+    fun getLineGraphData(
+        @Query("start_date") start_date: String,
+        @Query("end_date") end_date: String
+    ):Call<lineGraph>
 
     @GET("expense/list/")
-    fun expenselist():Call<RecordsResponse>
+    fun expenselist(
+        @Query("start_date") start_date: String,
+        @Query("end_date") end_date: String
+    ):Call<RecordsResponse>
 
     @GET("expense/category-expense/")
-    fun expenseChart():Call<CategoryChartResponse>
+    fun expenseChart(
+        @Query("start_date") start_date: String,
+        @Query("end_date") end_date: String
+    ):Call<CategoryChartResponse>
 
     @GET("analytics/convert-currency/")
     fun currencyData():Call<CurrencyData>
@@ -124,6 +140,32 @@ interface ApiService {
         @Field("image") image: String?,
         @Field("is_credit") isCredit: Boolean
     ): Call<AddExpenses>
+
+    @GET("expense/update/{id}/")
+    fun getRecordDetails(
+        @Path("id") id: String
+    ): Call<RecordDetails>
+
+    @POST("expense/update/{id}/")
+    fun updateRecords(
+        @Path("id") id: String,
+        @Query("amount") amount: String,
+        @Query("note") note: String,
+        @Query("date") date: String,
+        @Query("time") time: String,
+        @Query("category") category: String,
+        @Query("image") image: String?,
+        @Query("is_credit") isCredit: Boolean
+
+    ): Call<UpdateRecords>
+
+    @DELETE("expense/update/{id}/")
+    fun deleteRecords(
+        @Path("id") id: String
+    ): Call<DeleteRecords>
+
+    @GET("expense/incomeexpenses/")
+    fun barChart():Call<IncomevsExpense>
 
     @GET("split/recentsplits/")
     fun getSplitGroups(): Call<RecentSplitBillsResponse>
@@ -245,10 +287,14 @@ interface ApiService {
         @Field("savings") savings: Double
     ): Call<CreateBudgetResponse>
 
+    @FormUrlEncoded
     @POST("expense/monthly-limit/")
     fun setMonthlyLimit(
         @Field("monthlylimit") monthlylimit: Double
     ): Call<CreateMonthlyLimitResponse>
+
+    @GET("expense/userbudget/")
+    fun getBudgetLimit(): Call<BudgetbuildShowResponse>
 
     @GET("expense/budgetexpenses/")
     fun getBudgetExpenses(): Call<BudgetExpensesResponse>
@@ -266,4 +312,9 @@ interface ApiService {
     fun fcmToken(
         @Field("fcm_token") fcmToken: String
     ): Call<fcmTokenResponse>
+
+    @DELETE("triptrack/deletegroup/{id}/")
+    fun deleteGroup(
+        @Path("id") id: String
+    ): Call<DeleteGroup>
 }

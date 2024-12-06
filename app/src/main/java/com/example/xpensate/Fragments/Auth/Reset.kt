@@ -16,6 +16,7 @@ import com.example.xpensate.API.auth.response.PassResetResponse
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentResetBinding
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -137,23 +138,25 @@ class Reset : Fragment() {
             email = email!!,
             new_password = newPassword
         )
-
+        ProgressDialogHelper.showProgressDialog(requireContext())
         AuthInstance.api.passreset(passResetRequest).enqueue(object : Callback<PassResetResponse> {
             override fun onResponse(call: Call<PassResetResponse>, response: Response<PassResetResponse>) {
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Password reset successfully", Toast.LENGTH_SHORT).show()
                     navController.navigate(R.id.action_reset_to_login2)
                 } else {
+                    ProgressDialogHelper.hideProgressDialog()
                     val errorMessage = when (response.code()) {
-                        400 -> "Error: Invalid request"
-                        else -> "Error: ${response.message()}"
+                        400 -> "Invalid request"
+                        else -> "Network Error"
                     }
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<PassResetResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                ProgressDialogHelper.hideProgressDialog()
+                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
             }
         })
     }

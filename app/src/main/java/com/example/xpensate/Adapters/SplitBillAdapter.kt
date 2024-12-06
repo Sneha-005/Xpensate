@@ -22,24 +22,33 @@ class SplitBillAdapter(private var billList: MutableList<Data>) :
     inner class SplitBillViewHolder(private val binding: RecentBillSplitItemBinding, private val context: android.content.Context) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(bill: Data) {
-            val dateTimeString = bill.billdate
+            val dateTimeString = bill.billdate ?: "N/A"
             val formattedDate = formatDate(dateTimeString)
-            binding.amountSplit.text = bill.amount
+            binding.amountSplit.text = bill.amount ?: "0"
             binding.SplitDate.text = formattedDate
-            binding.category.text = bill.billname
+            binding.category.text = bill.billname ?: "Unknown"
 
             (context as? androidx.fragment.app.FragmentActivity)?.lifecycleScope?.launch {
-                val email = TokenDataStore.getEmail(context).first()
-                val userPaidAmount = bill.bill_participants
-                    .firstOrNull { it.participant.email == email }
-                    ?.amount
-                binding.userPaid.text = userPaidAmount ?: "N/A"
+                try {
+                    val email = TokenDataStore.getEmail(context).first()
+                    val userPaidAmount = bill.bill_participants
+                        ?.firstOrNull { it.participant?.email == email }
+                        ?.amount ?: "N/A"
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        binding.userPaid.text = userPaidAmount
+                    }
+                } catch (e: Exception) {
+                    Log.e("SplitBillAdapter", "Error fetching user paid amount: ${e.message}")
+                }
             }
 
-            val imageList = bill.bill_participants.map {
-                it.participant.profile_image as? Int ?: R.drawable.avatar3
-            }
-
+            val imageList = bill.bill_participants?.map {
+                try {
+                    it.participant?.profile_image as? Int ?: R.drawable.avatar3
+                } catch (e: Exception) {
+                    R.drawable.avatar3
+                }
+            } ?: listOf(R.drawable.avatar3)
             binding.overlappingImagesRecycler.layoutManager = LinearLayoutManager(
                 context, LinearLayoutManager.HORIZONTAL, false
             )

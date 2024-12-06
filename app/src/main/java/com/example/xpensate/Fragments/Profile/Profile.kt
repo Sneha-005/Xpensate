@@ -16,6 +16,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,9 +28,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.xpensate.API.home.UpdateContact.ProfileImage
 import com.example.xpensate.API.home.UpdateUsernameResponse
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.TokenDataStore
 import com.example.xpensate.databinding.FragmentProfileBinding
@@ -46,13 +49,9 @@ import java.io.File
 import java.io.InputStream
 
 class Profile : Fragment() {
-    private lateinit var navController: NavController
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
-    private val debounceDelay = 500L
-
+    private lateinit var navController: NavController
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -63,6 +62,13 @@ class Profile : Fragment() {
                 }
             }
         }
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            TokenDataStore.loadImageOnStart(requireContext())
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,41 +82,49 @@ class Profile : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val binding = _binding?: return
         navController = findNavController()
         loadUserData()
-        setupRealTimeNameUpdate()
-        setupNavigation()
-        setupImagePicker()
 
-        lifecycleScope.launch {
-            val savedUsername = TokenDataStore.getUsername(requireContext()).first()
-            val savedProfileImage = TokenDataStore.getImage(requireContext()).first()
-            if (!savedUsername.isNullOrBlank()) {
-                binding.userName.setText(savedUsername)
-                Log.d("ProfileFragment", "Loaded username: $savedUsername")
+                setupRealTimeNameUpdate()
+            setupNavigation()
+            setupImagePicker()
+            lifecycleScope.launch {
+                val savedUsername = TokenDataStore.getUsername(requireContext()).first()
+                val savedProfileImage = TokenDataStore.getImage(requireContext()).first()
+                if (!savedUsername.isNullOrBlank()) {
+                    binding.userName.setText(savedUsername)
+                    Log.d("ProfileFragment", "Loaded username: $savedUsername")
+                }
+                if (savedProfileImage != null) {
+                    Glide.with(requireContext())
+                        .load(savedProfileImage)
+                        .into(binding.selectedImage)
+                }
             }
-           if(savedProfileImage != null){
-               binding.selectedImage.setImageBitmap(savedProfileImage)
-           }
-        }
+            binding.userName.setOnKeyListener { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
+                    return@setOnKeyListener true
+                }
+                false
+            }
+            binding.card2.logo.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.currency_preference)
+            binding.card2.textView.text = "Currency Preference"
+            binding.card4.logo.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.applock)
+            binding.card4.textView.text = "App Lock"
+            binding.card3.logo.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.currency_nav)
+            binding.card3.textView.text = "Exchanger"
+            binding.card5.logo.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.export_icon)
+            binding.card5.textView.text = "Export Expenses"
+            binding.card6.logo.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.share)
+            binding.card6.textView.text = "Share App"
 
-        binding.card2.logo.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.currency_preference)
-        binding.card2.textView.text = "Currency Preference"
-        binding.card4.logo.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.applock)
-        binding.card4.textView.text = "App Lock"
-        binding.card3.logo.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.currency_nav)
-        binding.card3.textView.text = "Exchanger"
-        binding.card5.logo.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.export_icon)
-        binding.card5.textView.text = "Export Expenses"
-        binding.card6.logo.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.share)
-        binding.card6.textView.text = "Share App"
-
-        setupNavigation()
+            setupNavigation()
     }
 
     private fun setupNavigation() {
@@ -130,17 +144,18 @@ class Profile : Fragment() {
                 navController.navigate(R.id.action_profile2_to_login2)
             }
         }
-        binding.card1.arrow.setOnClickListener {
+        binding.card1.root.setOnClickListener {
             navController.navigate(R.id.action_profile2_to_updateContact)
         }
-        binding.card2.arrow.setOnClickListener {
+        binding.card2.root.setOnClickListener {
             navController.navigate(R.id.action_profile2_to_preferredCurrency)
         }
-        binding.card3.arrow.setOnClickListener {
+        binding.card3.root.setOnClickListener {
             navController.navigate(R.id.action_profile2_to_currencyConverter)
         }
-
-
+        binding.card4.root.setOnClickListener{
+            navController.navigate(R.id.action_profile2_to_appLock)
+        }
 
     }
 
@@ -161,9 +176,8 @@ class Profile : Fragment() {
             override fun afterTextChanged(editable: Editable?) {
                 val newName = editable?.toString()?.trim()
                 if (!newName.isNullOrEmpty()) {
-                    debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
-                    debounceRunnable = Runnable { updateUserName(newName) }
-                    debounceHandler.postDelayed(debounceRunnable!!, debounceDelay)
+                    updateUserName(newName)
+
                 }
             }
         })
@@ -191,80 +205,137 @@ class Profile : Fragment() {
     }
 
     private fun updateUserName(newName: String) {
-        AuthInstance.api.updateName(newName).enqueue(object : Callback<UpdateUsernameResponse> {
-            override fun onResponse(
-                call: Call<UpdateUsernameResponse>,
-                response: Response<UpdateUsernameResponse>
-            ) {
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        lifecycleScope.launch {
-                            TokenDataStore.saveUsername(requireContext(), newName)
+
+        lifecycleScope.launch {
+                try {
+                    val savedUsername = TokenDataStore.getUsername(requireContext()).first()
+                    if (newName != savedUsername) {
+                        AuthInstance.api.updateName(newName)
+                            .enqueue(object : Callback<UpdateUsernameResponse> {
+                                override fun onResponse(
+                                    call: Call<UpdateUsernameResponse>,
+                                    response: Response<UpdateUsernameResponse>
+                                ) {
+
+                                    if (response.isSuccessful) {
+                                        response.body()?.let {
+                                            lifecycleScope.launch {
+                                                TokenDataStore.saveUsername(
+                                                    requireContext(),
+                                                    newName
+                                                )
+                                                Toast.makeText(
+                                                    requireContext(),
+                                                    "Name updated successfully",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        }
+                                    } else {
+                                        if(response.code() == 500){
+                                            Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                                        }
+                                        val errorBody = response.message().toString()
+                                        Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    call: Call<UpdateUsernameResponse>,
+                                    t: Throwable
+                                ) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Network error",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            })
+                    }
+                } catch (e: Exception) {
+                    ProgressDialogHelper.hideProgressDialog()
+                    e.printStackTrace()
+                    Toast.makeText(
+                        requireContext(),
+                        "An unexpected error occurred",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+    private fun uploadProfileImage(imageUri: Uri) {
+        try {
+            val filePath = getPathFromUri(imageUri)
+            if (filePath == null) {
+                Toast.makeText(requireContext(), "Invalid image path", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val file = File(filePath)
+            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+            val imagePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
+            ProgressDialogHelper.showProgressDialog(requireContext())
+
+            lifecycleScope.launch {
+                try {
+                    AuthInstance.api.uploadProfileImage(imagePart).enqueue(object : Callback<ProfileImage> {
+                        override fun onResponse(
+                            call: Call<ProfileImage>,
+                            response: Response<ProfileImage>
+                        ) {
+                            ProgressDialogHelper.hideProgressDialog()
+                            if (response.isSuccessful) {
+                                response.body()?.let { profileImage ->
+                                    val imageUrl = profileImage.data.profile_image.toString()
+                                    if (imageUrl != null) {
+                                        Glide.with(requireContext()).load(imageUrl)
+                                            .into(binding.selectedImage)
+                                    }
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Profile image updated successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Failed to upload image.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ProfileImage>, t: Throwable) {
+                            ProgressDialogHelper.hideProgressDialog()
                             Toast.makeText(
                                 requireContext(),
-                                "Name updated successfully",
+                                "Network error:",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                    }
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed to update name. Code: ${response.code()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    })
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), "An unexpected error occurred", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
+        } catch (e: Exception) {
+            ProgressDialogHelper.hideProgressDialog()
 
-            override fun onFailure(call: Call<UpdateUsernameResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        })
-    }
-
-    private fun uploadProfileImage(imageUri: Uri) {
-        val filePath = getPathFromUri(imageUri) ?: return
-        val file = File(filePath)
-        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-        val imagePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
-
-        lifecycleScope.launch {
-            AuthInstance.api.uploadProfileImage(imagePart).enqueue(object : Callback<ProfileImage> {
-                override fun onResponse(
-                    call: Call<ProfileImage>,
-                    response: Response<ProfileImage>
-                ) {
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            lifecycleScope.launch {
-                                TokenDataStore.saveImage(requireContext(), BitmapFactory.decodeStream(file.inputStream()))
-                            }
-                        }
-                        Toast.makeText(
-                            requireContext(),
-                            "Profile image updated successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to upload image. Code: ${response.code()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-                override fun onFailure(call: Call<ProfileImage>, t: Throwable) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Network error: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT)
+                .show()
         }
     }
+    private fun saveImageUrl(imageUrl: Bitmap) {
+        lifecycleScope.launch {
+            TokenDataStore.saveImage(requireContext(), imageUrl)
+        }
+    }
+
 
     private fun getPathFromUri(uri: Uri): String? {
         var filePath: String? = null
@@ -284,10 +355,8 @@ class Profile : Fragment() {
         return filePath
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
-        debounceHandler.removeCallbacksAndMessages(null)
         _binding = null
     }
 }

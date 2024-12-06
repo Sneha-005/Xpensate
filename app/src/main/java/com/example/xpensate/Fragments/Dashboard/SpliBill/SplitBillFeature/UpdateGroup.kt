@@ -37,9 +37,6 @@ class UpdateGroup : Fragment() {
             listOf(R.drawable.avatar1, R.drawable.avatar3)
         )
 
-        binding.addMemberButton.setOnClickListener {
-            findNavController().navigate(R.id.action_bill_container_to_addMember)
-        }
         val groupName = binding.name.text
 
         binding.createGroupButton.setOnClickListener {
@@ -47,25 +44,28 @@ class UpdateGroup : Fragment() {
             (parentFragment as? bill_container)?.replaceFragmentWithSplitBill()
         }
 
-        binding.overlappingImagesRecycler.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = overlappingImagesAdapter
-        }
 
         return binding.root
     }
     private fun createGroup(groupName: String, memberEmail: String) {
+        binding.createGroupButton.isEnabled = false
         AuthInstance.api.addGroup(groupName,memberEmail).enqueue(object : Callback<CreateGroup> {
             override fun onResponse(call: Call<CreateGroup>, response: Response<CreateGroup>) {
+                binding.createGroupButton.isEnabled = true
                 if (response.isSuccessful) {
                     Toast.makeText(context,"Group created Successfully",Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context,"Group creation failed",Toast.LENGTH_SHORT).show()
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<CreateGroup>, t: Throwable) {
-               Toast.makeText(context,"Try after some time",Toast.LENGTH_SHORT).show()
+                binding.createGroupButton.isEnabled = true
+                Toast.makeText(context,"Try after some time",Toast.LENGTH_SHORT).show()
             }
         })
     }

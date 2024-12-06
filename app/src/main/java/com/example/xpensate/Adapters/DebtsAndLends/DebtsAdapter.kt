@@ -4,12 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xpensate.API.home.DebtsAndLends.Debtmark
 import com.example.xpensate.API.home.DebtsAndLends.DebtsList
 import com.example.xpensate.databinding.DebtsRecordsItemBinding
 import com.example.xpensate.AuthInstance
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
+import com.example.xpensate.TokenDataStore
+import kotlinx.coroutines.flow.firstOrNull
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,18 +46,18 @@ class DebtsAdapter(private val recordList: MutableList<DebtsList>) :
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        Toast.makeText(
-                            binding.root.context,
-                            "Failed to mark as paid. Please try again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if(response.code() == 500){
+                            Toast.makeText(binding.root.context,"Something went wrong",Toast.LENGTH_SHORT).show()
+                        }
+                        val errorBody = response.message().toString()
+                        Toast.makeText(binding.root.context,"$errorBody",Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<Debtmark>, t: Throwable) {
                     Toast.makeText(
                         binding.root.context,
-                        "Error: ${t.message}",
+                        "Network Error",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

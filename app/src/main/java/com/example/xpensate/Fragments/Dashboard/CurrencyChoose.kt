@@ -16,6 +16,7 @@ import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.CurrencyAdapter
 import com.example.xpensate.Modals.CurrencyClass
 import com.example.xpensate.OnCurrencySelectedListener
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.SharedViewModel
 import com.example.xpensate.databinding.FragmentCurrencyChooseBinding
 import retrofit2.Call
@@ -49,6 +50,8 @@ class CurrencyChoose : Fragment() {
 
         binding.currencyContainer.layoutManager = LinearLayoutManager(requireContext())
 
+        ProgressDialogHelper.showProgressDialog(requireContext())
+
         fetchCurrencyData()
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -66,6 +69,8 @@ class CurrencyChoose : Fragment() {
     private fun fetchCurrencyData() {
         AuthInstance.api.currencyData().enqueue(object : Callback<CurrencyData> {
             override fun onResponse(call: Call<CurrencyData>, response: Response<CurrencyData>) {
+                ProgressDialogHelper.hideProgressDialog()
+
                 if (response.isSuccessful) {
                     val currencyData = response.body()
                     if (currencyData != null && currencyData.success) {
@@ -82,14 +87,17 @@ class CurrencyChoose : Fragment() {
                         Toast.makeText(binding.root.context, "Failed to fetch data", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<CurrencyData>, t: Throwable) {
-                if (_binding != null) {
-                    Toast.makeText(requireContext(), "Network Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
+                ProgressDialogHelper.hideProgressDialog()
+                Toast.makeText(requireContext(), "Network Error", Toast.LENGTH_SHORT).show()
             }
         })
     }

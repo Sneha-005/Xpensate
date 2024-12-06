@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.UpdateGroup
 import com.example.xpensate.Fragments.Dashboard.SpliBill.SplitBillFeature.split_bill
-import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentSplitBillMoreBinding
 
@@ -19,6 +18,7 @@ class SplitBillMore : Fragment() {
     private var _binding: FragmentSplitBillMoreBinding? = null
     private val binding get() = _binding!!
     private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -28,7 +28,7 @@ class SplitBillMore : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSplitBillMoreBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,18 +37,36 @@ class SplitBillMore : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navController.navigate(R.id.action_splitBillMore_to_blankFragment)
+                if (isAdded) {
+                    navController.navigate(R.id.action_splitBillMore_to_blankFragment)
+                }
             }
         })
-        childFragmentManager.commit {
-            replace(R.id.fragment_container, split_bill())
-        }
 
-    }
-    fun replaceFragmentWithUpdateGroup() {
-        childFragmentManager.commit {
-            replace(R.id.fragment_container, UpdateGroup())
-            addToBackStack(null)
+        if (savedInstanceState == null) {
+            safeReplaceFragment(split_bill())
         }
+    }
+
+    private fun safeReplaceFragment(fragment: Fragment) {
+        if (isAdded) {
+            childFragmentManager.commit {
+                replace(R.id.fragment_container, fragment)
+            }
+        }
+    }
+
+    fun replaceFragmentWithUpdateGroup() {
+        if (isAdded) {
+            childFragmentManager.commit {
+                replace(R.id.fragment_container, UpdateGroup())
+                addToBackStack(null)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null // Avoid memory leaks
     }
 }

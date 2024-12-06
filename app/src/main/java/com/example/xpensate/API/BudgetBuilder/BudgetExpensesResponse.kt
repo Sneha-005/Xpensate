@@ -5,5 +5,6 @@ data class BudgetExpensesResponse(
     val luxury_debit_total: Int,
     val needs_credit_total: Int,
     val needs_debit_total: Int,
-    val success: Boolean
+    val success: Boolean,
+    val monthly: Int
 )

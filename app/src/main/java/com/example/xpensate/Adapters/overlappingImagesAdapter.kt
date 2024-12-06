@@ -23,8 +23,12 @@ class OverlappingImagesAdapter(private val images: List<Any>) : RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.binding.setImageResource(images[position] as Int)
-    }
+        val imageResource = images[position]
+        try {
+            holder.binding.setImageResource(imageResource as Int)
+        } catch (e: Exception) {
+            holder.binding.setImageResource(R.drawable.avatar3)
+        }    }
 
     override fun getItemCount(): Int = images.size
 }

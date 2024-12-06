@@ -3,6 +3,7 @@ package com.example.xpensate.Adapters.SlitBillFeature
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.xpensate.API.home.SplitBillFeature.GroupMembers.Data
 import com.example.xpensate.R
 import com.example.xpensate.databinding.AddMemberItemBinding
@@ -27,8 +28,12 @@ class AddmemberAdapter(
                     onGroupSelected(email)
                 }
             }
-            binding.image.setImageResource((groupMember.member.profile_image as? Int ?: R.drawable.avatar3))
-        }
+            val imageResource = groupMember.member.profile_image as? Int ?: R.drawable.avatar3
+            Glide.with(binding.root.context)
+                .load(imageResource)
+                .placeholder(R.drawable.avatar3)
+                .error(R.drawable.avatar3)
+                .into(binding.image)        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {

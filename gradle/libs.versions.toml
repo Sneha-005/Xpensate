@@ -1,19 +1,21 @@
 [versions]
 agp = "8.3.1"
 kotlin = "1.9.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-espressoCore = "3.6.1"
+espressoCore = "3.5.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.8.0"
-constraintlayout = "2.1.4"
-navigation = "2.7.1"
-navigationFragment = "2.8.3"
-retrofit = "2.9.0"
+activity = "1.9.3"
+constraintlayout = "2.2.0"
+navigation = "2.8.4"
+navigationFragment = "2.8.4"
+retrofit = "2.11.0"
 navigationSafeArgs = "2.8.3"
 viewpager2 = "1.1.0"
+foundationLayoutAndroid = "1.7.5"
+uiTestAndroid = "1.7.5"
 
 
 
@@ -31,8 +33,10 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-androidx-datastore = "androidx.datastore:datastore-preferences:1.0.0"
+androidx-datastore = "androidx.datastore:datastore-preferences:1.1.1"
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 
 
 [plugins]

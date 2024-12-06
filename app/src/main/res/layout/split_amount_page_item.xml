@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="#242828">
     <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:stretchColumns="3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,14 +17,14 @@
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 app:buttonTint="@android:color/white"
                 android:gravity="center"
                 android:padding="3dip"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
             <TextView
-                android:layout_width="120dp"
+                android:layout_width="100dp"
                 android:id="@+id/name"
                 android:text="Name"
                 android:padding="3dip"
@@ -35,9 +35,10 @@
                 android:textColor="@color/white" />
             <EditText
                 android:id="@+id/share"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:text="Share"
-                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:gravity="bottom|center_horizontal"
                 android:textSize="16sp"
                 android:textFontWeight="600"
                 android:lineHeight="22sp"

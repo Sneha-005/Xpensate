@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Xpensate"
-include(":app")
+include(":app",":circularseekbar")

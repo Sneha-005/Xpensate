@@ -57,16 +57,17 @@ class TripTrackerDashBoard : Fragment() {
 
     private fun createTrip(name: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
                 val response = AuthInstance.api.createTrip(name).awaitResponse()
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Group is created successfully", Toast.LENGTH_SHORT).show()
                 }
-            } catch (e: HttpException) {
-                Toast.makeText(context, "HTTP Exception: ${e.message}", Toast.LENGTH_SHORT).show()
-            } catch (e: Throwable) {
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+                else{
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
+                }
         }
     }
 
@@ -76,17 +77,22 @@ class TripTrackerDashBoard : Fragment() {
     }
 
     private fun joinGroup(invitecode: String) {
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = AuthInstance.api.joinGroup(invitecode).awaitResponse()
-
+Log.d("join","$invitecode")
                 if (response.isSuccessful) {
                     Toast.makeText(context, "Joined successfully", Toast.LENGTH_SHORT).show()
                 }
-            } catch (e: HttpException) {
-                Toast.makeText(context, "HTTP Exception: ${e.message} ", Toast.LENGTH_SHORT).show()
-            } catch (e: Throwable) {
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                else{
+                    if(response.code() == 500){
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                    }
+                    val errorBody = response.message().toString()
+                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()                }
+            } catch(e: Throwable){
+                Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -102,7 +108,7 @@ class TripTrackerDashBoard : Fragment() {
                     }
                 }
             } catch (e: Throwable) {
-                Toast.makeText(context, " ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Network Issue", Toast.LENGTH_SHORT).show()
             }
         }
     }
