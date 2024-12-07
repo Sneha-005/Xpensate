@@ -1,6 +1,5 @@
 package com.example.xpensate.Fragments.Dashboard
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
@@ -14,8 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.compose.ui.geometry.times
-import androidx.compose.ui.unit.times
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -30,8 +27,6 @@ import com.example.xpensate.Adapters.SplitBillAdapter
 import com.example.xpensate.Modals.LabelItem
 import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
-import com.example.xpensate.TokenDataStore
-import com.example.xpensate.TokenDataStore.getCurrencyRate
 import com.example.xpensate.databinding.FragmentBlankBinding
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
@@ -51,9 +46,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Calendar
 import java.util.Locale
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.Dispatchers
-import kotlin.time.times
 
 class BlankFragment : Fragment() {
     private lateinit var navController: NavController
@@ -64,7 +57,6 @@ class BlankFragment : Fragment() {
     private val startDate: String
     private val endDate: String
     private val lastApiCallTime = MutableSharedFlow<Unit>(replay = 1)
-    private var currencyRate: Double? = null
 
     init {
         calendar.set(Calendar.DAY_OF_MONTH, 1)
@@ -87,20 +79,13 @@ class BlankFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            currencyRate = TokenDataStore.getCurrencyRate(requireContext()).firstOrNull() ?: 1.0
-            currencyRate?.let { setLineChartData(it) }
 
-        }
         navController = findNavController()
         binding.budgetBuilder.setOnClickListener {
             navController.navigate(R.id.action_blankFragment_to_budgetBuilderShow)
         }
         binding.moreRecords.setOnClickListener {
             navController.navigate(R.id.action_blankFragment_to_records)
-        }
-        binding.moreSplits.setOnClickListener {
-            navController.navigate(R.id.action_blankFragment_to_splitBillMore)
         }
 
         val pieChart = _binding?.pieChart
@@ -122,6 +107,8 @@ class BlankFragment : Fragment() {
 
         fetchRecordsData(recordAdapter)
         fetchUserBudget()
+        setLineChartData()
+
 
         if (pieChart != null && legendListView != null) {
             setupPieChart(pieChart)
@@ -152,8 +139,12 @@ class BlankFragment : Fragment() {
                                 val splitList = splitBillsResponse.data
                                 withContext(Dispatchers.Main) {
                                     adapter.updateSplits(splitList)
+                                    binding.billSplitRecycler.visibility = View.VISIBLE
+                                    binding.noSplit.visibility = View.GONE
                                 }
                             } else {
+                                binding.billSplitRecycler.visibility = View.GONE
+                                binding.noSplit.visibility = View.VISIBLE
                                 Log.d("API Response", "No records found or data is null")
                             }
                         } else {
@@ -172,6 +163,7 @@ class BlankFragment : Fragment() {
     }
     private fun fetchUserBudget() {
         AuthInstance.api.getBudgetExpenses().enqueue(object : Callback<BudgetExpensesResponse> {
+
             override fun onResponse(
                 call: Call<BudgetExpensesResponse>,
                 response: Response<BudgetExpensesResponse>
@@ -179,8 +171,8 @@ class BlankFragment : Fragment() {
                 if (response.isSuccessful) {
                     val budgetResponse = response.body()
                     if (budgetResponse != null) {
-                        val totalDebit = budgetResponse.luxury_debit_total?.plus(budgetResponse.needs_debit_total)?.toFloat() ?: 0f
-                        val totalIncome = budgetResponse.monthly?.toFloat() ?: 0f
+                        val totalDebit = budgetResponse.luxury_debit_total.plus(budgetResponse.needs_debit_total)
+                        val totalIncome = budgetResponse.monthly
                         val text = "Spent ₹$totalDebit Of ₹$totalIncome monthly"
                         val spannableString = SpannableString(text)
                         val start = text.indexOf("₹")
@@ -237,9 +229,14 @@ class BlankFragment : Fragment() {
                         val recordsList = recordsResponse.expenses.take(4)
                         withContext(Dispatchers.Main) {
                             adapter.updateRecords(recordsList)
+                            binding.recordContainer.visibility = View.VISIBLE
+                            binding.noRecord.visibility = View.GONE
                         }
                     } else{
+                        binding.recordContainer.visibility = View.GONE
+                        binding.noRecord.visibility = View.VISIBLE
                         Toast.makeText(requireContext(),"Server Error",Toast.LENGTH_SHORT).show()
+
                     }
                 } else {
                     if(response.code() == 500){
@@ -254,9 +251,8 @@ class BlankFragment : Fragment() {
         }
     }
 
-    private fun setLineChartData(currencyRate: Double) {
+    private fun setLineChartData() {
         val lineChart = binding.lineChart
-        Log.d("currency","$currencyRate")
         val xAxis = lineChart.xAxis
         xAxis.apply {
             axisMinimum = 0f
@@ -287,7 +283,7 @@ class BlankFragment : Fragment() {
                     ProgressDialogHelper.hideProgressDialog()
                     val lineGraphData = response.body()
                     val amount = (lineGraphData?.total_expenses?: 0.0)
-                    val total = amount * currencyRate
+                    val total = amount
                     Log.d("total","$total")
 
                     binding.balanceText.text = "₹%.2f".format(total)
@@ -351,7 +347,7 @@ class BlankFragment : Fragment() {
         }
     }
 
-    private fun setUpCircularSeekBar(totalIncome: Float, totalSpent: Float) {
+    private fun setUpCircularSeekBar(totalIncome: Int, totalSpent: Double) {
         val circularSeekBar = binding.circularSeekBar
 
         val progressPercentage = if (totalIncome > 0) {
@@ -361,7 +357,7 @@ class BlankFragment : Fragment() {
         }
 
         circularSeekBar.max = 100f
-        circularSeekBar.progress = progressPercentage
+        circularSeekBar.progress = progressPercentage.toFloat()
         circularSeekBar.min = 0f
         circularSeekBar.progressGradientColorsArray = intArrayOf(
             ContextCompat.getColor(requireContext(), R.color.greenShade),
@@ -385,7 +381,7 @@ class BlankFragment : Fragment() {
                         val categoryChartData = response.body()
                         if (categoryChartData != null && categoryChartData.expenses_by_category.isNotEmpty()) {
                             val pieEntries = ArrayList<PieEntry>()
-                            val totalSpent = categoryChartData.total_expenses * currencyRate!!
+                            val totalSpent = categoryChartData.total_expenses
 
                             categoryChartData.expenses_by_category.forEach { category ->
                                 val proportion = (category.total.toFloat() / totalSpent)*100

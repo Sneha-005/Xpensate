@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -68,6 +69,7 @@ class DeleteRecord : Fragment() {
         navController = findNavController()
         setupDatePicker()
         setupTimePicker()
+        setupInputFilters()
         selectedId = arguments?.getString("id")
         if (selectedId == null) {
             Toast.makeText(requireContext(), "Invalid record ID", Toast.LENGTH_SHORT).show()
@@ -76,18 +78,12 @@ class DeleteRecord : Fragment() {
         }
 
         fetchRecordsDetails(selectedId!!)
-        binding.categoryList.isVisible = false
-        fetchCategories()
-        binding.categoryField.setOnClickListener {
-            binding.categoryList.isVisible = !binding.categoryList.isVisible
-        }
+
         binding.deleteButton.setOnClickListener {
             selectedId?.let { deleteRecords(it) }
         }
 
-        binding.saveButton.setOnClickListener {
-            selectedId?.let { updateRecordDetails(it) }
-        }
+
     }
 
     private fun fetchRecordsDetails(id: String){
@@ -138,12 +134,62 @@ class DeleteRecord : Fragment() {
         })
     }
 
-    private fun updateRecordDetails(id: String){
+    private fun setupInputFilters() {
+        binding.amountField.filters = arrayOf(InputFilter { source, _, _, dest, _, _ ->
+            val input = (dest.toString() + source.toString()).toDoubleOrNull()
+            if (input != null) {
+                when {
+                    input > 10000000000 -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Amount cannot exceed 10 billion",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ""
+                    }
+
+                    input < 0 -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Amount cannot be negative",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ""
+                    }
+
+                    else -> null
+                }
+            } else null
+        })
+        binding.customTagsField.filters = arrayOf(InputFilter.LengthFilter(50))
+        binding.customTagsField.setOnFocusChangeListener { _, hasFocus ->
+            if (binding.customTagsField.text.length > 50) {
+                Toast.makeText(
+                    requireContext(),
+                    "Tags cannot exceed 50 characters",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        binding.categoryField.filters = arrayOf(InputFilter.LengthFilter(20))
+        binding.categoryField.setOnFocusChangeListener { _, hasFocus ->
+            if (binding.categoryField.text.length > 20) {
+                Toast.makeText(
+                    requireContext(),
+                    "Category name cannot exceed 20 characters",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+        private fun updateRecordDetails(id: String){
         val amount = binding.amountField.text.toString().trim()
         val note = binding.customTagsField.text.toString().trim()
         val date = binding.dateField.text.toString().trim()
         val time = binding.timeField.text.toString().trim()
         val category = binding.categoryField.text.toString().trim()
+        Log.d("update","$category")
         val image = null
         val isCredit = binding.incomeButton.isChecked
         if (amount.isEmpty()|| category.isEmpty()) {
@@ -151,12 +197,14 @@ class DeleteRecord : Fragment() {
             return
         }
         try {
-            ProgressDialogHelper.showProgressDialog(requireContext())
 
         AuthInstance.api.updateRecords(id,amount, note, date, time, category, image, isCredit).enqueue(object: Callback<UpdateRecords> {
             override fun onResponse(call: Call<UpdateRecords>, response: Response<UpdateRecords>){
                 Log.d("update","Response: ${response.code()}")
                 Log.d("update","response: ${response.body()}")
+                Log.d("update","$category")
+
+
                 if(response.isSuccessful){
                     Toast.makeText(requireContext(), "Record updated successfully", Toast.LENGTH_LONG).show()
                 }else {
@@ -168,7 +216,6 @@ class DeleteRecord : Fragment() {
                 }
             }
             override fun onFailure(call: Call<UpdateRecords>, t: Throwable) {
-                ProgressDialogHelper.hideProgressDialog()
                 Log.e("CategoriesFragment", "Error: ${t.message}")
                 Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
             }
@@ -256,40 +303,8 @@ class DeleteRecord : Fragment() {
             datePickerDialog.show()
         }
     }
-    private fun fetchCategories() {
-        ProgressDialogHelper.showProgressDialog(requireContext())
-        AuthInstance.api.getCategoryList().enqueue(object : Callback<CategoriesList> {
-            override fun onResponse(call: Call<CategoriesList>, response: Response<CategoriesList>) {
-                if (response.isSuccessful) {
-                    setupRecyclerView(response.body()!!)
-                } else {
-                    if(response.code() == 500){
-                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
-                    }
-                    val errorBody = response.message().toString()
-                    Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<CategoriesList>, t: Throwable) {
-                ProgressDialogHelper.hideProgressDialog()
-                Log.e("CategoriesFragment", "Error: ${t.message}")
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-    private fun setupRecyclerView(categoryList: List<CategoriesListItem>) {
-        _binding?.let { binding ->
-            val adapter = CategoriesListAdapter(categoryList, imageMap) { selectedCategory ->
-                binding.categoryField.setText(selectedCategory)
-                binding.categoriesContainer.isVisible = false
-            }
-            binding.categoriesContainer.apply {
-                layoutManager = LinearLayoutManager(context)
-                this.adapter = adapter
-            }
-        }
-    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

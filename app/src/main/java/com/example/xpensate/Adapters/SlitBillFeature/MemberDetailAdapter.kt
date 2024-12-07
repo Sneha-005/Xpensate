@@ -8,13 +8,18 @@ import com.example.xpensate.databinding.SplitContactDetailsCheckBinding
 import com.example.xpensate.databinding.SplitGroupShowItemBinding
 
 class MemberDetailAdapter(
-    private val bills: List<BillParticipant>
+    private val bills: List<BillParticipant>,
+    private val billId: String,
+    private val markBillAsPaid: (String, String, Boolean) -> Unit
 ): RecyclerView.Adapter<MemberDetailAdapter.BillViewHolder>(){
 
     inner class BillViewHolder(private val binding: SplitContactDetailsCheckBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: BillParticipant){
             if(item.paid){
                 binding.checkbox.setChecked(true)
+            }
+            binding.checkbox.setOnCheckedChangeListener { _, isChecked ->
+                markBillAsPaid(billId, item.participant.email, isChecked)
             }
             binding.name.text = item.participant.email
             binding.amountBill.text = item.amount

@@ -335,7 +335,7 @@ class Records : Fragment() {
                         responseBody?.let {
                             val totalIncome = it.total_income.toFloat()
                             val totalExpense = it.total_expense.toFloat()
-                            val savings = totalIncome - totalExpense
+                            val savings = (totalIncome - totalExpense)
                             entries.add(BarEntry(0f, totalIncome))
                             entries.add(BarEntry(1f, totalExpense))
                             entries.add(BarEntry(2f, savings))

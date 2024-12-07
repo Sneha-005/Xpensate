@@ -20,6 +20,7 @@ import com.example.xpensate.Adapters.OverlappingImagesAdapter
 import com.example.xpensate.Adapters.SlitBillFeature.SplitAmountpageAdapter
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentSplitAmountPageBinding
 import kotlinx.coroutines.launch
@@ -99,6 +100,7 @@ class SplitAmountPage : Fragment() {
     }
 
     private fun fetchGroupData() {
+        ProgressDialogHelper.showProgressDialog(requireContext())
         viewLifecycleOwner.lifecycleScope.launch {
             selectedGroupId?.let {
                 AuthInstance.api.getGroupMembers(it).enqueue(object : Callback<GroupMembers> {
@@ -107,6 +109,7 @@ class SplitAmountPage : Fragment() {
                         response: Response<GroupMembers>
                     ) {
                         if (response.isSuccessful) {
+                            ProgressDialogHelper.hideProgressDialog()
                             val groupMembers = response.body()?.data ?: emptyList()
                             if (groupMembers.isNotEmpty()) {
                                 participants.clear()
@@ -126,7 +129,11 @@ class SplitAmountPage : Fragment() {
                                     )
                                 val overlappingAdapter = OverlappingImagesAdapter(imageList)
                                 binding.overlappingImagesRecycler.adapter = overlappingAdapter
+                                binding.contactContainer.visibility = View.VISIBLE
+                                binding.noSplit.visibility = View.GONE
                             } else {
+                                binding.contactContainer.visibility = View.GONE
+                                binding.noSplit.visibility = View.VISIBLE
                                 Toast.makeText(
                                     context,
                                     "No participants found in the group",
@@ -138,12 +145,16 @@ class SplitAmountPage : Fragment() {
                             if(response.code() == 500){
                                 Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
                             }
-                            val errorBody = response.message().toString()
-                            Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
+                            else {
+                                val errorBody = response.message()?.toString()
+                                Toast.makeText(requireContext(), "$errorBody", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
                     }
 
                     override fun onFailure(call: Call<GroupMembers>, t: Throwable) {
+                        ProgressDialogHelper.hideProgressDialog()
                         Toast.makeText(
                             context,
                             "Failed to fetch data",
@@ -177,7 +188,7 @@ class SplitAmountPage : Fragment() {
             bill_participants = selectedParticipants,
             group = selectedGroupId ?: ""
         )
-
+Log.d("tfvh","$request")
         AuthInstance.api.createBill(request).enqueue(object : Callback<CreateBillResponse> {
             override fun onResponse(call: Call<CreateBillResponse>, response: Response<CreateBillResponse>) {
                 if (response.isSuccessful) {

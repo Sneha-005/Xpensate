@@ -17,7 +17,7 @@ class SplitAmountpageAdapter(
 ) : RecyclerView.Adapter<SplitAmountpageAdapter.TableViewHolder>() {
 
     private val checkboxState = mutableMapOf<String, Boolean>()
-
+    var totalAmount: Double = 0.0
     inner class TableViewHolder(private val binding: SplitAmountPageItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: BillParticipantX) {
@@ -34,15 +34,6 @@ class SplitAmountpageAdapter(
                     val inputText = s.toString().replace("%", "").trim()
                     val sharePercentage = inputText.toDoubleOrNull()
 
-                    if (sharePercentage != null) {
-                        val totalAmount = binding.amountBill.text.toString().toDoubleOrNull() ?: 0.0
-                        val percentage = if (totalAmount > 0) (sharePercentage * totalAmount) / 100 else 0.0
-                        Log.d("Split","$totalAmount $sharePercentage $percentage")
-
-                        binding.amountBill.text = "%.2f".format(percentage)
-                    } else {
-                        binding.amountBill.text = "100"
-                    }
                 }
 
             })

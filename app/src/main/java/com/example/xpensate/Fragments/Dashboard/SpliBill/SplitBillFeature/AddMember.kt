@@ -17,6 +17,7 @@ import com.example.xpensate.API.home.SplitBillFeature.DeleteMember
 import com.example.xpensate.API.home.SplitBillFeature.GroupMembers.GroupMembers
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.SlitBillFeature.AddmemberAdapter
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentAddMemberBinding
 import kotlinx.coroutines.Job
@@ -112,6 +113,7 @@ class AddMember : Fragment() {
 
     private fun fetchGroupData() {
         selectedGroupId?.let {
+            ProgressDialogHelper.showProgressDialog(requireContext())
             AuthInstance.api.getGroupMembers(it).enqueue(object : Callback<GroupMembers> {
                 override fun onResponse(
                     call: Call<GroupMembers>,
@@ -119,6 +121,7 @@ class AddMember : Fragment() {
                 ) {
                     if (isAdded) {
                         if (response.isSuccessful) {
+                            ProgressDialogHelper.hideProgressDialog()
                             val groupMembers = response.body()?.data ?: emptyList()
                             adapter.updateData(groupMembers)
                             Log.d("Split", "Group members: $groupMembers")
@@ -138,6 +141,7 @@ class AddMember : Fragment() {
                 }
 
                 override fun onFailure(call: Call<GroupMembers>, t: Throwable) {
+                    ProgressDialogHelper.hideProgressDialog()
                     Log.e("Split", "Failed to fetch data: ${t.message}")
                     if(isAdded) {
                         Toast.makeText(context, "Failed to fetch data", Toast.LENGTH_SHORT).show()

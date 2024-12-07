@@ -17,6 +17,7 @@ import com.example.xpensate.AuthInstance
 import com.example.xpensate.Adapters.SplitBillFeature.SplitBillFeatureAdapter
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_containerDirections
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.R
 import com.example.xpensate.databinding.FragmentSplitBillBinding
 import kotlinx.coroutines.launch
@@ -89,18 +90,24 @@ class split_bill : Fragment() {
     }
 
     private fun fetchGroupData() {
+        ProgressDialogHelper.showProgressDialog(requireContext())
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 withContext(Dispatchers.IO) {
                     val response = AuthInstance.api.getGroups().execute()
                     if (response.isSuccessful) {
+                        ProgressDialogHelper.hideProgressDialog()
                         val groupsResponse = response.body()
                         withContext(Dispatchers.Main) {
                             if (groupsResponse != null) {
                                 Log.d("SplitBill", "Fetched groups: $groupsResponse")
                                 val combinedGroups = (groupsResponse.ownerGroups ?: emptyList()) + (groupsResponse.membersGroups ?: emptyList())
                                 updateGroupData(combinedGroups)
+                                binding.splitBill.visibility = View.VISIBLE
+                                binding.noSplit.visibility = View.GONE
                             } else {
+                                binding.splitBill.visibility = View.GONE
+                                binding.noSplit.visibility = View.VISIBLE
                                 Log.e("SplitBill", "Response body is null")
                             }
                         }
@@ -117,6 +124,7 @@ class split_bill : Fragment() {
                     }
                 }
             } catch (e: Exception) {
+                ProgressDialogHelper.hideProgressDialog()
                 Log.e("SplitBill", "Failed to fetch data", e)
                 withContext(Dispatchers.Main) {
                     context?.let {

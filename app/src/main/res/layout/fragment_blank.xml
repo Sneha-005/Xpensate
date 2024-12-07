@@ -93,22 +93,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
-
         <TextView
-            android:id="@+id/moreSplits"
+            android:id="@+id/noSplit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="See more"
-            android:layout_marginRight="15dp"
-            android:textColor="@color/link"
-            android:textSize="16sp"
-            android:lineHeight="21.79sp"
-            android:textFontWeight="600"
-            android:layout_marginTop="310dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:text="No data available"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed"/>
-
+            app:layout_constraintTop_toBottomOf="@id/recent_head"
+            app:layout_constraintBottom_toTopOf="@id/cardItem"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -256,6 +251,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
+        <TextView
+            android:id="@+id/noRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No data available"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/moreRecords"
+            app:layout_constraintBottom_toTopOf="@id/card2"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="350dp"
@@ -267,6 +273,7 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card2"
         android:layout_width="match_parent"
         android:layout_height="235dp"
         app:cardElevation="5dp"

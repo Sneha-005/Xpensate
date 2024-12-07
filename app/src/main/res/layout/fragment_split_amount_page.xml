@@ -104,7 +104,7 @@
                         <TableLayout
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:stretchColumns="3"
+                            android:stretchColumns="2"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
@@ -119,7 +119,7 @@
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent" />
                                 <TextView
-                                    android:layout_width="100dp"
+                                    android:layout_width="180dp"
                                     android:id="@+id/categoryText"
                                     android:text="Name"
                                     android:padding="3dip"
@@ -137,17 +137,19 @@
                                     android:lineHeight="22sp"
                                     android:textColor="@color/white"
                                     android:padding="3dip" />
-                                <TextView
-                                    android:gravity="center"
-                                    android:text="Amount"
-                                    android:textSize="16sp"
-                                    android:textFontWeight="600"
-                                    android:lineHeight="22sp"
-
-                                    android:textColor="@color/white"
-                                    android:padding="3dip" />
                             </TableRow>
                         </TableLayout>
+                        <TextView
+                            android:id="@+id/noSplit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No data available"
+                            android:textColor="@color/white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/split_button"/>
                         <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="0dp"
                             android:layout_height="305dp"

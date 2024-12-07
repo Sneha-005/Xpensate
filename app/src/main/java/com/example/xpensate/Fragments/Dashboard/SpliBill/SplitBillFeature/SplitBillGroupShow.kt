@@ -13,10 +13,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.xpensate.API.home.SplitBillFeature.Groups.MembersGroup
 import com.example.xpensate.API.home.SplitBillFeature.Groups.OwnerGroup
+import com.example.xpensate.API.home.SplitBillFeature.MarkPaidResponse
 import com.example.xpensate.API.home.SplitBillFeature.SplitGroupShowDetails.SplitGroupDetails
 import com.example.xpensate.Adapters.SlitBillFeature.SplitAmountShowAdapter
 import com.example.xpensate.AuthInstance
 import com.example.xpensate.Fragments.Dashboard.SpliBill.bill_container
+import com.example.xpensate.ProgressDialogHelper
 import com.example.xpensate.databinding.FragmentSplitBillGroupShowBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -82,27 +84,24 @@ class SplitBillGroupShow : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = SplitAmountShowAdapter(mutableListOf(), "")
+        adapter = SplitAmountShowAdapter(mutableListOf(), "") { groupId, participantEmail, isPaid ->
+            markBillAsPaid(selectedGroupId!!, participantEmail, isPaid)
+        }
         binding.splitContainer.layoutManager = LinearLayoutManager(context)
         binding.splitContainer.adapter = adapter
     }
 
-    private fun fetchGroupData() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            selectedGroupId?.let { groupId ->
-                AuthInstance.api.showSplitDetail(groupId).enqueue(object : Callback<SplitGroupDetails> {
-                    override fun onResponse(
-                        call: Call<SplitGroupDetails>,
-                        response: Response<SplitGroupDetails>
-                    ) {
+    private fun markBillAsPaid(groupId: String, participantEmail: String, isPaid: Boolean) {
+        if (isPaid) {
+            AuthInstance.api.markBillAsPaid(groupId, participantEmail)
+                .enqueue(object : Callback<MarkPaidResponse> {
+                    override fun onResponse(call: Call<MarkPaidResponse>, response: Response<MarkPaidResponse>) {
                         if (response.isSuccessful) {
-                            response.body()?.let { details ->
-                                if (_binding != null) {
-                                    binding.groupName.text = details.data.name
-                                    userName = details.data.groupowner
-                                    adapter.updateSplits(details.data.bills)
-                                    group = details.data
-                                }
+                            val markPaidResponse = response.body()
+                            if (markPaidResponse?.success == "true") {
+                                Toast.makeText(context, "Bill marked as paid", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "${markPaidResponse?.success}", Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             if(response.code() == 500){
@@ -113,7 +112,48 @@ class SplitBillGroupShow : Fragment() {
                         }
                     }
 
+                    override fun onFailure(call: Call<MarkPaidResponse>, t: Throwable) {
+                        Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        }
+    }
+
+
+    private fun fetchGroupData() {
+        ProgressDialogHelper.showProgressDialog(requireContext())
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            selectedGroupId?.let { groupId ->
+                AuthInstance.api.showSplitDetail(groupId).enqueue(object : Callback<SplitGroupDetails> {
+                    override fun onResponse(
+                        call: Call<SplitGroupDetails>,
+                        response: Response<SplitGroupDetails>
+                    ) {
+                        if (response.isSuccessful) {
+                            ProgressDialogHelper.hideProgressDialog()
+                            response.body()?.let { details ->
+                                if (_binding != null) {
+                                    binding.groupName.text = details.data.name
+                                    userName = details.data.groupowner
+                                    adapter.updateSplits(details.data.bills)
+                                    group = details.data
+                                    binding.splitContainer.visibility = View.VISIBLE
+                                    binding.noSplit.visibility = View.GONE
+                                }
+                            }
+                        } else {
+                            binding.splitContainer.visibility = View.GONE
+                            binding.noSplit.visibility = View.VISIBLE
+                            if(response.code() == 500){
+                                Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
+                            }
+                            val errorBody = response.message().toString()
+                            Toast.makeText(requireContext(),"$errorBody",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
                     override fun onFailure(call: Call<SplitGroupDetails>, t: Throwable) {
+                        ProgressDialogHelper.hideProgressDialog()
                         context?.let {
                             Toast.makeText(it, "Failed to fetch data", Toast.LENGTH_SHORT).show()
                         }

@@ -89,14 +89,14 @@ class RecordEntry : Fragment() {
     }
     private fun setupInputFilters() {
         binding.amountField.filters = arrayOf(InputFilter { source, _, _, dest, _, _ ->
-            val input = dest.toString() + source.toString()
+            val input = (dest.toString() + source.toString()).toDoubleOrNull()
             if (input != null) {
                 when {
-                    input > 10000000000.toString() -> {
+                    input > 10000000000 -> {
                         Toast.makeText(requireContext(), "Amount cannot exceed 10 billion", Toast.LENGTH_SHORT).show()
                         ""
                     }
-                    input < 0.toString() -> {
+                    input < 0 -> {
                         Toast.makeText(requireContext(), "Amount cannot be negative", Toast.LENGTH_SHORT).show()
                         ""
                     }

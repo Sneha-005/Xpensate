@@ -9,7 +9,9 @@ import com.example.xpensate.databinding.SplitGroupShowItemBinding
 
 class SplitAmountShowAdapter (
     private var bills: MutableList<Bill>,
-    private val ownerName: String
+    private val ownerName: String,
+    private val markBillAsPaid: (String, String, Boolean) -> Unit
+
 ): RecyclerView.Adapter<SplitAmountShowAdapter.BillViewHolder>(){
 
     inner class BillViewHolder(private val binding: SplitGroupShowItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -22,11 +24,12 @@ class SplitAmountShowAdapter (
                 )
             }
             if (item.bill_participants.isNotEmpty()) {
-                val adapter = MemberDetailAdapter(item.bill_participants)
+                val adapter = MemberDetailAdapter(item.bill_participants,item.id.toString(), markBillAsPaid)
                 binding.contactContainer.adapter = adapter
             } else {
                 binding.contactContainer.adapter = null
             }
+            item.bill_participants.map { it.paid == true }
         }
     }
 
