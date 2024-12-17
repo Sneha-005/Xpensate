@@ -15,28 +15,30 @@ This app is your ultimate financial companion! It simplifies expense tracking, s
 ## Architecture
 
 The app employs a modular architecture that integrates various modern Android development components and best practices to ensure scalability, maintainability, and high performance.
+
 **Components**
-1. User Interface
-  - **RecyclerView**: Developed 10+ dynamic and efficient lists using RecyclerView, significantly enhancing UI responsiveness and user experience.
-  - **Fragments & Activities**: Structured UI components to manage different sections of the app seamlessly.
 
-2. Data Management
-  - **Retrofit**: Integrated APIs with Retrofit for seamless data exchange between the app and backend services.
-  - **Glide**: Utilized Glide to efficiently process and load images from the server.
-  - **DataStore**: Implemented a secure OTP-based Two-Factor Authentication system with access and refresh token management using DataStore.
+1. **User Interface**
+  - *RecyclerView*: Developed 10+ dynamic and efficient lists using RecyclerView, significantly enhancing UI responsiveness and user experience.
+  - *Fragments & Activities*: Structured UI components to manage different sections of the app seamlessly.
 
-3. Authentication & Security
-  - **Two-Factor Authentication (OTP)**: Ensured secure user authentication with OTP-based verification.
-  - **Token Management**: Managed access and refresh tokens securely using DataStore.
+2. **Data Management**
+  - *Retrofit*: Integrated APIs with Retrofit for seamless data exchange between the app and backend services.
+  - *Glide*: Utilized Glide to efficiently process and load images from the server.
+  - *DataStore*: Implemented a secure OTP-based Two-Factor Authentication system with access and refresh token management using DataStore.
 
-4. Real-Time Features
-  - **Firebase Cloud Messaging (FCM)**: Leveraged FCM to deliver real-time notifications, enhancing user engagement and communication.
+3.**Authentication & Security**
+  - *Two-Factor Authentication (OTP)*: Ensured secure user authentication with OTP-based verification.
+  - *Token Management*: Managed access and refresh tokens securely using DataStore.
+
+4.**Real-Time Features**
+  - *Firebase Cloud Messaging (FCM)*: Leveraged FCM to deliver real-time notifications, enhancing user engagement and communication.
     
-5. Asynchronous Operations
-  - **Kotlin Coroutines**: Optimized asynchronous operations by incorporating Kotlin Coroutines for managing background tasks, ensuring smooth and responsive user experiences.
+5. **Asynchronous Operations**
+  - *Kotlin Coroutines*: Optimized asynchronous operations by incorporating Kotlin Coroutines for managing background tasks, ensuring smooth and responsive user experiences.
 
-6. State Management
-  - **ViewModel**: Utilized ViewModel to manage data for RecyclerView adapters, enabling efficient handling of dynamic lists and minimizing redundant API calls.
+6. **State Management**
+  - *ViewModel*: Utilized ViewModel to manage data for RecyclerView adapters, enabling efficient handling of dynamic lists and minimizing redundant API calls.
 
 ## Technologies Used
 
