@@ -1,6 +1,8 @@
 # Xpensate
 
-This app is your ultimate financial companion! It simplifies expense tracking, shared bill management, debt monitoring, currency conversion, and includes a Budget Builder to help you stay financially disciplined by setting monthly spending limits.## Features
+This app is your ultimate financial companion! It simplifies expense tracking, shared bill management, debt monitoring, currency conversion, and includes a Budget Builder to help you stay financially disciplined by setting monthly spending limits.
+
+## Features
 
 - **Home Screen**: Overview of personal expenses and group balances.
 - **Add Expense**:  Form for recording new transactions.
