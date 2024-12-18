@@ -71,7 +71,7 @@ The app employs a modular architecture that integrates various modern Android de
 
 ## Video
 
-[![Watch the video](https://i.sstatic.net/Vp2cE.png)](https://drive.google.com/file/d/1eLcTS7WGA99YVLyvdP7RiZw1haJVeYq2/view)
+[![Watch the video](https://drive.google.com/file/d/1--RGVpoB42nL3qrFJRyFd9VQqMVDzEpg/view?usp=drivesdk)](https://drive.google.com/file/d/1eLcTS7WGA99YVLyvdP7RiZw1haJVeYq2/view)
 
 ## Contributing
 
