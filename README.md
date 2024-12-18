@@ -11,6 +11,7 @@ This app is your ultimate financial companion! It simplifies expense tracking, s
 - **Debt & Lend**:  View, add, and manage debt/lend records.
 - **Currency Converter**: Perform quick conversions and track foreign expenses.
 - **Budget Builder**: Set and monitor your monthly spending limits with visual indicators.
+- **Trip Tracker**: Plan trips, manage shared expenses, and settle costs with group members seamlessly.
 
 ## Architecture
 
@@ -68,6 +69,10 @@ The app employs a modular architecture that integrates various modern Android de
 
 3. Build and run the project on an emulator or physical device.
 
+## Video
+
+![Alt Text](https://drive.google.com/file/d/1eLcTS7WGA99YVLyvdP7RiZw1haJVeYq2/view?t=6)
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
@@ -76,3 +81,4 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 - [Room DB](https://developer.android.com/training/data-storage/room)
 - [Retrofit](https://square.github.io/retrofit/)
+  
