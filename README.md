@@ -69,6 +69,9 @@ The app employs a modular architecture that integrates various modern Android de
 
 3. Build and run the project on an emulator or physical device.
 
+## Figma
+https://www.figma.com/design/ZYNHVRTKQ7ERiYGcA5Jt6I/Xpensate?node-id=85-168&p=f&t=OnreAlJSgocq80eg-0
+
 ## Video
 
 [![Watch the video](https://drive.google.com/file/d/1--RGVpoB42nL3qrFJRyFd9VQqMVDzEpg/view?usp=drivesdk)](https://drive.google.com/file/d/1eLcTS7WGA99YVLyvdP7RiZw1haJVeYq2/view)
