@@ -2,6 +2,25 @@
 
 This app is your ultimate financial companion! It simplifies expense tracking, shared bill management, debt monitoring, currency conversion, and includes a Budget Builder to help you stay financially disciplined by setting monthly spending limits.
 
+
+## Screenshots
+<img width="221" height="491" alt="Image" src="https://github.com/user-attachments/assets/80692a50-cfab-4f6a-bb52-45854d6b0ee1" />
+<img width="121" height="509" alt="Image" src="https://github.com/user-attachments/assets/b20f6462-c495-4861-8195-072d9bbfc37f" />
+<img width="171" height="636" alt="Image" src="https://github.com/user-attachments/assets/98fccb88-4057-4329-98f9-fbff72562660" />
+<img width="184" height="417" alt="Image" src="https://github.com/user-attachments/assets/2f6edcf6-dfb0-4ca8-b622-b15da764d8af" />
+<img width="229" height="517" alt="Image" src="https://github.com/user-attachments/assets/d9f817e1-d48f-465f-8538-ce20f1cdafa5" />
+<img width="138" height="300" alt="Image" src="https://github.com/user-attachments/assets/c4624a92-35d6-4827-8b6e-556b1e707634" />
+<img width="204" height="455" alt="Image" src="https://github.com/user-attachments/assets/6145a218-f3b2-4812-a804-6f5baaf3d988" />
+<img width="230" height="507" alt="Image" src="https://github.com/user-attachments/assets/c7eb34d3-25e9-4f8c-9669-4bbca0f16a9f" />
+<img width="200" height="446" alt="Image" src="https://github.com/user-attachments/assets/d3eb37f0-b129-4dfe-b126-f5273752e961" />
+<img width="214" height="481" alt="Image" src="https://github.com/user-attachments/assets/0f990f19-c265-40c2-aa0c-b01d10ebff58" />
+<img width="186" height="418" alt="Image" src="https://github.com/user-attachments/assets/88844091-26b4-4b60-830e-6b6b1021e06e" />
+<img width="179" height="398" alt="Image" src="https://github.com/user-attachments/assets/0d23c452-ad05-46f8-8f68-8cda62405959" />
+<img width="213" height="474" alt="Image" src="https://github.com/user-attachments/assets/c4f8ee60-19f3-40f7-9114-e905eb516cce" />
+
+## Video
+https://github.com/user-attachments/assets/6f00e93e-8090-4fa8-91b4-3bf01a87359c
+
 ## Features
 
 - **Home Screen**: Overview of personal expenses and group balances.
@@ -68,13 +87,6 @@ The app employs a modular architecture that integrates various modern Android de
 2. Open the project in Android Studio.
 
 3. Build and run the project on an emulator or physical device.
-
-## Figma
-https://www.figma.com/design/ZYNHVRTKQ7ERiYGcA5Jt6I/Xpensate?node-id=85-168&p=f&t=OnreAlJSgocq80eg-0
-
-## Video
-
-[![Watch the video](https://drive.google.com/file/d/1--RGVpoB42nL3qrFJRyFd9VQqMVDzEpg/view?usp=drivesdk)](https://drive.google.com/file/d/1eLcTS7WGA99YVLyvdP7RiZw1haJVeYq2/view)
 
 ## Contributing
 
