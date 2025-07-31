@@ -4,23 +4,23 @@ This app is your ultimate financial companion! It simplifies expense tracking, s
 
 
 ## Screenshots
-<img width="191" height="440" alt="Image" src="https://github.com/user-attachments/assets/8bafc026-4ae8-4526-b629-6f504e7d6592" />&nbsp&nbsp;
-<img width="196" height="443" alt="Image" src="https://github.com/user-attachments/assets/93da8ddb-80bf-4180-a9cd-1a00189da0f6" />&nbsp&nbsp;
-<img width="211" height="470" alt="Image" src="https://github.com/user-attachments/assets/406a1e4e-b5fc-43b1-b1d1-4095f62c2648" />&nbsp&nbsp; 
-<img width="163" height="629" alt="Image" src="https://github.com/user-attachments/assets/8c0a23ea-353a-4d69-9345-9ca2b935e681" />&nbsp&nbsp;
-<img width="117" height="498" alt="Image" src="https://github.com/user-attachments/assets/0ff613ce-3e8e-4d53-a347-139db514344f" />&nbsp&nbsp; 
-<img width="169" height="354" alt="Image" src="https://github.com/user-attachments/assets/212dc7b6-cfe0-4f7e-9631-04322aa693b5" />&nbsp&nbsp; 
-<img width="184" height="415" alt="Image" src="https://github.com/user-attachments/assets/8c58734c-1ee8-446d-b823-69fe7e794601" />&nbsp&nbsp; 
-<img width="224" height="509" alt="Image" src="https://github.com/user-attachments/assets/abdf2c60-4f63-4081-9794-74d883b477d7" />&nbsp&nbsp; 
-<img width="134" height="294" alt="Image" src="https://github.com/user-attachments/assets/5be70620-25e6-4228-ade5-7e3ddbed4b60" />&nbsp&nbsp; 
-<img width="197" height="445" alt="Image" src="https://github.com/user-attachments/assets/cefd3b9e-d471-4a34-9684-94b13e6bf504" />&nbsp&nbsp; 
-<img width="201" height="452" alt="Image" src="https://github.com/user-attachments/assets/1ccd9add-601a-4693-90b3-854df9c6d913" />&nbsp&nbsp; 
-<img width="224" height="501" alt="Image" src="https://github.com/user-attachments/assets/eb6dd821-351d-42ce-b2eb-16ce4aae9621" />&nbsp&nbsp; 
-<img width="196" height="435" alt="Image" src="https://github.com/user-attachments/assets/141f603e-6065-4200-8e20-68fe24122e7f" />&nbsp&nbsp; 
-<img width="214" height="477" alt="Image" src="https://github.com/user-attachments/assets/0e121364-29ab-467c-83d6-6ea69e8d36bf" />&nbsp&nbsp; 
-<img width="215" height="488" alt="Image" src="https://github.com/user-attachments/assets/3e5798d0-3573-4561-8fac-14793c6668c2" />&nbsp&nbsp; 
-<img width="183" height="417" alt="Image" src="https://github.com/user-attachments/assets/2e09c399-ee84-4669-94b3-994d468386fd" />&nbsp&nbsp; 
-<img width="176" height="394" alt="Image" src="https://github.com/user-attachments/assets/9dedca4f-320c-4dd4-99c3-4de426ebff62" />&nbsp&nbsp; 
+<img width="191" height="440" alt="Image" src="https://github.com/user-attachments/assets/8bafc026-4ae8-4526-b629-6f504e7d6592" />&nbsp;
+<img width="196" height="443" alt="Image" src="https://github.com/user-attachments/assets/93da8ddb-80bf-4180-a9cd-1a00189da0f6" />&nbsp;
+<img width="211" height="470" alt="Image" src="https://github.com/user-attachments/assets/406a1e4e-b5fc-43b1-b1d1-4095f62c2648" />&nbsp; 
+<img width="163" height="629" alt="Image" src="https://github.com/user-attachments/assets/8c0a23ea-353a-4d69-9345-9ca2b935e681" />&nbsp;
+<img width="117" height="498" alt="Image" src="https://github.com/user-attachments/assets/0ff613ce-3e8e-4d53-a347-139db514344f" />&nbsp; 
+<img width="169" height="354" alt="Image" src="https://github.com/user-attachments/assets/212dc7b6-cfe0-4f7e-9631-04322aa693b5" />&nbsp; 
+<img width="184" height="415" alt="Image" src="https://github.com/user-attachments/assets/8c58734c-1ee8-446d-b823-69fe7e794601" />&nbsp; 
+<img width="224" height="509" alt="Image" src="https://github.com/user-attachments/assets/abdf2c60-4f63-4081-9794-74d883b477d7" />&nbsp; 
+<img width="134" height="294" alt="Image" src="https://github.com/user-attachments/assets/5be70620-25e6-4228-ade5-7e3ddbed4b60" />&nbsp; 
+<img width="197" height="445" alt="Image" src="https://github.com/user-attachments/assets/cefd3b9e-d471-4a34-9684-94b13e6bf504" />&nbsp; 
+<img width="201" height="452" alt="Image" src="https://github.com/user-attachments/assets/1ccd9add-601a-4693-90b3-854df9c6d913" />&nbsp; 
+<img width="224" height="501" alt="Image" src="https://github.com/user-attachments/assets/eb6dd821-351d-42ce-b2eb-16ce4aae9621" />&nbsp; 
+<img width="196" height="435" alt="Image" src="https://github.com/user-attachments/assets/141f603e-6065-4200-8e20-68fe24122e7f" />&nbsp; 
+<img width="214" height="477" alt="Image" src="https://github.com/user-attachments/assets/0e121364-29ab-467c-83d6-6ea69e8d36bf" />&nbsp; 
+<img width="215" height="488" alt="Image" src="https://github.com/user-attachments/assets/3e5798d0-3573-4561-8fac-14793c6668c2" />&nbsp; 
+<img width="183" height="417" alt="Image" src="https://github.com/user-attachments/assets/2e09c399-ee84-4669-94b3-994d468386fd" />&nbsp; 
+<img width="176" height="394" alt="Image" src="https://github.com/user-attachments/assets/9dedca4f-320c-4dd4-99c3-4de426ebff62" />&nbsp; 
 
 ## Video
 https://github.com/user-attachments/assets/6f00e93e-8090-4fa8-91b4-3bf01a87359c
